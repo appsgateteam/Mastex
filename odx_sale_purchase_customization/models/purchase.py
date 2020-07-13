@@ -29,12 +29,8 @@ class PurchaseOrder(models.Model):
     customer_id = fields.Many2one(comodel_name='res.partner', string="Customer")
     sequence_no = fields.Char(string='Reference', required=True, copy=False, readonly=True, index=True,
                               default=lambda self: _('New'))
-    landing_date = fields.Date('Date')
-    landing_company = fields.Char("Company")
-    awb = fields.Char("AWB")
-    landing_amount = fields.Float('Amount')
-    landing_attachment = fields.Binary('Document')
-    landing_attachment_name = fields.Char('Document Name')
+
+    landing_line_ids = fields.One2many('purchase.landing.cost', 'purchase_id', string="Landing Costs")
 
     def button_confirm(self):
         """ inherited to create sale order,
@@ -104,3 +100,16 @@ class PurchaseOrderLine(models.Model):
         res.update({'quantity': self.actual_qty})
 
         return res
+
+
+class LandingCost(models.Model):
+    _name = 'purchase.landing.cost'
+    _description = 'Purchase Landing Cost'
+
+    name = fields.Char("AWB", required=True)
+    landing_date = fields.Date('Date', required=True)
+    landing_company = fields.Char("Company", required=True)
+    landing_amount = fields.Float('Amount', required=True)
+    landing_attachment = fields.Binary('Document',  attachment=True)
+    landing_attachment_name = fields.Char('Document Name')
+    purchase_id = fields.Many2one('purchase.order', string="Purchase Order", ondelete='cascade')

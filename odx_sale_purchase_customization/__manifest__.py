@@ -19,6 +19,7 @@
 
     # always loaded
     'data': [
+        'security/ir.model.access.csv',
         'data/sale_purchase_customization_data.xml',
         'views/res_partner.xml',
         'views/sale_views.xml',
