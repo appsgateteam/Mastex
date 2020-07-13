@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Inherit Sale Order Form View to Modify it -->
+        <record id="view_order_form_inherit" model="ir.ui.view">
+            <field name="name">sale.order.form.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet/group" position="inside">
+                    <group>
+                        <field name="vendor_id" widget="res_partner_many2one"
+                               context="{'res_partner_search_mode': 'supplier', 'show_vat': True}"
+                               placeholder="Name, TIN, Email, or Reference"
+                               attrs="{'readonly': [('state', 'not in', ('draft', 'sent'))],'required': True}"
+                               domain="[('supplier_rank','=',1)]"/>
+                        <field name="purchase_order_id" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="sequence_no" readonly="1"/>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="attributes">
+                    <attribute name="domain">[('customer_rank','=',1)]</attribute>
+                </xpath>
+
+                <xpath expr="//form/sheet/notebook/page[@name='other_information']" position="after">
+                    <page string="Instructions" name="instructions_tab">
+                        <group>
+                            <field name="colour_instructions"/>
+                            <field name="packing"/>
+                            <field name="face_stamp"/>
+                            <field name="selvedge"/>
+                        </group>
+                        <group>
+                            <field name="shipping_mark"/>
+                            <field name="shipping_sample_book"/>
+                            <field name="notes"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sale_margin_sale_order_line_form">
+            <field name="name">sale.order.line.tree.margin.view.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+               <xpath expr="//field[@name='order_line']/tree//field[@name='product_uom_qty']" position="after">
+                    <field name="actual_qty" attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree//field[@name='qty_delivered']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/form//field[@name='qty_delivered']" position="after">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+
+            </field>
+        </record>
+
+
+
+<!--                <xpath expr="//field[@name='order_line']/tree/field['qty_delivered']" position="after">-->
+<!--                    <field name="actual_qty"/>-->
+<!--                </xpath>-->
+    </data>
+</odoo>
