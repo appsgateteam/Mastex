@@ -24,6 +24,8 @@
         'views/res_partner.xml',
         'views/sale_views.xml',
         'views/purchase_views.xml',
+        'views/purchase_landing_cost_view.xml',
+        'report/sale_report_template.xml'
 
     ],
     # only loaded in demonstration mode

@@ -1,2 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_purchase_landing_cost,access_purchase_landing_cost,model_purchase_landing_cost,base.group_user,1,1,1,1
+access_res_insurance,access_res_insurance,model_res_insurance,base.group_user,1,1,1,1
+access_res_marks,access_res_marks,model_res_marks,base.group_user,1,1,1,1
+access_res_destination,access_res_destination,model_res_destination,base.group_user,1,1,1,1

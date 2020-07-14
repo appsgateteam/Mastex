@@ -39,6 +39,13 @@ class SaleOrder(models.Model):
     shipping_sample_book = fields.Text(string="Shipping Sample Book File")
     notes = fields.Text(string="Notes")
 
+    shipment = fields.Char("Shipment")
+    payment = fields.Char("Payment")
+    insurance_id = fields.Many2one('res.insurance',"Insurance")
+    destination_id = fields.Many2one('res.destination','Destination')
+    # packing = fields.Char("Packing")
+    marks_id = fields.Many2one('res.marks',"Marks")
+
     def action_confirm(self):
         """ inherited to create sale order,
          first check for an existing sale order for the corresponding SO
@@ -61,6 +68,7 @@ class SaleOrder(models.Model):
                                                         "date_planned": datetime.today(),
                                                         "product_uom": line.product_uom.id,
                                                         'price_unit': line.price_unit,
+                                                        "actual_qty":line.actual_qty,
                                                         'taxes_id': [(6, 0, taxes_id.ids)],
                                                         }))
                 vals = {
@@ -68,7 +76,14 @@ class SaleOrder(models.Model):
                     "sale_order_id": record.id,
                     "customer_id": record.partner_id.id,
                     "order_line": purchase_order_lines,
-                    "sequence_no": record.sequence_no
+                    "sequence_no": record.sequence_no,
+                    "colour_instructions":record.colour_instructions,
+                    "packing":record.packing,
+                    "face_stamp":record.face_stamp,
+                    "selvedge":record.selvedge,
+                    "shipping_mark":record.shipping_mark,
+                    "shipping_sample_book":record.shipping_sample_book,
+                    "notes":record.notes,
                 }
                 purchase = purchase_order_obj.create(vals)
                 record.purchase_order_id = purchase.id
@@ -98,6 +113,13 @@ class SaleOrder(models.Model):
         """adding sequence to the name"""
         return [(r.id, u"%s-%s" % (r.name, r.sequence_no)) for r in self]
 
+    def _prepare_invoice(self):
+        res = super(SaleOrder, self)._prepare_invoice()
+        res['ref'] = self.sequence_no
+
+        return res
+
+
 
 #
 class SaleOrderLine(models.Model):
@@ -117,3 +139,23 @@ class SaleOrderLine(models.Model):
     def _onchange_qty_uom(self):
         if self.product_uom_qty:
             self.actual_qty = self.product_uom_qty
+
+class ResInsurance(models.Model):
+    _name = 'res.insurance'
+
+    name = fields.Char("Name",required=True)
+
+
+class ResMarks(models.Model):
+    _name = 'res.marks'
+
+    name = fields.Char("Name", required=True)
+
+
+class Resdestination(models.Model):
+    _name = 'res.destination'
+
+    name = fields.Char("Name", required=True)
+
+
+

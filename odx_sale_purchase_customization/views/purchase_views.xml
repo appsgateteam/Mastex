@@ -12,7 +12,7 @@
                         <field name="customer_id" widget="res_partner_many2one"
                                context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True}"
                                options="{&quot;always_reload&quot;: True}"
-                               attrs="{'readonly': [('state', 'in', ('purchase', 'done', 'cancel'))],'required': True}"
+                               attrs="{'readonly': [('state', 'in', ('purchase', 'done', 'cancel'))]}"
                                domain="[('customer_rank','=',1)]"/>
                         <field name="sale_order_id" readonly="1"/>
                     </group>
@@ -41,14 +41,33 @@
                     <page string="Bill Of Landings" name="bill_of_landings">
                         <field name="landing_line_ids">
                             <tree editable="bottom">
+                                <field name="reference"/>
                                 <field name="landing_date"/>
                                 <field name="landing_company"/>
                                 <field name="name"/>
                                 <field name="landing_amount"/>
+                                <field name="no_of_packages"/>
+                                <field name="destination"/>
+                                <field name="marks"/>
                                 <field name="landing_attachment"/>
                                 <field name="landing_attachment_name" invisible="1"/>
                             </tree>
                         </field>
+                    </page>
+                </xpath>
+                <xpath expr="//notebook" position="inside">
+                    <page string="Instructions" name="instructions_tab" >
+                        <group>
+                            <field name="colour_instructions" attrs="{'readonly':[('state', 'in', 'purchase')]}"/>
+                            <field name="packing" attrs="{'readonly':[('state', 'in', 'purchase')]}"/>
+                            <field name="face_stamp" attrs="{'readonly':[('state', 'in', 'purchase')]}"/>
+                            <field name="selvedge" attrs="{'readonly':[('state', 'in', 'purchase')]}"/>
+                        </group>
+                        <group>
+                            <field name="shipping_mark" attrs="{'readonly':[('state', 'in', 'purchase')]}"/>
+                            <field name="shipping_sample_book" attrs="{'readonly':[('state', 'in', 'purchase')]}"/>
+                            <field name="notes" attrs="{'readonly':[('state', 'in', 'purchase')]}"/>
+                        </group>
                     </page>
                 </xpath>
             </field>
