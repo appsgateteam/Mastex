@@ -21,6 +21,8 @@
 from datetime import datetime
 
 from odoo import fields, models, api, _
+from odoo.exceptions import UserError
+from odoo.tools import float_is_zero, float_compare
 
 
 class SaleOrder(models.Model):
@@ -29,8 +31,6 @@ class SaleOrder(models.Model):
 
     purchase_order_id = fields.Many2one(comodel_name="purchase.order", string="PO#", copy=False)
     vendor_id = fields.Many2one(comodel_name='res.partner', string="Vendor")
-    sequence_no = fields.Char(string='Reference', required=True, copy=False, readonly=True, index=True,
-                              default=lambda self: _('New'))
     colour_instructions = fields.Text(string="Colour Instructions")
     packing = fields.Text(string="Packing")
     face_stamp = fields.Text(string="Face Stamp on Paper and Booklet File")
@@ -38,13 +38,11 @@ class SaleOrder(models.Model):
     shipping_mark = fields.Text(string="Shipping Mark")
     shipping_sample_book = fields.Text(string="Shipping Sample Book File")
     notes = fields.Text(string="Notes")
-
     shipment = fields.Char("Shipment")
     payment = fields.Char("Payment")
-    insurance_id = fields.Many2one('res.insurance',"Insurance")
-    destination_id = fields.Many2one('res.destination','Destination')
-    # packing = fields.Char("Packing")
-    marks_id = fields.Many2one('res.marks',"Marks")
+    insurance_id = fields.Many2one('res.insurance', "Insurance")
+    destination_id = fields.Many2one('res.destination', 'Destination')
+    marks_id = fields.Many2one('res.marks', "Marks")
 
     def action_confirm(self):
         """ inherited to create sale order,
@@ -68,22 +66,28 @@ class SaleOrder(models.Model):
                                                         "date_planned": datetime.today(),
                                                         "product_uom": line.product_uom.id,
                                                         'price_unit': line.price_unit,
-                                                        "actual_qty":line.actual_qty,
+                                                        "actual_qty": line.actual_qty,
                                                         'taxes_id': [(6, 0, taxes_id.ids)],
+                                                        "attachment_ids": [(6, 0, line.attachment_ids.ids)]
                                                         }))
                 vals = {
                     "partner_id": record.vendor_id.id,
                     "sale_order_id": record.id,
                     "customer_id": record.partner_id.id,
                     "order_line": purchase_order_lines,
-                    "sequence_no": record.sequence_no,
-                    "colour_instructions":record.colour_instructions,
-                    "packing":record.packing,
-                    "face_stamp":record.face_stamp,
-                    "selvedge":record.selvedge,
-                    "shipping_mark":record.shipping_mark,
-                    "shipping_sample_book":record.shipping_sample_book,
-                    "notes":record.notes,
+                    "colour_instructions": record.colour_instructions,
+                    "packing": record.packing,
+                    "face_stamp": record.face_stamp,
+                    "name": record.name,
+                    "selvedge": record.selvedge,
+                    "shipping_mark": record.shipping_mark,
+                    "shipping_sample_book": record.shipping_sample_book,
+                    "notes": record.notes,
+                    "shipment": record.shipment,
+                    "payment": record.payment,
+                    "insurance_id": record.insurance_id.id,
+                    "destination_id": record.destination_id.id,
+                    "marks_id": record.marks_id.id
                 }
                 purchase = purchase_order_obj.create(vals)
                 record.purchase_order_id = purchase.id
@@ -100,25 +104,20 @@ class SaleOrder(models.Model):
         if values['partner_id']:
             customer = self.env['res.partner'].browse(values['partner_id'])
             if customer:
-                code = customer.customer_code
+                if customer:
+                    code = customer.customer_code
 
-        if values.get('sequence_no', _('New')) == _('New'):
+        if values.get('name', _('New')) == _('New'):
             # values['name'] = self.env['ir.sequence'].next_by_code('sale.delivery')
-            values['sequence_no'] = str(code) + " " + self.env['ir.sequence'].next_by_code('order.reference',
-                                                                                           None) or _('New')
+            values['name'] = str(code) + " " + self.env['ir.sequence'].next_by_code('order.reference',
+                                                                                    None) or _('New')
         return super(SaleOrder, self).create(values)
-
-
-    def name_get(self):
-        """adding sequence to the name"""
-        return [(r.id, u"%s-%s" % (r.name, r.sequence_no)) for r in self]
 
     def _prepare_invoice(self):
         res = super(SaleOrder, self)._prepare_invoice()
-        res['ref'] = self.sequence_no
+        res['ref'] = self.name
 
         return res
-
 
 
 #
@@ -127,23 +126,84 @@ class SaleOrderLine(models.Model):
 
     actual_qty = fields.Float(string='Actual Quantity', required=True
                               , default=1.0)
+    attachment_ids = fields.Many2many(comodel_name="ir.attachment", string="Images")
 
     def _prepare_invoice_line(self):
         res = super(SaleOrderLine, self)._prepare_invoice_line()
-
         res.update({'quantity': self.actual_qty})
-
         return res
 
-    @api.onchange('product_uom_qty')
-    def _onchange_qty_uom(self):
-        if self.product_uom_qty:
-            self.actual_qty = self.product_uom_qty
+    @api.depends('state', 'actual_qty', 'qty_delivered', 'qty_to_invoice', 'qty_invoiced')
+    def _compute_invoice_status(self):
+        """
+        Compute the invoice status of a SO line. Possible statuses:
+        - no: if the SO is not in status 'sale' or 'done', we consider that there is nothing to
+          invoice. This is also hte default value if the conditions of no other status is met.
+        - to invoice: we refer to the quantity to invoice of the line. Refer to method
+          `_get_to_invoice_qty()` for more information on how this quantity is calculated.
+        - upselling: this is possible only for a product invoiced on ordered quantities for which
+          we delivered more than expected. The could arise if, for example, a project took more
+          time than expected but we decided not to invoice the extra cost to the client. This
+          occurs onyl in state 'sale', so that when a SO is set to done, the upselling opportunity
+          is removed from the list.
+        - invoiced: the quantity invoiced is larger or equal to the quantity ordered.
+
+        ***Additional Customization***
+            Overriden base function to change the dependency of the the  product quantity to actual quantity
+        """
+        precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+        for line in self:
+            if line.state not in ('sale', 'done'):
+                line.invoice_status = 'no'
+            elif not float_is_zero(line.qty_to_invoice, precision_digits=precision):
+                line.invoice_status = 'to invoice'
+            elif line.state == 'sale' and line.product_id.invoice_policy == 'order' and \
+                    float_compare(line.qty_delivered, line.actual_qty, precision_digits=precision) == 1:
+                print(line.qty_delivered, line.actual_qty)
+                line.invoice_status = 'upselling'
+            elif float_compare(line.qty_invoiced, line.actual_qty, precision_digits=precision) >= 0:
+                line.invoice_status = 'invoiced'
+            else:
+                line.invoice_status = 'no'
+
+    @api.depends('qty_invoiced', 'qty_delivered', 'actual_qty', 'order_id.state')
+    def _get_to_invoice_qty(self):
+        """
+        Compute the quantity to invoice. If the invoice policy is order, the quantity to invoice is
+        calculated from the actual quantity. Otherwise, the quantity delivered is used.
+
+        ***Additional Customization***
+            Overriden base function to change the dependency of the the  product quantity to actual quantity
+        """
+        for line in self:
+            if line.order_id.state in ['sale', 'done']:
+
+                if line.product_id.invoice_policy == 'order':
+                    line.qty_to_invoice = line.actual_qty - line.qty_invoiced
+                else:
+                    line.qty_to_invoice = line.qty_delivered - line.qty_invoiced
+            else:
+                line.qty_to_invoice = 0
+
+    @api.model_create_multi
+    def create(self, values):
+        """
+        Generates an error message when an additional line is created in SO, when the state
+        is in sale, done
+        :param values:
+        :return: new record
+        """
+        res = super(SaleOrderLine, self).create(values)
+        states = ['sale', 'done']
+        if res.state in states:
+            raise UserError(_('You can not create an additional sale order line in a confirmed sale order '))
+        return res
+
 
 class ResInsurance(models.Model):
     _name = 'res.insurance'
 
-    name = fields.Char("Name",required=True)
+    name = fields.Char("Name", required=True)
 
 
 class ResMarks(models.Model):
@@ -152,10 +212,7 @@ class ResMarks(models.Model):
     name = fields.Char("Name", required=True)
 
 
-class Resdestination(models.Model):
+class ResDestination(models.Model):
     _name = 'res.destination'
 
     name = fields.Char("Name", required=True)
-
-
-

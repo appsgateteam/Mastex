@@ -4,7 +4,7 @@
             <field name="name">purchase.landing.cost.tree</field>
             <field name="model">purchase.landing.cost</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree editable="bottom">
                     <field name="reference"/>
                     <field name="landing_date"/>
                     <field name="landing_company"/>

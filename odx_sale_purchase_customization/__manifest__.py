@@ -25,8 +25,10 @@
         'views/sale_views.xml',
         'views/purchase_views.xml',
         'views/purchase_landing_cost_view.xml',
-        'report/sale_report_template.xml'
-
+        'views/account_move_views.xml',
+        'report/sale_report_template.xml',
+        'report/purchase_report.xml',
+        'report/rfq_print.xml'
     ],
     # only loaded in demonstration mode
     'demo': [

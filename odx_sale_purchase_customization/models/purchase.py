@@ -19,19 +19,17 @@
 #
 ###################################################################################
 from odoo import fields, models, api, _
+from odoo.exceptions import UserError
 
 
 class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
     _description = "Purchase Order"
 
+
     sale_order_id = fields.Many2one(comodel_name="sale.order", string="SO#", copy=False)
     customer_id = fields.Many2one(comodel_name='res.partner', string="Customer")
-    sequence_no = fields.Char(string='Reference', required=True, copy=False, readonly=True, index=True,
-                              default=lambda self: _('New'))
-
     landing_line_ids = fields.One2many('purchase.landing.cost', 'purchase_id', string="Landing Costs")
-
     colour_instructions = fields.Text(string="Colour Instructions")
     packing = fields.Text(string="Packing")
     face_stamp = fields.Text(string="Face Stamp on Paper and Booklet File")
@@ -39,6 +37,11 @@ class PurchaseOrder(models.Model):
     shipping_mark = fields.Text(string="Shipping Mark")
     shipping_sample_book = fields.Text(string="Shipping Sample Book File")
     notes = fields.Text(string="Notes")
+    shipment = fields.Char("Shipment")
+    payment = fields.Char("Payment")
+    insurance_id = fields.Many2one('res.insurance', "Insurance")
+    destination_id = fields.Many2one('res.destination', 'Destination')
+    marks_id = fields.Many2one('res.marks', "Marks")
 
     def button_confirm(self):
         """ inherited to create sale order,
@@ -61,6 +64,7 @@ class PurchaseOrder(models.Model):
                                                     'product_uom_qty': line.product_qty,
                                                     "product_uom": line.product_uom.id,
                                                     'price_unit': line.price_unit,
+                                                    "attachment_ids": [(6, 0, line.attachment_ids.ids)],
                                                     "actual_qty":line.actual_qty
                                                     }))
                 vals = {
@@ -68,51 +72,24 @@ class PurchaseOrder(models.Model):
                     "vendor_id": record.partner_id.id,
                     "purchase_order_id": record.id,
                     "order_line": sale_order_lines,
-                    "sequence_no": record.sequence_no,
                     "colour_instructions": record.colour_instructions,
                     "packing": record.packing,
+                    "name":record.name,
                     "face_stamp": record.face_stamp,
                     "selvedge": record.selvedge,
                     "shipping_mark": record.shipping_mark,
                     "shipping_sample_book": record.shipping_sample_book,
                     "notes": record.notes,
+                    "shipment": record.shipment,
+                    "payment": record.payment,
+                    "insurance_id": record.insurance_id.id,
+                    "destination_id": record.destination_id.id,
+                    "marks_id": record.marks_id.id
                 }
                 sale_order = sale_order_obj.create(vals)
                 record.sale_order_id = sale_order.id
             return res
 
-    def action_view_invoice(self):
-        print()
-        '''
-        This function returns an action that display existing vendor bills of given purchase order ids.
-        When only one found, show the vendor bill immediately.
-        '''
-        action = self.env.ref('account.action_move_in_invoice_type')
-        result = action.read()[0]
-        create_bill = self.env.context.get('create_bill', False)
-        # override the context to get rid of the default filtering
-        result['context'] = {
-            'default_type': 'in_invoice',
-            'default_company_id': self.company_id.id,
-            'default_purchase_id': self.id,
-            'default_ref': self.sequence_no,
-        }
-        # choose the view_mode accordingly
-        if len(self.invoice_ids) > 1 and not create_bill:
-            result['domain'] = "[('id', 'in', " + str(self.invoice_ids.ids) + ")]"
-        else:
-            res = self.env.ref('account.view_move_form', False)
-            form_view = [(res and res.id or False, 'form')]
-            if 'views' in result:
-                result['views'] = form_view + [(state,view) for state,view in action['views'] if view != 'form']
-            else:
-                result['views'] = form_view
-            # Do not set an invoice_id if we want to create a new bill.
-            if not create_bill:
-                result['res_id'] = self.invoice_ids.id or False
-        result['context']['default_origin'] = self.name
-        result['context']['default_reference'] = self.partner_ref
-        return result
 
     @api.model
     def create(self, values):
@@ -125,16 +102,13 @@ class PurchaseOrder(models.Model):
         if values['partner_id']:
             customer = self.env['res.partner'].browse(values['customer_id'])
             if customer:
-                code = customer.customer_code
-        if values.get('sequence_no', _('New')) == _('New') and  values['customer_id']:
+                if customer.customer_code:
+                    code = customer.customer_code
+        if values.get('name', _('New')) == _('New'):
             # values['name'] = self.env['ir.sequence'].next_by_code('sale.delivery')
-            values['sequence_no'] = str(code) + " " + self.env['ir.sequence'].next_by_code('order.reference',
+            values['name'] = str(code) + " " + self.env['ir.sequence'].next_by_code('order.reference',
                                                                                            None) or _('New')
         return super(PurchaseOrder, self).create(values)
-
-    def name_get(self):
-        """adding sequence to the name"""
-        return [(r.id, u"%s-%s" % (r.name, r.sequence_no)) for r in self]
 
 
 class PurchaseOrderLine(models.Model):
@@ -142,18 +116,26 @@ class PurchaseOrderLine(models.Model):
 
     actual_qty = fields.Float(string='Actual Quantity', required=True
                               , default=1.0)
+    attachment_ids = fields.Many2many(comodel_name="ir.attachment",string="Images")
 
     def _prepare_account_move_line(self, move):
         res = super(PurchaseOrderLine, self)._prepare_account_move_line(move)
-
         res.update({'quantity': self.actual_qty})
-
         return res
 
-    @api.onchange('product_qty')
-    def _onchange_product_qty(self):
-        if self.product_qty:
-            self.actual_qty = self.product_qty
+    @api.model_create_multi
+    def create(self, values):
+        """
+        Generates an error message when an additional line is created in PO, when the state
+        is in purchase, done
+        :param values:
+        :return: new record
+        """
+        res = super(PurchaseOrderLine, self).create(values)
+        states = ['purchase', 'done']
+        if res.order_id.state in states:
+            raise UserError(_('You can not create an additional purchase order line in a confirmed order '))
+        return res
 
 
 class LandingCost(models.Model):
@@ -170,4 +152,4 @@ class LandingCost(models.Model):
     no_of_packages = fields.Char('No Of Packages')
     destination = fields.Char("Destination")
     marks = fields.Char("Marks")
-    reference = fields.Char("Refrence")
+    reference = fields.Char("Reference")
