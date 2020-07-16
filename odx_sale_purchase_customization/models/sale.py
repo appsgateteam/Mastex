@@ -125,7 +125,7 @@ class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
     actual_qty = fields.Float(string='Actual Quantity', required=True
-                              , default=1.0)
+                              , default=0)
     attachment_ids = fields.Many2many(comodel_name="ir.attachment", string="Images")
 
     def _prepare_invoice_line(self):
