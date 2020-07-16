@@ -90,6 +90,11 @@ class PurchaseOrder(models.Model):
                 record.sale_order_id = sale_order.id
             return res
 
+    def action_view_invoice(self):
+        res = super(PurchaseOrder, self).action_view_invoice()
+        res['context'].update({'default_ref': self.name})
+        return res
+
 
     @api.model
     def create(self, values):
@@ -154,7 +159,8 @@ class LandingCost(models.Model):
     marks = fields.Char("Marks")
     reference = fields.Char("Reference")
 
+
     @api.onchange('purchase_id')
-    def _onchange_purchase_id(self):
+    def _onchange(self):
         if self.purchase_id:
             self.reference = self.purchase_id.name
