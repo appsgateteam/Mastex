@@ -6,14 +6,9 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='name']" position="replace">
-                <div class="o_row" name="name">
+            <xpath expr="//field[@name='name']" position="after">
+                <div class="o_row" name="code">
                     <field name="customer_rank" invisible="1"/>
-                    <field name="name" default_focus="1" placeholder="Name"
-                           attrs="{'required' : [('type', '=', 'contact')]}" nolabel="1"/>
-                    <span attrs="{'invisible' : [('customer_rank','!=',1)]}">-</span>
-                    <!--                    <field name="sequence_no"/>-->
-
                     <field name="customer_code" attrs="{'required' : [('customer_rank','=',1)],'invisible' : [('customer_rank','!=',1)]}"/>
                 </div>
             </xpath>
@@ -27,7 +22,6 @@
         <field name="inherit_id" ref="base.view_res_partner_filter"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='name']" position="after">
-                <!--                <field name="sequence_no"/>-->
                 <field name="customer_code"/>
             </xpath>
         </field>

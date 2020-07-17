@@ -8,7 +8,6 @@ class AccountMove(models.Model):
     def _get_default_reference(self):
         """:return PO reference"""
 
-        print(self._context)
         if self._context.get('default_ref'):
             return self._context.get('default_ref')
         return False

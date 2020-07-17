@@ -7,6 +7,12 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//sheet/div[@name='button_box']" position="inside">
+                    <button name="photos" type="object" class="oe_stat_button" icon="fa-picture-o">
+                    <field name="attachment_ids" invisible="1"/>
+                    <field name="attachment_count" widget="statinfo" string="Photos"/>
+                </button>
+                </xpath>
                 <xpath expr="//sheet/group" position="inside">
                     <group>
                         <field name="vendor_id" widget="res_partner_many2one"
@@ -24,7 +30,7 @@
                     <group>
                         <field name="insurance_id" attrs="{'readonly':[('state', 'in', 'sale')]}"/>
                         <field name="destination_id" attrs="{'readonly':[('state', 'in', 'sale')]}"/>
-                        <field name="marks_id" attrs="{'readonly':[('state', 'in', 'sale')]}"/>
+                        <field name="marks" attrs="{'readonly':[('state', 'in', 'sale')]}"/>
                     </group>
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="attributes">
@@ -37,15 +43,15 @@
                 <xpath expr="//form/sheet/notebook/page[@name='other_information']" position="after">
                     <page string="Instructions" name="instructions_tab">
                         <group>
-                            <field name="colour_instructions" attrs="{'readonly':[('state', 'in', 'sale')]}"/>
-                            <field name="packing" attrs="{'readonly':[('state', 'in', 'sale')]}"/>
-                            <field name="face_stamp" attrs="{'readonly':[('state', 'in', 'sale')]}"/>
-                            <field name="selvedge" attrs="{'readonly':[('state', 'in', 'sale')]}"/>
+                            <field name="colour_instructions"/>
+                            <field name="packing"/>
+                            <field name="face_stamp"/>
+                            <field name="selvedge"/>
                         </group>
                         <group>
-                            <field name="shipping_mark" attrs="{'readonly':[('state', 'in', 'sale')]}"/>
-                            <field name="shipping_sample_book" attrs="{'readonly':[('state', 'in', 'sale')]}"/>
-                            <field name="notes" attrs="{'readonly':[('state', 'in', 'sale')]}"/>
+                            <field name="shipping_mark"/>
+                            <field name="shipping_sample_book"/>
+                            <field name="notes"/>
                         </group>
                     </page>
                 </xpath>
@@ -131,7 +137,7 @@
                                 attrs="{'readonly':[('state', 'in', 'sale')]}"
                         />
                         <field name="actual_qty" attrs="{'readonly': [('parent.state', 'not in', ['sale', 'done'])]}"/>
-                        <field name="attachment_ids" widget="many2many_binary" options="{'no_create': False}"/>
+<!--                        <field name="attachment_ids" widget="many2many_binary" options="{'no_create': False}"/>-->
                         <field
                                 name="qty_delivered"
                                 string="Delivered"
@@ -199,28 +205,5 @@
                 </xpath>
             </field>
         </record>
-
-<!--        <record model="ir.ui.view" id="sale_margin_sale_order_line_form">-->
-<!--            <field name="name">sale.order.line.tree.margin.view.form</field>-->
-<!--            <field name="model">sale.order</field>-->
-<!--            <field name="inherit_id" ref="sale.view_order_form"/>-->
-<!--            <field name="arch" type="xml">-->
-<!--                <xpath expr="//field[@name='order_line']/tree//field[@name='product_uom_qty']" position="after">-->
-<!--                    <field name="actual_qty" attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"/>-->
-<!--                    <field name="attachment_ids" widget="many2many_tags" options="{'no_create': False}"/>-->
-<!--                </xpath>-->
-<!--                <xpath expr="//field[@name='order_line']/tree//field[@name='qty_delivered']" position="attributes">-->
-<!--                    <attribute name="invisible">1</attribute>-->
-<!--                </xpath>-->
-
-<!--                <xpath expr="//field[@name='order_line']/form//field[@name='qty_delivered']" position="attributes">-->
-<!--                    <attribute name="invisible">1</attribute>-->
-<!--                </xpath>-->
-<!--                <xpath expr="//field[@name='order_line']/form//field[@name='product_uom_qty']" position="after">-->
-<!--                    <field name="actual_qty" attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}"/>-->
-<!--                    <field name="attachment_ids" widget="many2many_tags" options="{'no_create': False}"/>-->
-<!--                </xpath>-->
-<!--            </field>-->
-<!--        </record>-->
     </data>
 </odoo>

@@ -7,9 +7,8 @@
                 <tree editable="bottom">
                     <field name="reference"/>
                     <field name="landing_date"/>
-                    <field name="landing_company"/>
+                    <field name="landing_company_id"/>
                     <field name="name"/>
-                    <field name="landing_amount"/>
                     <field name="no_of_packages"/>
                     <field name="destination"/>
                     <field name="marks"/>
@@ -28,9 +27,8 @@
                             <group>
                                 <field name="reference"/>
                                 <field name="landing_date"/>
-                                <field name="landing_company"/>
+                                <field name="landing_company_id"/>
                                 <field name="name"/>
-                                <field name="landing_amount"/>
                             </group>
                             <group>
                                 <field name="no_of_packages"/>
@@ -53,7 +51,7 @@
                 </p>
             </field>
         </record>
-        <menuitem name="Bill Of Landings" id="menu_purchase_landing_cost" action="action_purchase_landing_cost"
+        <menuitem name="Bill Of Ladings" id="menu_purchase_landing_cost" action="action_purchase_landing_cost"
                   parent="purchase.menu_purchase_config"/>
     </data>
 </odoo>

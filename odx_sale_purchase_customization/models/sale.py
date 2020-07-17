@@ -31,18 +31,45 @@ class SaleOrder(models.Model):
 
     purchase_order_id = fields.Many2one(comodel_name="purchase.order", string="PO#", copy=False)
     vendor_id = fields.Many2one(comodel_name='res.partner', string="Vendor")
-    colour_instructions = fields.Text(string="Colour Instructions")
-    packing = fields.Text(string="Packing")
-    face_stamp = fields.Text(string="Face Stamp on Paper and Booklet File")
-    selvedge = fields.Text(string="Selvedge")
-    shipping_mark = fields.Text(string="Shipping Mark")
-    shipping_sample_book = fields.Text(string="Shipping Sample Book File")
-    notes = fields.Text(string="Notes")
-    shipment = fields.Char("Shipment")
-    payment = fields.Char("Payment")
-    insurance_id = fields.Many2one('res.insurance', "Insurance")
-    destination_id = fields.Many2one('res.destination', 'Destination')
-    marks_id = fields.Many2one('res.marks', "Marks")
+
+    # Instructions
+    colour_instructions = fields.Text(string="Colour Instructions", related="purchase_order_id.colour_instructions")
+    packing = fields.Text(string="Packing", related="purchase_order_id.packing")
+    face_stamp = fields.Text(string="Face Stamp on Paper and Booklet File", related="purchase_order_id.face_stamp")
+    selvedge = fields.Text(string="Selvedge", related="purchase_order_id.selvedge")
+    shipping_mark = fields.Text(string="Shipping Mark", related="purchase_order_id.shipping_mark")
+    shipping_sample_book = fields.Text(string="Shipping Sample Book File", related="purchase_order_id.shipping_sample_book")
+    notes = fields.Text(string="Notes", related="purchase_order_id.notes")
+
+    # Other details
+    shipment = fields.Char(string="Shipment", related="purchase_order_id.shipment")
+    payment = fields.Char(string="Payment", related="purchase_order_id.payment")
+    insurance_id = fields.Many2one(comodel_name='res.insurance', string="Insurance",
+                                   related="purchase_order_id.insurance_id")
+    destination_id = fields.Many2one(comodel_name='res.destination', string='Destination',
+                                     related='purchase_order_id.destination_id')
+    marks = fields.Char(string="Marks")
+
+    attachment_ids = fields.One2many('ir.attachment', 'sale_id', string='Attachment')
+    attachment_count = fields.Integer(compute='_compute_attachment_count')
+
+    def photos(self):
+        return {
+            'name': 'Photos',
+            'view_type': 'form',
+            'view_mode': 'kanban,tree,form',
+            'res_model': 'ir.attachment',
+            'view_id': False,
+            'type': 'ir.actions.act_window',
+            'context': {'default_sale_id': self.id},
+            'domain': [('sale_id', '=', self.id)]
+
+        }
+
+    @api.depends('attachment_ids')
+    def _compute_attachment_count(self):
+        for order in self:
+            order.attachment_count = len(order.attachment_ids)
 
     def action_confirm(self):
         """ inherited to create sale order,
@@ -52,7 +79,17 @@ class SaleOrder(models.Model):
             res = super(SaleOrder, self).action_confirm()
             if not record.purchase_order_id and record.vendor_id:
                 purchase_order_lines = []
+                attachment_ids = []
                 purchase_order_obj = self.env['purchase.order']
+                for attchment in record.attachment_ids:
+                    attachment_ids.append((0, 0, {
+                        'name': attchment.name,
+                        'datas': attchment.datas,
+                        "description":attchment.description,
+                        "mimetype": attchment.mimetype,
+                        'index_content': attchment.index_content,
+                        "create_uid": attchment.create_uid.id,
+                    }))
                 for line in record.order_line:
                     taxes = line.product_id.supplier_taxes_id
                     fpos = record.fiscal_position_id
@@ -68,13 +105,14 @@ class SaleOrder(models.Model):
                                                         'price_unit': line.price_unit,
                                                         "actual_qty": line.actual_qty,
                                                         'taxes_id': [(6, 0, taxes_id.ids)],
-                                                        "attachment_ids": [(6, 0, line.attachment_ids.ids)]
                                                         }))
+
                 vals = {
                     "partner_id": record.vendor_id.id,
                     "sale_order_id": record.id,
                     "customer_id": record.partner_id.id,
                     "order_line": purchase_order_lines,
+                    "attachment_ids": attachment_ids,
                     "colour_instructions": record.colour_instructions,
                     "packing": record.packing,
                     "face_stamp": record.face_stamp,
@@ -87,7 +125,7 @@ class SaleOrder(models.Model):
                     "payment": record.payment,
                     "insurance_id": record.insurance_id.id,
                     "destination_id": record.destination_id.id,
-                    "marks_id": record.marks_id.id
+
                 }
                 purchase = purchase_order_obj.create(vals)
                 record.purchase_order_id = purchase.id
@@ -111,6 +149,7 @@ class SaleOrder(models.Model):
             # values['name'] = self.env['ir.sequence'].next_by_code('sale.delivery')
             values['name'] = str(code) + " " + self.env['ir.sequence'].next_by_code('order.reference',
                                                                                     None) or _('New')
+            values['marks'] = values['name']
         return super(SaleOrder, self).create(values)
 
     def _prepare_invoice(self):
@@ -120,13 +159,13 @@ class SaleOrder(models.Model):
         return res
 
 
-#
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
     actual_qty = fields.Float(string='Actual Quantity', required=True
-                              , default=0)
-    attachment_ids = fields.Many2many(comodel_name="ir.attachment", string="Images")
+                              , default=1.0)
+
+    # attachment_ids = fields.Many2many(comodel_name="ir.attachment", string="Images")
 
     def _prepare_invoice_line(self):
         res = super(SaleOrderLine, self)._prepare_invoice_line()

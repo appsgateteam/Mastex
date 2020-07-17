@@ -7,41 +7,56 @@
             <field name="model">purchase.order</field>
             <field name="inherit_id" ref="purchase.purchase_order_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//sheet/div[@name='button_box']" position="inside">
+                    <button name="photos" type="object" class="oe_stat_button" icon="fa-picture-o">
+                    <field name="attachment_ids" invisible="1"/>
+                    <field name="attachment_count" widget="statinfo" string="Photos"/>
+                </button>
+                </xpath>
                 <xpath expr="//sheet/group" position="inside">
                     <group>
                         <field name="customer_id" widget="res_partner_many2one"
                                context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True,'default_customer_rank':1}"
                                options="{&quot;always_reload&quot;: True}"
                                attrs="{'readonly': [('state', 'in', ('purchase', 'done', 'cancel'))]}"
-                               domain="[('customer_rank','=',1)]"/>
+                               domain="[('customer_rank','=',1)]"
+                               required="1"/>
                         <field name="sale_order_id" readonly="1"/>
                     </group>
                     <group>
-                        <field name="shipment" attrs="{'readonly':[('state', 'in', 'purchase')]}"/>
-                        <field name="payment" attrs="{'readonly':[('state', 'in', 'purchase')]}"/>
+                        <field name="shipment" attrs="{'readonly':[('state', 'in', 'done')]}"/>
+                        <field name="payment" attrs="{'readonly':[('state', 'in', 'done')]}"/>
                     </group>
                     <group>
-                        <field name="insurance_id" attrs="{'readonly':[('state', 'in', 'purchase')]}"/>
-                        <field name="destination_id" attrs="{'readonly':[('state', 'in', 'purchase')]}"/>
-                        <field name="marks_id" attrs="{'readonly':[('state', 'in', 'purchase')]}"/>
+                        <field name="insurance_id" attrs="{'readonly':[('state', 'in', 'done')]}"/>
+                        <field name="destination_id" attrs="{'readonly':[('state', 'in', 'done')]}"/>
+                        <field name="marks" attrs="{'readonly':[('state', 'in', 'done')]}"/>
+                    </group>
+                    <group>
+                        <field name="is_sample_customer" readonly="1"/>
+                        <field name="is_sample_vendor" readonly="1"/>
+                        <field name="is_vendor_sample_customer" readonly="1"/>
+                        <field name="is_sample_company" readonly="1"/>
                     </group>
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="attributes">
                     <attribute name="domain">[('supplier_rank','=',1)]</attribute>
                 </xpath>
                 <xpath expr="//notebook" position="inside">
-                    <page string="Bill Of Landings" name="bill_of_landings">
-                        <field name="landing_line_ids">
+                    <page string="Bill Of Lading" name="bill_of_landings">
+                        <field name="landing_line_ids"
+                                context="{'default_reference': name}">
                             <tree editable="bottom">
                                 <field name="reference"/>
                                 <field name="landing_date"/>
-                                <field name="landing_company"/>
+                                <field name="landing_company_id"/>
                                 <field name="name"/>
-                                <field name="landing_amount"/>
                                 <field name="no_of_packages"/>
                                 <field name="destination"/>
                                 <field name="marks"/>
-                                <field name="landing_attachment"/>
+                                <field name="landing_attachment" widget="image"
+                                       class="oe_avatar"
+                                       options="{'preview_image': 'image_small', 'size': [30, 30]}"/>
                                 <field name="landing_attachment_name" invisible="1"/>
                             </tree>
                         </field>
@@ -50,16 +65,34 @@
                 <xpath expr="//notebook" position="inside">
                     <page string="Instructions" name="instructions_tab">
                         <group>
-                            <field name="colour_instructions" attrs="{'readonly':[('state', 'in', 'purchase')]}"/>
-                            <field name="packing" attrs="{'readonly':[('state', 'in', 'purchase')]}"/>
-                            <field name="face_stamp" attrs="{'readonly':[('state', 'in', 'purchase')]}"/>
-                            <field name="selvedge" attrs="{'readonly':[('state', 'in', 'purchase')]}"/>
+                            <field name="colour_instructions" attrs="{'readonly':[('state', 'in', 'done')]}"/>
+                            <field name="packing" attrs="{'readonly':[('state', 'in', 'done')]}"/>
+                            <field name="face_stamp" attrs="{'readonly':[('state', 'in', 'done')]}"/>
+                            <field name="selvedge" attrs="{'readonly':[('state', 'in', 'done')]}"/>
                         </group>
                         <group>
-                            <field name="shipping_mark" attrs="{'readonly':[('state', 'in', 'purchase')]}"/>
-                            <field name="shipping_sample_book" attrs="{'readonly':[('state', 'in', 'purchase')]}"/>
-                            <field name="notes" attrs="{'readonly':[('state', 'in', 'purchase')]}"/>
+                            <field name="shipping_mark" attrs="{'readonly':[('state', 'in', 'done')]}"/>
+                            <field name="shipping_sample_book" attrs="{'readonly':[('state', 'in', 'done')]}"/>
+                            <field name="notes" attrs="{'readonly':[('state', 'in', 'done')]}"/>
                         </group>
+                    </page>
+                    <page string="Shipment" name="shipment_tab">
+                        <field name="purchase_shipment_ids">
+                            <tree string="Shipment Details" editable="bottom">
+                                <field name="shipment_to"/>
+                                <field name="shipment_from"/>
+                                <field name="reference"/>
+                                <field name="description"/>
+                                <field name="from_date"/>
+                                <field name="to_date"/>
+                                <field name="type"/>
+                                <field name="attachment" filename="attachment_name" widget="image"
+                                        class="oe_avatar"
+                                        options="{'preview_image': 'image_small', 'size': [30, 30]}"/>
+                                <field name="attachment_name" invisible="1" force_save="1"/>
+                                <field name="status"/>
+                            </tree>
+                        </field>
                     </page>
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree" position="replace">
@@ -100,8 +133,9 @@
                                domain="['|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"/>
                         <field name="product_qty" string="Contract Quantity"
                                attrs="{'readonly': [('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}"/>
-                        <field name="actual_qty" attrs="{'readonly': [('parent.state', 'not in', ('purchase', 'done'))]}"/>
-                        <field name="attachment_ids" widget="many2many_binary" options="{'no_create': False}"/>
+                        <field name="actual_qty"
+                               attrs="{'readonly': [('parent.state', 'not in', ('purchase', 'done'))]}"/>
+<!--                        <field name="attachment_ids" widget="many2many_binary" options="{'no_create': False}"/>-->
                         <field name="qty_received_manual" invisible="1"/>
                         <field name="qty_received_method" invisible="1"/>
                         <field name="qty_received" string="Received" invisible="1"
@@ -116,7 +150,8 @@
                                             'required': [('display_type', '=', False)]
                                         }"
                                force_save="1" optional="show"/>
-                        <field name="price_unit" attrs="{'readonly': ['|',('invoice_lines', '!=', []),('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}"/>
+                        <field name="price_unit"
+                               attrs="{'readonly': ['|',('invoice_lines', '!=', []),('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}"/>
                         <field name="taxes_id" widget="many2many_tags"
                                domain="[('type_tax_use','=','purchase'), ('company_id', '=', parent.company_id)]"
                                context="{'default_type_tax_use': 'purchase', 'search_view_ref': 'account.account_tax_view_search'}"

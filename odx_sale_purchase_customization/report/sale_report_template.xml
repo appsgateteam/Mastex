@@ -19,27 +19,29 @@
                         <strong>Destination:</strong>
                         <p class="m-0" t-field="doc.destination_id"/>
                     </div>
-                    <div t-if="doc.marks_id" class="col-auto mw-100 mb-2">
+                    <div t-if="doc.marks" class="col-auto mw-100 mb-2">
                         <strong>Marks:</strong>
-                        <p class="m-0" t-field="doc.marks_id"/>
+                        <p class="m-0" t-field="doc.marks"/>
                     </div>
                 </div>
             </xpath>
             <xpath expr="//table[1]/thead/tr/th[@name='th_quantity']" position="after">
                 <th name="th_actual_quantity" class="text-right">Actual Quantity</th>
-                <th name="th_images" class="text-right">Images</th>
             </xpath>
             <xpath expr="//table[1]/tbody/t/tr/t/td[@name='td_quantity']" position="after">
                 <td name="td_actual_quantity" class="text-right">
                     <span t-field="line.actual_qty"/>
                     <span t-field="line.product_uom" groups="uom.group_uom"/>
                 </td>
-                <td name="td_attchment" class="text-right">
-                    <t t-foreach="line.attachment_ids" t-as="attachment">
+            </xpath>
+            <xpath expr="//t/t/div[hasclass('page')]" position="after">
+                <t t-foreach="doc.attachment_ids" t-as="attachment">
+                    <div class="page">
                         <span t-field="attachment.datas"
-                              t-options='{"widget": "image", "style":"width: 50px;height: 50px"}'/>
-                    </t>
-                </td>
+                              t-options='{"widget": "image"}'/>
+                    </div>
+                    <br/>
+                </t>
             </xpath>
         </template>
     </data>
