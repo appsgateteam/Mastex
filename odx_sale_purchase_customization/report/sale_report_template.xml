@@ -34,13 +34,14 @@
                     <span t-field="line.product_uom" groups="uom.group_uom"/>
                 </td>
             </xpath>
-            <xpath expr="//t/t/div[hasclass('page')]" position="after">
+            <xpath expr="//t" position="inside">
                 <t t-foreach="doc.attachment_ids" t-as="attachment">
-                    <div class="page">
-                        <span t-field="attachment.datas"
-                              t-options='{"widget": "image"}'/>
-                    </div>
-                    <br/>
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <span t-field="attachment.datas"
+                                  t-options='{"widget": "image"}'/>
+                        </div>
+                    </t>
                 </t>
             </xpath>
         </template>

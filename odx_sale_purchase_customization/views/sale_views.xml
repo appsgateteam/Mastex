@@ -23,14 +23,14 @@
                         <field name="purchase_order_id" readonly="1"/>
                     </group>
                     <group>
-                        <field name="shipment" attrs="{'readonly':[('state', 'in', 'sale')]}"/>
-                        <field name="payment" attrs="{'readonly':[('state', 'in', 'sale')]}"/>
+                        <field name="shipment" attrs="{'readonly':[('state', 'in', 'done')]}"/>
+                        <field name="payment" attrs="{'readonly':[('state', 'in', 'done')]}"/>
 
                     </group>
                     <group>
-                        <field name="insurance_id" attrs="{'readonly':[('state', 'in', 'sale')]}"/>
-                        <field name="destination_id" attrs="{'readonly':[('state', 'in', 'sale')]}"/>
-                        <field name="marks" attrs="{'readonly':[('state', 'in', 'sale')]}"/>
+                        <field name="insurance_id" attrs="{'readonly':[('state', 'in', 'done')]}"/>
+                        <field name="destination_id" attrs="{'readonly':[('state', 'in', 'done')]}"/>
+                        <field name="marks" attrs="{'readonly':[('state', 'in', 'done')]}"/>
                     </group>
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="attributes">
@@ -43,15 +43,15 @@
                 <xpath expr="//form/sheet/notebook/page[@name='other_information']" position="after">
                     <page string="Instructions" name="instructions_tab">
                         <group>
-                            <field name="colour_instructions"/>
-                            <field name="packing"/>
-                            <field name="face_stamp"/>
-                            <field name="selvedge"/>
+                            <field name="colour_instructions" attrs="{'readonly':[('state', 'in', 'done')]}"/>
+                            <field name="packing" attrs="{'readonly':[('state', 'in', 'done')]}"/>
+                            <field name="face_stamp" attrs="{'readonly':[('state', 'in', 'done')]}"/>
+                            <field name="selvedge" attrs="{'readonly':[('state', 'in', 'done')]}"/>
                         </group>
                         <group>
-                            <field name="shipping_mark"/>
-                            <field name="shipping_sample_book"/>
-                            <field name="notes"/>
+                            <field name="shipping_mark" attrs="{'readonly':[('state', 'in', 'done')]}"/>
+                            <field name="shipping_sample_book" attrs="{'readonly':[('state', 'in', 'done')]}"/>
+                            <field name="notes" attrs="{'readonly':[('state', 'in', 'done')]}"/>
                         </group>
                     </page>
                 </xpath>

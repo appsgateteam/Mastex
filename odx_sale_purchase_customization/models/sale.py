@@ -19,6 +19,7 @@
 #
 ###################################################################################
 from datetime import datetime
+import base64
 
 from odoo import fields, models, api, _
 from odoo.exceptions import UserError
@@ -33,25 +34,58 @@ class SaleOrder(models.Model):
     vendor_id = fields.Many2one(comodel_name='res.partner', string="Vendor")
 
     # Instructions
-    colour_instructions = fields.Text(string="Colour Instructions", related="purchase_order_id.colour_instructions")
-    packing = fields.Text(string="Packing", related="purchase_order_id.packing")
-    face_stamp = fields.Text(string="Face Stamp on Paper and Booklet File", related="purchase_order_id.face_stamp")
-    selvedge = fields.Text(string="Selvedge", related="purchase_order_id.selvedge")
-    shipping_mark = fields.Text(string="Shipping Mark", related="purchase_order_id.shipping_mark")
-    shipping_sample_book = fields.Text(string="Shipping Sample Book File", related="purchase_order_id.shipping_sample_book")
-    notes = fields.Text(string="Notes", related="purchase_order_id.notes")
+    colour_instructions = fields.Text(string="Colour Instructions")
+    packing = fields.Text(string="Packing")
+    face_stamp = fields.Text(string="Face Stamp on Paper and Booklet File")
+    selvedge = fields.Text(string="Selvedge")
+    shipping_mark = fields.Text(string="Shipping Mark")
+    shipping_sample_book = fields.Text(string="Shipping Sample Book File")
+    notes = fields.Text(string="Notes")
 
     # Other details
-    shipment = fields.Char(string="Shipment", related="purchase_order_id.shipment")
-    payment = fields.Char(string="Payment", related="purchase_order_id.payment")
+    shipment = fields.Char(string="Shipment")
+    payment = fields.Char(string="Payment")
     insurance_id = fields.Many2one(comodel_name='res.insurance', string="Insurance",
-                                   related="purchase_order_id.insurance_id")
+                                   )
     destination_id = fields.Many2one(comodel_name='res.destination', string='Destination',
-                                     related='purchase_order_id.destination_id')
+                                     )
     marks = fields.Char(string="Marks")
 
     attachment_ids = fields.One2many('ir.attachment', 'sale_id', string='Attachment')
     attachment_count = fields.Integer(compute='_compute_attachment_count')
+
+
+    # def action_quotation_send(self):
+    #     res = super(SaleOrder, self).action_quotation_send()
+    #     pdf = self.env.ref('odx_sale_purchase_customization.instruction_sheet').render_qweb_pdf(self.ids)
+    #     b64_pdf = base64.b64encode(pdf[0])
+    #
+    #     attachment_id = self.env['ir.attachment'].create({
+    #         'name': 'Instruction',
+    #         'type': 'binary',
+    #         'datas': b64_pdf,
+    #         'display_name': 'Instruction' + '.pdf',
+    #         'store_fname': 'Instruction',
+    #         'res_model': self._name,
+    #         'res_id': self.id,
+    #         'mimetype': 'application/x-pdf'
+    #     })
+    #     res['context']['default_attachment_ids']=[(6, 0, [attachment_id])]
+    #
+    #     return res
+
+    @api.onchange('purchase_order_id')
+    def _onchange_purchase_order_id(self):
+        self.colour_instructions = self.purchase_order_id.colour_instructions
+        self.packing = self.purchase_order_id.packing
+        self.face_stamp = self.purchase_order_id.face_stamp
+        self.selvedge = self.purchase_order_id.selvedge
+        self.shipping_mark = self.purchase_order_id.shipping_mark
+        self.shipping_sample_book = self.purchase_order_id.shipping_sample_book
+        self.shipment = self.purchase_order_id.shipment
+        self.payment = self.purchase_order_id.payment
+        self.insurance_id = self.purchase_order_id.insurance_id
+        self.destination_id = self.purchase_order_id.destination_id
 
     def photos(self):
         return {
@@ -85,7 +119,7 @@ class SaleOrder(models.Model):
                     attachment_ids.append((0, 0, {
                         'name': attchment.name,
                         'datas': attchment.datas,
-                        "description":attchment.description,
+                        "description": attchment.description,
                         "mimetype": attchment.mimetype,
                         'index_content': attchment.index_content,
                         "create_uid": attchment.create_uid.id,
@@ -163,7 +197,7 @@ class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
     actual_qty = fields.Float(string='Actual Quantity', required=True
-                              , default=1.0)
+                              , default=0.0)
 
     # attachment_ids = fields.Many2many(comodel_name="ir.attachment", string="Images")
 

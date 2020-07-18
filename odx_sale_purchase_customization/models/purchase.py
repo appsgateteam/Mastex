@@ -181,7 +181,7 @@ class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
 
     actual_qty = fields.Float(string='Actual Quantity', required=True
-                              , default=1.0)
+                              , default=0.0)
     attachment_ids = fields.Many2many(comodel_name="ir.attachment", string="Images")
 
     def _prepare_account_move_line(self, move):

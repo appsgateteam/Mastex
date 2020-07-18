@@ -22,7 +22,7 @@
                     </div>
                     <div t-if="o.marks" class="col-auto mw-100 mb-2">
                         <strong>Marks:</strong>
-                        <p class="m-0" t-field="o.mark"/>
+                        <p class="m-0" t-field="o.marks"/>
                     </div>
                 </div>
             </xpath>
@@ -36,13 +36,14 @@
                 </td>
 
             </xpath>
-            <xpath expr="//t/t/div[hasclass('page')]" position="after">
+            <xpath expr="//t" position="inside">
                 <t t-foreach="o.attachment_ids" t-as="attachment">
-                    <div class="page">
-                        <span t-field="attachment.datas"
-                              t-options='{"widget": "image"}'/>
-                    </div>
-                    <br/>
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <span t-field="attachment.datas"
+                                  t-options='{"widget": "image"}'/>
+                        </div>
+                    </t>
                 </t>
             </xpath>
         </template>

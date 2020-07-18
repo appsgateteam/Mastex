@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+         <report
+            id="instruction_sheet"
+            model="sale.order"
+            string="Instruction"
+            report_type="qweb-pdf"
+            name="odx_sale_purchase_customization.instruction_template"
+            file="odx_sale_purchase_customization.instruction_template"
+            attachment_use="False"
+            menu="True"
+        />
+        <report
+            id="mastex_tocb_report"
+            model="sale.order"
+            string="Mastex TOCB"
+            report_type="xlsx"
+            name="mastex.report.report.xlsx"
+            file="Mastex TOCB Report"
+            attachment_use="False"
+            menu="True"
+        />
+    </data>
+</odoo>

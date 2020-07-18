@@ -15,7 +15,7 @@
     'version': '13.0.0.0.0',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'sale', 'purchase'],
+    'depends': ['base', 'sale', 'purchase','report_xlsx'],
 
     # always loaded
     'data': [
@@ -28,7 +28,9 @@
         'views/account_move_views.xml',
         'report/sale_report_template.xml',
         'report/purchase_report.xml',
-        'report/rfq_print.xml'
+        'report/rfq_print.xml',
+        'report/instruction_report_template.xml',
+        'report/report.xml'
     ],
     # only loaded in demonstration mode
     'demo': [
