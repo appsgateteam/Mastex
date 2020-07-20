@@ -6,3 +6,4 @@ class Attachment(models.Model):
 
     sale_id = fields.Many2one('sale.order', string='Sale Order')
     purchase_id = fields.Many2one('purchase.order', string='Purchase Order')
+    description = fields.Char(string='Description')

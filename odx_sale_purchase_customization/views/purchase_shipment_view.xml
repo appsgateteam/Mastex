@@ -5,6 +5,7 @@
             <field name="model">purchase.shipment</field>
             <field name="arch" type="xml">
                 <tree editable="bottom">
+                    <field name="type"/>
                     <field name="shipment_to"/>
                     <field name="shipment_from"/>
                     <field name="reference"/>
@@ -12,7 +13,8 @@
                     <field name="to_date"/>
                     <field name="description"/>
                     <field name="status"/>
-                    <field name="type"/>
+                    <field name="attachment" widget="image"/>
+                    <field name="attachment_name" invisible="1"/>
                 </tree>
             </field>
         </record>
@@ -34,7 +36,7 @@
                                 <field name="reference"/>
                                 <field name="description"/>
                                 <field name="status"/>
-                                <field name="attachment"/>
+                                <field name="attachment" widget="image"/>
                                 <field name="attachment_name" invisible="1"/>
                             </group>
                         </group>
@@ -45,7 +47,7 @@
         <record model="ir.actions.act_window" id="action_purchase_shipment">
             <field name="name">Purchase Shipment</field>
             <field name="res_model">purchase.shipment</field>
-            <field name="view_mode">form,tree</field>
+            <field name="view_mode">tree,form</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">Create the first item
                 </p>

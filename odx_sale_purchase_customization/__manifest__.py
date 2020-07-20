@@ -30,6 +30,7 @@
         'report/purchase_report.xml',
         'report/rfq_print.xml',
         'views/purchase_shipment_view.xml',
+        'views/ir_attachment_view.xml',
         'report/instruction_report_template.xml',
         'report/report.xml'
     ],

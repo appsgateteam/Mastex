@@ -127,7 +127,7 @@ class PurchaseOrder(models.Model):
             'res_model': 'ir.attachment',
             'view_id': False,
             'type': 'ir.actions.act_window',
-            'context': {'default_purchase_id': self.id},
+            'context': {'default_purchase_id': self.id,'default_sale_id': self.sale_order_id.id if self.sale_order_id else ''},
             'domain': [('purchase_id', '=', self.id)]
 
         }

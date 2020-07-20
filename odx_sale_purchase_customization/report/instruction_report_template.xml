@@ -49,39 +49,40 @@
                                 </tr>
                             </table>
                             <br/>
-                            <h4>
+                            <h4 style="color: #FF0000;">
                                 <u>Color Instructions:</u>
                             </h4>
                             <span t-field="o.colour_instructions"/>
                             <br/>
+                            <br/>
                             <h4>
-                                <u>PACKING:</u>
+                                <u style="background-color:#FFFF00;">PACKING:</u>
                             </h4>
                             <span t-field="o.packing"/>
                             <br/>
                             <h2>
-                                <u>FACE STAMP ON PAPER AND BOOKLET:</u>
+                                <u style="background-color:#FFFF00;">FACE STAMP ON PAPER AND BOOKLET:</u>
                             </h2>
                             <h3 t-field="o.face_stamp"/>
                             <br/>
                             <h4>
-                                <u>SELVEDGE:</u>
+                                <u style="background-color:#FFFF00;">SELVEDGE:</u>
                                 <span t-field="o.selvedge"/>
                             </h4>
                             <br/>
                             <h4>
-                                <u>Shipping Mark:</u>
+                                <u style="background-color:#FFFF00;">Shipping Mark:</u>
                             </h4>
                             <span t-field="o.shipping_mark"/>
                             <br/>
                             <br/>
                             <h4>
-                                <u>Shipping Sample book:</u>
+                                <u style="background-color:#FFFF00;">Shipping Sample book:</u>
                                 <span t-field="o.shipping_sample_book"/>
                             </h4>
                             <br/>
                             <h4>
-                                <u>Notes:</u>
+                                <u style="background-color:#FFFF00;">Notes:</u>
                             </h4>
                             <h5 t-field="o.notes"/>
 

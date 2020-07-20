@@ -12,7 +12,7 @@
                     <field name="no_of_packages"/>
                     <field name="destination"/>
                     <field name="marks"/>
-                    <field name="landing_attachment"/>
+                    <field name="landing_attachment" widget="image"/>
                     <field name="landing_attachment_name" invisible="1"/>
                 </tree>
             </field>
@@ -34,7 +34,7 @@
                                 <field name="no_of_packages"/>
                                 <field name="destination"/>
                                 <field name="marks"/>
-                                <field name="landing_attachment"/>
+                                <field name="landing_attachment" widget="image"/>
                                 <field name="landing_attachment_name" invisible="1"/>
                             </group>
                         </group>
@@ -43,7 +43,7 @@
             </field>
         </record>
         <record model="ir.actions.act_window" id="action_purchase_landing_cost">
-            <field name="name">Purchase Landing Cost</field>
+            <field name="name">Bill Of Ladings</field>
             <field name="res_model">purchase.landing.cost</field>
             <field name="view_mode">tree,form</field>
             <field name="help" type="html">

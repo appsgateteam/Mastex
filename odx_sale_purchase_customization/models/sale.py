@@ -133,6 +133,15 @@ class SaleOrder(models.Model):
         if self.purchase_order_id:
             self.purchase_order_id.marks = self.marks
 
+    @api.onchange('attachment_ids')
+    def _onchange_attachment_ids(self):
+        print('aaaaaaaaaaa')
+        if self.purchase_order_id:
+            print('purchase idd')
+            for attachment in self.attachment_ids:
+                print(attachment.purchase_id, self.purchase_order_id, 'pppp')
+                attachment.purchase_id = self.purchase_order_id.id
+
     def photos(self):
         return {
             'name': 'Photos',
@@ -141,7 +150,8 @@ class SaleOrder(models.Model):
             'res_model': 'ir.attachment',
             'view_id': False,
             'type': 'ir.actions.act_window',
-            'context': {'default_sale_id': self.id},
+            'context': {'default_sale_id': self.id,
+                        'default_purchase_id': self.purchase_order_id.id if self.purchase_order_id else ''},
             'domain': [('sale_id', '=', self.id)]
 
         }

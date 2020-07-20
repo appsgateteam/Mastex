@@ -9,9 +9,9 @@
             <field name="arch" type="xml">
                 <xpath expr="//sheet/div[@name='button_box']" position="inside">
                     <button name="photos" type="object" class="oe_stat_button" icon="fa-picture-o">
-                    <field name="attachment_ids" invisible="1"/>
-                    <field name="attachment_count" widget="statinfo" string="Photos"/>
-                </button>
+                        <field name="attachment_ids" invisible="1"/>
+                        <field name="attachment_count" widget="statinfo" string="Photos"/>
+                    </button>
                 </xpath>
                 <xpath expr="//sheet/group" position="inside">
                     <group>
@@ -45,7 +45,7 @@
                 <xpath expr="//notebook" position="inside">
                     <page string="Bill Of Lading" name="bill_of_landings">
                         <field name="landing_line_ids"
-                                context="{'default_reference': name}">
+                               context="{'default_reference': name}">
                             <tree editable="bottom">
                                 <field name="reference"/>
                                 <field name="landing_date"/>
@@ -79,16 +79,16 @@
                     <page string="Shipment" name="shipment_tab">
                         <field name="purchase_shipment_ids">
                             <tree string="Shipment Details" editable="bottom">
+                                <field name="type"/>
                                 <field name="shipment_to"/>
                                 <field name="shipment_from"/>
                                 <field name="reference"/>
                                 <field name="description"/>
                                 <field name="from_date"/>
                                 <field name="to_date"/>
-                                <field name="type"/>
                                 <field name="attachment" filename="attachment_name" widget="image"
-                                        class="oe_avatar"
-                                        options="{'preview_image': 'image_small', 'size': [30, 30]}"/>
+                                       class="oe_avatar"
+                                       options="{'preview_image': 'image_small', 'size': [30, 30]}"/>
                                 <field name="attachment_name" invisible="1" force_save="1"/>
                                 <field name="status"/>
                             </tree>
@@ -135,7 +135,7 @@
                                attrs="{'readonly': [('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}"/>
                         <field name="actual_qty"
                                attrs="{'readonly': [('parent.state', 'not in', ('purchase', 'done'))]}"/>
-<!--                        <field name="attachment_ids" widget="many2many_binary" options="{'no_create': False}"/>-->
+                        <!--                        <field name="attachment_ids" widget="many2many_binary" options="{'no_create': False}"/>-->
                         <field name="qty_received_manual" invisible="1"/>
                         <field name="qty_received_method" invisible="1"/>
                         <field name="qty_received" string="Received" invisible="1"
