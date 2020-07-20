@@ -29,6 +29,7 @@
         'report/sale_report_template.xml',
         'report/purchase_report.xml',
         'report/rfq_print.xml',
+        'views/purchase_shipment_view.xml',
         'report/instruction_report_template.xml',
         'report/report.xml'
     ],

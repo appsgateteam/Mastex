@@ -31,7 +31,7 @@ class PurchaseOrder(models.Model):
 
     # Bill of Lading
     landing_line_ids = fields.One2many(comodel_name='purchase.landing.cost', inverse_name='purchase_id',
-                                       string="Landing Costs")
+                                       string="Bill Of Ladings")
     # Instructions
     colour_instructions = fields.Text(string="Colour Instructions")
     packing = fields.Text(string="Packing")
@@ -58,6 +58,66 @@ class PurchaseOrder(models.Model):
     # attachments
     attachment_ids = fields.One2many('ir.attachment', 'purchase_id', string='Attachment', copy=False)
     attachment_count = fields.Integer(compute='_compute_attachment_count')
+
+    @api.onchange('colour_instructions')
+    def _onchange_colour_instructions(self):
+        if self.sale_order_id:
+            self.sale_order_id.colour_instructions = self.colour_instructions
+
+    @api.onchange('packing')
+    def _onchange_packing(self):
+        if self.sale_order_id:
+            self.sale_order_id.packing = self.packing
+
+    @api.onchange('face_stamp')
+    def _onchange_face_stamp(self):
+        if self.sale_order_id:
+            self.sale_order_id.face_stamp = self.face_stamp
+
+    @api.onchange('selvedge')
+    def _onchange_selvedge(self):
+        if self.sale_order_id:
+            self.sale_order_id.selvedge = self.selvedge
+
+    @api.onchange('shipping_mark')
+    def _onchange_shipping_mark(self):
+        if self.sale_order_id:
+            self.sale_order_id.shipping_mark = self.shipping_mark
+
+    @api.onchange('shipping_sample_book')
+    def _onchange_shipping_sample_book(self):
+        if self.sale_order_id:
+            self.sale_order_id.shipping_sample_book = self.shipping_sample_book
+
+    @api.onchange('notes')
+    def _onchange_notes(self):
+        if self.sale_order_id:
+            self.sale_order_id.notes = self.notes
+
+    @api.onchange('payment')
+    def _onchange_payment(self):
+        if self.sale_order_id:
+            self.sale_order_id.payment = self.payment
+
+    @api.onchange('shipment')
+    def _onchange_shipment(self):
+        if self.sale_order_id:
+            self.sale_order_id.shipment = self.shipment
+
+    @api.onchange('insurance_id')
+    def _onchange_insurance_id(self):
+        if self.sale_order_id and self.insurance_id:
+            self.sale_order_id.insurance_id = self.insurance_id.id
+
+    @api.onchange('destination_id')
+    def _onchange_destination_id(self):
+        if self.sale_order_id and self.destination_id:
+            self.sale_order_id.destination_id = self.destination_id.id
+
+    @api.onchange('marks')
+    def _onchange_marks(self):
+        if self.sale_order_id:
+            self.sale_order_id.marks = self.marks
 
     def photos(self):
         return {

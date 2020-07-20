@@ -33,10 +33,10 @@
                         <field name="marks" attrs="{'readonly':[('state', 'in', 'done')]}"/>
                     </group>
                     <group>
-                        <field name="is_sample_customer" readonly="1"/>
-                        <field name="is_sample_vendor" readonly="1"/>
-                        <field name="is_vendor_sample_customer" readonly="1"/>
-                        <field name="is_sample_company" readonly="1"/>
+                        <field name="is_sample_customer" readonly="1" force_save="True"/>
+                        <field name="is_sample_vendor" readonly="1" force_save="True"/>
+                        <field name="is_vendor_sample_customer" readonly="1" force_save="True"/>
+                        <field name="is_sample_company" readonly="1" force_save="True"/>
                     </group>
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="attributes">
