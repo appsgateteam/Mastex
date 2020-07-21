@@ -8,9 +8,8 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='name']" position="after">
                 <div class="o_row" name="code">
-                    <span attrs="{'invisible' : [('customer_rank','!=',1)]}">-</span>
-                    <field name="customer_rank" invisible="1"/>
-                    <field name="customer_code" attrs="{'required' : [('customer_rank','=',1)],'invisible' : [('customer_rank','!=',1)]}"/>
+                    <span>-</span>
+                    <field name="customer_code" required="True"/>
                 </div>
             </xpath>
             <xpath expr="//page[@name='sales_purchases']//field[@name='user_id']" position="after">

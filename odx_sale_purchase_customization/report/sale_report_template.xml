@@ -3,9 +3,9 @@
         <template id="report_saleorder_document_inherit" inherit_id="sale.report_saleorder_document">
             <xpath expr="//t/t/div[hasclass('page')]/div[@id='informations']" position="after">
                 <div class="row mt32 mb32">
-                    <div t-if="doc.shipment" class="col-auto mw-100 mb-2">
+                    <div t-if="doc.shipment_date" class="col-auto mw-100 mb-2">
                         <strong>Shipment:</strong>
-                        <p class="m-0" t-field="doc.shipment"/>
+                        <p class="m-0" t-field="doc.shipment_date"/>
                     </div>
                     <div t-if="doc.payment" class="col-auto mw-100 mb-2">
                         <strong>Payment:</strong>
@@ -38,8 +38,7 @@
                 <t t-foreach="doc.attachment_ids" t-as="attachment">
                     <t t-call="web.external_layout">
                         <div class="page">
-                            <span t-field="attachment.datas"
-                                  t-options='{"widget": "image"}'/>
+                            <img t-attf-src="data:image/*;base64,{{attachment.datas}}" style="max-height:900px;"/>
                         </div>
                     </t>
                 </t>

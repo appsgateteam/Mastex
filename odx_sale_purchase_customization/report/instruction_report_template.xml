@@ -44,7 +44,7 @@
                                         <u>SHIPMENT</u>
                                     </th>
                                     <td>
-                                        <span t-field="o.shipment"/>
+<!--                                        <span t-field="o.shipment"/>-->
                                     </td>
                                 </tr>
                             </table>
@@ -56,33 +56,33 @@
                             <br/>
                             <br/>
                             <h4>
-                                <u style="background-color:#FFFF00;">PACKING:</u>
+                                <u>PACKING:</u>
                             </h4>
                             <span t-field="o.packing"/>
                             <br/>
                             <h2>
-                                <u style="background-color:#FFFF00;">FACE STAMP ON PAPER AND BOOKLET:</u>
+                                <u>FACE STAMP ON PAPER AND BOOKLET:</u>
                             </h2>
                             <h3 t-field="o.face_stamp"/>
                             <br/>
                             <h4>
-                                <u style="background-color:#FFFF00;">SELVEDGE:</u>
+                                <u >SELVEDGE:</u>
                                 <span t-field="o.selvedge"/>
                             </h4>
                             <br/>
                             <h4>
-                                <u style="background-color:#FFFF00;">Shipping Mark:</u>
+                                <u >Shipping Mark:</u>
                             </h4>
                             <span t-field="o.shipping_mark"/>
                             <br/>
                             <br/>
                             <h4>
-                                <u style="background-color:#FFFF00;">Shipping Sample book:</u>
+                                <u >Shipping Sample book:</u>
                                 <span t-field="o.shipping_sample_book"/>
                             </h4>
                             <br/>
                             <h4>
-                                <u style="background-color:#FFFF00;">Notes:</u>
+                                <u>Notes:</u>
                             </h4>
                             <h5 t-field="o.notes"/>
 

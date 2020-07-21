@@ -5,3 +5,4 @@ access_res_marks,access_res_marks,model_res_marks,base.group_user,1,1,1,1
 access_res_destination,access_res_destination,model_res_destination,base.group_user,1,1,1,1
 access_shipment_destination,access_shipment_destination,model_shipment_destination,base.group_user,1,1,1,1
 access_purchase_shipment,access_purchase_shipment,model_purchase_shipment,base.group_user,1,1,1,1
+access_res_payments,access_res_payments,model_res_payments,base.group_user,1,1,1,1

@@ -23,13 +23,17 @@
                         <field name="purchase_order_id" readonly="1"/>
                     </group>
                     <group>
-                        <field name="shipment" attrs="{'readonly':[('state', 'in', 'done')]}"/>
-                        <field name="payment" attrs="{'readonly':[('state', 'in', 'done')]}"/>
+                        <label for="shipment_date" string="Shipment"/>
+                            <div>
+                                <field name="shipment_date" class="oe_inline" attrs="{'readonly':[('state', 'in', 'done')]}"/>
+                                <field name="destination_id" attrs="{'readonly':[('state', 'in', 'done')]}" class="oe_inline"/>
+                            </div>
+<!--                        <field name="shipment" attrs="{'readonly':[('state', 'in', 'done')]}"/>-->
 
                     </group>
                     <group>
                         <field name="insurance_id" attrs="{'readonly':[('state', 'in', 'done')]}"/>
-                        <field name="destination_id" attrs="{'readonly':[('state', 'in', 'done')]}"/>
+                        <field name="payment" attrs="{'readonly':[('state', 'in', 'done')]}"/>
                         <field name="marks" attrs="{'readonly':[('state', 'in', 'done')]}"/>
                     </group>
                 </xpath>
@@ -72,6 +76,7 @@
                         <field name="sequence" widget="handle" attrs="{'readonly':[('state', 'in', 'sale')]}"/>
                         <!-- We do not display the type because we don't want the user to be bothered with that information if he has no section or note. -->
                         <field name="display_type" invisible="1"/>
+                        <field name="purchase_order_line_id" invisible="1"/>
                         <field name="product_uom_category_id" invisible="1"/>
 
                         <field name="product_updatable" invisible="1"/>
@@ -178,14 +183,14 @@
                                 name="price_unit"
                                 attrs="{'readonly': ['|',('qty_invoiced', '&gt;', 0),('parent.state', 'not in', ['draft', 'sent'])]}"
                         />
-                        <field
-                                name="tax_id"
-                                widget="many2many_tags"
-                                options="{'no_create': True}"
-                                domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
-                                attrs="{'readonly': ['|',('qty_invoiced', '&gt;', 0), ('parent.state', 'not in', ['draft', 'sent'])]}"
-                                optional="show"
-                        />
+<!--                        <field-->
+<!--                                name="tax_id"-->
+<!--                                widget="many2many_tags"-->
+<!--                                options="{'no_create': True}"-->
+<!--                                domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"-->
+<!--                                attrs="{'readonly': ['|',('qty_invoiced', '&gt;', 0), ('parent.state', 'not in', ['draft', 'sent'])]}"-->
+<!--                                optional="show"-->
+<!--                        />-->
                         <field name="discount" string="Disc.%" groups="product.group_discount_per_so_line"
                                optional="show"
                                attrs="{'readonly': [('parent.state', 'not in', ['draft', 'sent'])]}"/>
@@ -201,6 +206,12 @@
                     </tree>
                 </xpath>
                 <xpath expr="//field[@name='order_line']/form//field[@name='qty_delivered']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/form//field[@name='tax_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='amount_tax']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
             </field>

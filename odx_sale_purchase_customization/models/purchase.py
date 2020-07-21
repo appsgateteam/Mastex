@@ -42,8 +42,8 @@ class PurchaseOrder(models.Model):
     notes = fields.Text(string="Notes")
 
     # Other details
-    shipment = fields.Char(string="Shipment")
-    payment = fields.Char(string="Payment")
+    shipment_date = fields.Date(string="Shipment Date")
+    payment = fields.Many2one('res.payments', string="Payment")
     insurance_id = fields.Many2one(comodel_name='res.insurance', string="Insurance")
     destination_id = fields.Many2one(comodel_name='res.destination', string='Destination')
     marks = fields.Char(string="Marks", )
@@ -99,10 +99,10 @@ class PurchaseOrder(models.Model):
         if self.sale_order_id:
             self.sale_order_id.payment = self.payment
 
-    @api.onchange('shipment')
-    def _onchange_shipment(self):
+    @api.onchange('shipment_date')
+    def _onchange_shipment_date(self):
         if self.sale_order_id:
-            self.sale_order_id.shipment = self.shipment
+            self.sale_order_id.shipment_date = self.shipment_date
 
     @api.onchange('insurance_id')
     def _onchange_insurance_id(self):
@@ -127,7 +127,8 @@ class PurchaseOrder(models.Model):
             'res_model': 'ir.attachment',
             'view_id': False,
             'type': 'ir.actions.act_window',
-            'context': {'default_purchase_id': self.id,'default_sale_id': self.sale_order_id.id if self.sale_order_id else ''},
+            'context': {'default_purchase_id': self.id,
+                        'default_sale_id': self.sale_order_id.id if self.sale_order_id else ''},
             'domain': [('purchase_id', '=', self.id)]
 
         }
@@ -163,7 +164,7 @@ class PurchaseOrder(models.Model):
         for record in self:
             res = super(PurchaseOrder, self).button_confirm()
             if not record.sale_order_id and record.customer_id:
-                sale_order_lines = []
+                sale_order_line_obj = self.env['sale.order.line']
                 attachment_ids = []
                 sale_order_obj = self.env['sale.order']
                 for attchment in record.attachment_ids:
@@ -175,25 +176,11 @@ class PurchaseOrder(models.Model):
                         'index_content': attchment.index_content,
                         "create_uid": attchment.create_uid.id,
                     }))
-                for line in record.order_line:
-                    taxes = line.product_id.taxes_id
-                    fpos = record.fiscal_position_id
-                    taxes_id = fpos.map_tax(taxes, line.product_id, record.partner_id) if fpos else taxes
-                    if taxes_id:
-                        taxes_id = taxes_id.filtered(lambda x: x.company_id.id == record.company_id.id)
-                    sale_order_lines.append((0, 0, {'product_id': line.product_id.id,
-                                                    'name': line.name,
-                                                    'tax_id': [(6, 0, taxes_id.ids)],
-                                                    'product_uom_qty': line.product_qty,
-                                                    "product_uom": line.product_uom.id,
-                                                    'price_unit': line.price_unit,
-                                                    "actual_qty": line.actual_qty
-                                                    }))
+
                 vals = {
                     "partner_id": record.customer_id.id,
                     "vendor_id": record.partner_id.id,
                     "purchase_order_id": record.id,
-                    "order_line": sale_order_lines,
                     "attachment_ids": attachment_ids,
                     "colour_instructions": record.colour_instructions,
                     "packing": record.packing,
@@ -203,13 +190,31 @@ class PurchaseOrder(models.Model):
                     "shipping_mark": record.shipping_mark,
                     "shipping_sample_book": record.shipping_sample_book,
                     "notes": record.notes,
-                    "shipment": record.shipment,
-                    "payment": record.payment,
+                    "shipment_date": record.shipment_date,
+                    "payment": record.payment.id,
                     "insurance_id": record.insurance_id.id,
                     "destination_id": record.destination_id.id,
                 }
                 sale_order = sale_order_obj.create(vals)
                 record.sale_order_id = sale_order.id
+                for line in record.order_line:
+                    taxes = line.product_id.taxes_id
+                    fpos = record.fiscal_position_id
+                    taxes_id = fpos.map_tax(taxes, line.product_id, record.partner_id) if fpos else taxes
+                    if taxes_id:
+                        taxes_id = taxes_id.filtered(lambda x: x.company_id.id == record.company_id.id)
+                    sale_order_line =sale_order_line_obj.create({'product_id': line.product_id.id,
+                                                    'name': line.name,
+                                                    'tax_id': [(6, 0, taxes_id.ids)],
+                                                    'product_uom_qty': line.product_qty,
+                                                    "product_uom": line.product_uom.id,
+                                                    'price_unit': line.price_unit,
+                                                                 "order_id":sale_order.id,
+                                                    "purchase_order_line_id": line.id,
+                                                    "actual_qty": line.actual_qty
+                                                    })
+                    line.sale_order_line_id = sale_order_line.id
+
             return res
 
     def action_view_invoice(self):
@@ -243,11 +248,17 @@ class PurchaseOrderLine(models.Model):
     actual_qty = fields.Float(string='Actual Quantity', required=True
                               , default=0.0)
     attachment_ids = fields.Many2many(comodel_name="ir.attachment", string="Images")
+    sale_order_line_id = fields.Many2one("sale.order.line", string='Sale Order Line')
 
     def _prepare_account_move_line(self, move):
         res = super(PurchaseOrderLine, self)._prepare_account_move_line(move)
         res.update({'quantity': self.actual_qty})
         return res
+
+    @api.onchange('actual_qty')
+    def _onchange_actual_qty(self):
+        if self.sale_order_line_id:
+            self.sale_order_line_id.actual_qty = self.actual_qty
 
     @api.model_create_multi
     def create(self, values):
