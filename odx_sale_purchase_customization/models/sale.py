@@ -19,10 +19,10 @@
 #
 ###################################################################################
 from datetime import datetime
-import base64
+# import base64
 
 from odoo import fields, models, api, _
-from odoo.exceptions import UserError
+# from odoo.exceptions import UserError
 from odoo.tools import float_is_zero, float_compare
 
 
@@ -36,20 +36,17 @@ class SaleOrder(models.Model):
     # Instructions
     colour_instructions = fields.Text(string="Colour Instructions")
     packing = fields.Text(string="Packing")
-    face_stamp = fields.Text(string="Face Stamp on Paper and Booklet File")
-    selvedge = fields.Text(string="Selvedge")
-    shipping_mark = fields.Text(string="Shipping Mark")
+    face_stamp = fields.Html(string="Face Stamp on Paper and Booklet File")
+    selvedge = fields.Html(string="Selvedge")
+    shipping_mark = fields.Html(string="Shipping Mark")
     shipping_sample_book = fields.Text(string="Shipping Sample Book File")
     notes = fields.Text(string="Notes")
 
     # Other details
     shipment_date = fields.Date(string="Shipment Date")
-
     payment = fields.Many2one('res.payments', string="Payment")
-    insurance_id = fields.Many2one(comodel_name='res.insurance', string="Insurance",
-                                   )
-    destination_id = fields.Many2one(comodel_name='res.destination', string='Destination',
-                                     )
+    insurance_id = fields.Many2one(comodel_name='res.insurance', string="Insurance")
+    destination_id = fields.Many2one(comodel_name='res.destination', string='Destination')
     marks = fields.Char(string="Marks")
 
     attachment_ids = fields.One2many('ir.attachment', 'sale_id', string='Attachment')
@@ -215,10 +212,10 @@ class SaleOrder(models.Model):
                                                                            "order_id": purchase.id,
                                                                            "actual_qty": line.actual_qty,
                                                                            "sale_order_line_id": line.id,
+                                                                           "discount": line.discount,
                                                                            'taxes_id': [(6, 0, taxes_id.ids)],
                                                                            })
                     line.purchase_order_line_id = purchase_order_line.id
-
             return res
 
     @api.model
@@ -255,8 +252,6 @@ class SaleOrderLine(models.Model):
     actual_qty = fields.Float(string='Actual Quantity', required=True
                               , default=0.0)
     purchase_order_line_id = fields.Many2one("purchase.order.line", string='Purchase Order Line')
-
-    # attachment_ids = fields.Many2many(comodel_name="ir.attachment", string="Images")
 
     def _prepare_invoice_line(self):
         res = super(SaleOrderLine, self)._prepare_invoice_line()
@@ -318,20 +313,6 @@ class SaleOrderLine(models.Model):
                     line.qty_to_invoice = line.qty_delivered - line.qty_invoiced
             else:
                 line.qty_to_invoice = 0
-
-    @api.model_create_multi
-    def create(self, values):
-        """
-        Generates an error message when an additional line is created in SO, when the state
-        is in sale, done
-        :param values:
-        :return: new record
-        """
-        res = super(SaleOrderLine, self).create(values)
-        states = ['sale', 'done']
-        if res.state in states:
-            raise UserError(_('You can not create an additional sale order line in a confirmed sale order '))
-        return res
 
 
 class ResInsurance(models.Model):

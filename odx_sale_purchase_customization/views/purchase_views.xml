@@ -27,7 +27,7 @@
                         <label for="shipment_date" string="Shipment"/>
                         <div>
                             <field name="shipment_date" class="oe_inline"
-                                   attrs="{'readonly':[('state', 'in', 'done')]}"/>
+                                   attrs="{'readonly':[('state', 'in', 'done')]}"/>-
                             <field name="destination_id" attrs="{'readonly':[('state', 'in', 'done')]}"
                                    class="oe_inline"/>
                         </div>
@@ -53,16 +53,17 @@
                                context="{'default_reference': name}">
                             <tree editable="bottom">
                                 <field name="reference"/>
-                                <field name="landing_date"/>
+                                <field name="landing_date_etd"/>
+                                <field name="landing_date_eta"/>
                                 <field name="landing_company_id"/>
                                 <field name="name"/>
                                 <field name="no_of_packages"/>
                                 <field name="destination"/>
                                 <field name="marks"/>
-                                <field name="landing_attachment" widget="image"
-                                       class="oe_avatar"
-                                       options="{'preview_image': 'image_small', 'size': [30, 30]}"/>
+                                <field name="container_no"/>
+                                <field name="landing_attachment"/>
                                 <field name="landing_attachment_name" invisible="1"/>
+                                <field name="status"/>
                             </tree>
                         </field>
                     </page>
@@ -81,9 +82,9 @@
                             <field name="notes" attrs="{'readonly':[('state', 'in', 'done')]}"/>
                         </group>
                     </page>
-                    <page string="Shipment" name="shipment_tab">
-                        <field name="purchase_shipment_ids">
-                            <tree string="Shipment Details" editable="bottom">
+                    <page string="Courier" name="shipment_tab">
+                        <field name="purchase_shipment_ids" context="{'default_reference': name}">
+                            <tree string="Courier Details" editable="bottom">
                                 <field name="type"/>
                                 <field name="shipment_to"/>
                                 <field name="shipment_from"/>
@@ -91,9 +92,7 @@
                                 <field name="description"/>
                                 <field name="from_date"/>
                                 <field name="to_date"/>
-                                <field name="attachment" filename="attachment_name" widget="image"
-                                       class="oe_avatar"
-                                       options="{'preview_image': 'image_small', 'size': [30, 30]}"/>
+                                <field name="attachment"/>
                                 <field name="attachment_name" invisible="1" force_save="1"/>
                                 <field name="status"/>
                             </tree>
@@ -162,7 +161,7 @@
                                domain="[('type_tax_use','=','purchase'), ('company_id', '=', parent.company_id)]"
                                context="{'default_type_tax_use': 'purchase', 'search_view_ref': 'account.account_tax_view_search'}"
                                options="{'no_create': True}" optional="show"
-                               attrs="{'readonly': [('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}"/>
+                               attrs="{'readonly': [('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}" invisible="1"/>
                         <field name="price_subtotal" widget="monetary"/>
                     </tree>
                 </xpath>

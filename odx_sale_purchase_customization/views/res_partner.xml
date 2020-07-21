@@ -13,10 +13,10 @@
                 </div>
             </xpath>
             <xpath expr="//page[@name='sales_purchases']//field[@name='user_id']" position="after">
-                <field name="customer_rank"/>
+                <field name="customer_rank" string="Customer"/>
             </xpath>
             <xpath expr="//page[@name='sales_purchases']//group[@name='purchase']" position="inside">
-                <field name="supplier_rank"/>
+                <field name="supplier_rank" string="Supplier"/>
             </xpath>
         </field>
     </record>

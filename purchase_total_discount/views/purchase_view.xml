@@ -7,23 +7,23 @@
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="after">
-                <field name="discount" invisible="1"/>
+                <field name="discount" string="Commission %"/>
                 <field name="discount_value" invisible="1"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/form//field[@name='price_unit']" position="after">
-                <field name="discount" />
+                <field name="discount" string="Commission %"/>
                 <field name="discount_value"/>
             </xpath>
             <xpath expr="//group[@class='oe_subtotal_footer oe_right']" position="replace">
                 <group col="4">
                     <group name="discount" colspan="2">
-                        <field name="discount_type"/>
-                        <field name="discount_rate"/>
+                        <field name="discount_type" invisible="1"/>
+                        <field name="discount_rate" invisible="1"/>
                     </group>
                     <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
                         <field name="amount_untaxed" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                         <field name="amount_discount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                        <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+<!--                        <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}"/>-->
                         <div class="oe_subtotal_footer_separator oe_inline">
                             <label for="amount_total"/>
                         </div>

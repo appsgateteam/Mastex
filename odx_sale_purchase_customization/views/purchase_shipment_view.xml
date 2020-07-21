@@ -4,7 +4,7 @@
             <field name="name">purchase.shipment.tree</field>
             <field name="model">purchase.shipment</field>
             <field name="arch" type="xml">
-                <tree editable="bottom">
+                <tree editable="bottom" edit="false">
                     <field name="type"/>
                     <field name="shipment_to"/>
                     <field name="shipment_from"/>
@@ -13,7 +13,7 @@
                     <field name="to_date"/>
                     <field name="description"/>
                     <field name="status"/>
-                    <field name="attachment" widget="image"/>
+                    <field name="attachment" filename="attachment_name"/>
                     <field name="attachment_name" invisible="1"/>
                 </tree>
             </field>
@@ -36,7 +36,7 @@
                                 <field name="reference"/>
                                 <field name="description"/>
                                 <field name="status"/>
-                                <field name="attachment" widget="image"/>
+                                <field name="attachment" filename="attachment_name"/>
                                 <field name="attachment_name" invisible="1"/>
                             </group>
                         </group>
@@ -45,7 +45,7 @@
             </field>
         </record>
         <record model="ir.actions.act_window" id="action_purchase_shipment">
-            <field name="name">Purchase Shipment</field>
+            <field name="name">Courier</field>
             <field name="res_model">purchase.shipment</field>
             <field name="view_mode">tree,form</field>
             <field name="help" type="html">
@@ -53,8 +53,8 @@
                 </p>
             </field>
         </record>
-        <menuitem name="Purchase Shipment" id="menu_purchase_shipment" action="action_purchase_shipment"
-                  parent="purchase.menu_purchase_config"/>
+        <menuitem name="courier" id="menu_purchase_shipment" action="action_purchase_shipment"
+                  parent="menu_purchase_document"/>
     </data>
 </odoo>
 

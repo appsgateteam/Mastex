@@ -20,7 +20,7 @@
                                         <u>Maker</u>
                                     </th>
                                     <td>
-                                        <span t-field="o.partner_id"/>
+                                        <span t-field="o.vendor_id"/>
                                     </td>
                                 </tr>
                                 <tr>
@@ -28,7 +28,7 @@
                                         <u>TOTAL</u>
                                     </th>
                                     <td>
-                                        <span t-field="o.name"/>
+                                        <span t-field="o.amount_total"/>
                                     </td>
                                 </tr>
                                 <tr>
@@ -44,7 +44,7 @@
                                         <u>SHIPMENT</u>
                                     </th>
                                     <td>
-<!--                                        <span t-field="o.shipment"/>-->
+                                        <span t-field="o.shipment_date"/>-<span t-field="destination_id"/>
                                     </td>
                                 </tr>
                             </table>

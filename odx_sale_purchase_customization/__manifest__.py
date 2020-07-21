@@ -10,12 +10,12 @@
         New fields is added in both sale order and purchase order. While confirming sale order,a purchase
         order is created based on the corresponding sale order and vice versa.
     """,
-    'author': 'Odox SoftHub / Albin',
+    'author': 'Odox SoftHub / Albin /Ashif',
     'website': 'https://www.odoxsofthub.com',
     'version': '13.0.0.0.0',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'sale', 'purchase','report_xlsx'],
+    'depends': ['base', 'sale', 'purchase', 'report_xlsx', 'odx_sale_discount_total', 'purchase_total_discount'],
 
     # always loaded
     'data': [

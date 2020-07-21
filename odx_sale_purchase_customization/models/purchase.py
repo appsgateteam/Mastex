@@ -35,9 +35,9 @@ class PurchaseOrder(models.Model):
     # Instructions
     colour_instructions = fields.Text(string="Colour Instructions")
     packing = fields.Text(string="Packing")
-    face_stamp = fields.Text(string="Face Stamp on Paper and Booklet File")
-    selvedge = fields.Text(string="Selvedge")
-    shipping_mark = fields.Text(string="Shipping Mark")
+    face_stamp = fields.Html(string="Face Stamp on Paper and Booklet File")
+    selvedge = fields.Html(string="Selvedge")
+    shipping_mark = fields.Html(string="Shipping Mark")
     shipping_sample_book = fields.Text(string="Shipping Sample Book File")
     notes = fields.Text(string="Notes")
 
@@ -203,16 +203,17 @@ class PurchaseOrder(models.Model):
                     taxes_id = fpos.map_tax(taxes, line.product_id, record.partner_id) if fpos else taxes
                     if taxes_id:
                         taxes_id = taxes_id.filtered(lambda x: x.company_id.id == record.company_id.id)
-                    sale_order_line =sale_order_line_obj.create({'product_id': line.product_id.id,
-                                                    'name': line.name,
-                                                    'tax_id': [(6, 0, taxes_id.ids)],
-                                                    'product_uom_qty': line.product_qty,
-                                                    "product_uom": line.product_uom.id,
-                                                    'price_unit': line.price_unit,
-                                                                 "order_id":sale_order.id,
-                                                    "purchase_order_line_id": line.id,
-                                                    "actual_qty": line.actual_qty
-                                                    })
+                    sale_order_line = sale_order_line_obj.create({'product_id': line.product_id.id,
+                                                                  'name': line.name,
+                                                                  'tax_id': [(6, 0, taxes_id.ids)],
+                                                                  'product_uom_qty': line.product_qty,
+                                                                  "product_uom": line.product_uom.id,
+                                                                  'price_unit': line.price_unit,
+                                                                  "order_id": sale_order.id,
+                                                                  "discount": line.discount,
+                                                                  "purchase_order_line_id": line.id,
+                                                                  "actual_qty": line.actual_qty
+                                                                  })
                     line.sale_order_line_id = sale_order_line.id
 
             return res
@@ -279,9 +280,10 @@ class LandingCost(models.Model):
     _name = 'purchase.landing.cost'
     _description = 'Purchase Landing Cost'
 
-    name = fields.Char(string="AWB", required=True)
-    landing_date = fields.Date(string='Date', required=True)
-    landing_company_id = fields.Many2one(comodel_name='res.company', string='Company', required=True,
+    name = fields.Char(string="B/L No", required=True)
+    landing_date_etd = fields.Date(string='ETD', required=True)
+    landing_date_eta = fields.Date(string='ETA', required=True)
+    landing_company_id = fields.Many2one(comodel_name='res.company', string='Shipping Line', required=True,
                                          default=lambda self: self.env.company)
     landing_attachment = fields.Binary(string='Document', attachment=True)
     landing_attachment_name = fields.Char(string='Document Name')
@@ -289,7 +291,9 @@ class LandingCost(models.Model):
     no_of_packages = fields.Char(string='No Of Packages')
     destination = fields.Char(string="Destination")
     marks = fields.Char(string="Marks")
+    container_no = fields.Char(string="Container No")
     reference = fields.Char(string="Reference")
+    status = fields.Selection([('in_transit', 'In Transit'), ('discharged', 'Discharged')], string='Status')
 
 
 class PurchaseShipment(models.Model):
@@ -297,11 +301,12 @@ class PurchaseShipment(models.Model):
 
     shipment_to = fields.Many2one(comodel_name='shipment.destination', string="Shipment To")
     shipment_from = fields.Many2one(comodel_name='shipment.destination', string="Shipment From")
-    from_date = fields.Datetime(string='Start Date', copy=False, default=fields.Datetime.now, store=True)
-    to_date = fields.Datetime(string='Expected Delivery Date', copy=False, store=True)
+    from_date = fields.Date(string='Start Date', copy=False, default=fields.Date.today(), store=True)
+    to_date = fields.Date(string='Expected Delivery Date', copy=False, store=True)
     reference = fields.Char(string="Reference")
     description = fields.Char(string="Description")
-    status = fields.Selection([('sent', 'Sent'), ('received', 'Received'), ('cancel', 'Canceled')],
+    status = fields.Selection([('sent', 'Sent'), ('received', 'Received'), ('delivered', 'Delivered'),
+                               ('in_transit', 'In Transit'), ('cancel', 'Canceled')],
                               string='Status')
     type = fields.Selection([('sample_customer', 'Receive sample from customer'),
                              ('sample_vendor', 'Sent sample to vendor'),

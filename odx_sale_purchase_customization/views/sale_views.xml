@@ -25,11 +25,10 @@
                     <group>
                         <label for="shipment_date" string="Shipment"/>
                             <div>
-                                <field name="shipment_date" class="oe_inline" attrs="{'readonly':[('state', 'in', 'done')]}"/>
+                                <field name="shipment_date" class="oe_inline"
+                                       attrs="{'readonly':[('state', 'in', 'done')]}"/>-
                                 <field name="destination_id" attrs="{'readonly':[('state', 'in', 'done')]}" class="oe_inline"/>
                             </div>
-<!--                        <field name="shipment" attrs="{'readonly':[('state', 'in', 'done')]}"/>-->
-
                     </group>
                     <group>
                         <field name="insurance_id" attrs="{'readonly':[('state', 'in', 'done')]}"/>
@@ -142,7 +141,6 @@
                                 attrs="{'readonly':[('state', 'in', 'sale')]}"
                         />
                         <field name="actual_qty" attrs="{'readonly': [('parent.state', 'not in', ['sale', 'done'])]}"/>
-<!--                        <field name="attachment_ids" widget="many2many_binary" options="{'no_create': False}"/>-->
                         <field
                                 name="qty_delivered"
                                 string="Delivered"
@@ -183,15 +181,16 @@
                                 name="price_unit"
                                 attrs="{'readonly': ['|',('qty_invoiced', '&gt;', 0),('parent.state', 'not in', ['draft', 'sent'])]}"
                         />
-<!--                        <field-->
-<!--                                name="tax_id"-->
-<!--                                widget="many2many_tags"-->
-<!--                                options="{'no_create': True}"-->
-<!--                                domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"-->
-<!--                                attrs="{'readonly': ['|',('qty_invoiced', '&gt;', 0), ('parent.state', 'not in', ['draft', 'sent'])]}"-->
-<!--                                optional="show"-->
-<!--                        />-->
-                        <field name="discount" string="Disc.%" groups="product.group_discount_per_so_line"
+                        <field
+                                name="tax_id"
+                                widget="many2many_tags"
+                                options="{'no_create': True}"
+                                domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"
+                                attrs="{'readonly': ['|',('qty_invoiced', '&gt;', 0), ('parent.state', 'not in', ['draft', 'sent'])]}"
+                                optional="show"
+                                invisible="1"
+                        />
+                        <field name="discount" string="Commission %" groups="product.group_discount_per_so_line"
                                optional="show"
                                attrs="{'readonly': [('parent.state', 'not in', ['draft', 'sent'])]}"/>
                         <field name="price_subtotal" widget="monetary"
