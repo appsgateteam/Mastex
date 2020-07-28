@@ -40,7 +40,7 @@
                                         <u>Date</u>
                                     </th>
                                     <td>
-                                        <span t-field="o.date_order"/>
+                                        <span t-field="o.date_order" t-options='{"widget": "date"}'/>
                                     </td>
                                 </tr>
                                 <tr>
@@ -53,20 +53,17 @@
                                 </tr>
                             </table>
                             <br/>
-                            <h4 style="color: #FF0000;">
+                            <span style="color: #FF0000;">
                                 <u>Color Instructions:</u>
-                            </h4>
+                            </span>
                             <span t-field="o.colour_instructions"/>
                             <br/>
                             <br/>
-                            <h4>
                                 <u>PACKING:</u>
-                            </h4>
                             <span t-field="o.packing"/>
                             <br/>
-                            <h2>
+                            <br/>
                                 <u>FACE STAMP ON PAPER AND BOOKLET:</u>
-                            </h2>
                             <h3 t-field="o.face_stamp"/>
                             <br/>
                                 <u >SELVEDGE:</u>

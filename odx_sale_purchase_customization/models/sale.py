@@ -108,10 +108,10 @@ class SaleOrder(models.Model):
         if self.purchase_order_id and self.destination_id:
             self.purchase_order_id.destination_id = self.destination_id.id
 
-    # @api.onchange('marks')
-    # def _onchange_marks(self):
-    #     if self.purchase_order_id:
-    #         self.purchase_order_id.marks = self.marks
+    @api.onchange('marks')
+    def _onchange_marks(self):
+        if self.purchase_order_id:
+            self.purchase_order_id.marks = self.marks
 
     @api.onchange('attachment_ids')
     def _onchange_attachment_ids(self):
@@ -170,6 +170,7 @@ class SaleOrder(models.Model):
                     "shipping_mark": record.shipping_mark,
                     "shipping_sample_book": record.shipping_sample_book,
                     "notes": record.notes,
+                    "marks":record.marks,
                     "shipment_date": record.shipment_date,
                     # "payment": record.payment.id,
                     # "insurance_id": record.insurance_id.id,

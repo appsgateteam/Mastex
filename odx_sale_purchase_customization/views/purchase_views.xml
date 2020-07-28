@@ -16,7 +16,9 @@
                 <xpath expr="//sheet/group" position="replace">
                     <group>
                         <group>
-                            <field name="partner_id" widget="res_partner_many2one" context="{'res_partner_search_mode': 'supplier', 'show_vat': True}" placeholder="Name, TIN, Email, or Reference"/>
+                            <field name="partner_id" widget="res_partner_many2one"
+                                   context="{'res_partner_search_mode': 'supplier', 'show_vat': True}"
+                                   placeholder="Name, TIN, Email, or Reference"/>
                             <field name="partner_ref"/>
                             <field name="currency_id" groups="base.group_multi_currency" force_save="1"/>
                             <field name="date_order" attrs="{'invisible': [('state','=','purchase')]}"/>
@@ -24,54 +26,28 @@
                             <field name="origin" attrs="{'invisible': [('origin','=',False)]}"/>
                             <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
                             <field name="customer_id" widget="res_partner_many2one"
-                               context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True,'default_customer_rank':1}"
-                               options="{&quot;always_reload&quot;: True}"
-                               attrs="{'readonly': [('state', 'in', ('purchase', 'done', 'cancel'))]}"
-                               domain="[('customer_rank','=',1)]"
-                               required="1"/>
-                        <field name="sale_order_id" readonly="1"/>
+                                   context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True,'default_customer_rank':1}"
+                                   options="{&quot;always_reload&quot;: True}"
+                                   attrs="{'readonly': [('state', 'in', ('purchase', 'done', 'cancel'))]}"
+                                   domain="[('customer_rank','=',1)]"
+                                   required="1"/>
+                            <field name="sale_order_id" readonly="1"/>
+                            <field name="marks" attrs="{'readonly':[('state', 'in', 'done')]}" invisible="1"/>
                             <label for="shipment_date" string="Shipment"/>
-                        <div>
-                            <field name="shipment_date" class="oe_inline"
-                                   attrs="{'readonly':[('state', 'in', 'done')]}"/>-
-                            <field name="destination_id" attrs="{'readonly':[('state', 'in', 'done')]}"
-                                   class="oe_inline"/>
-                        </div>
-                              <field name="is_sample_customer" readonly="1" force_save="True"/>
-                        <field name="is_sample_vendor" readonly="1" force_save="True"/>
-                        <field name="is_vendor_sample_customer" readonly="1" force_save="True"/>
-                        <field name="is_sample_company" readonly="1" force_save="True"/>
+                            <div>
+                                <field name="shipment_date" class="oe_inline"
+                                       attrs="{'readonly':[('state', 'in', 'done')]}"/>-
+                                <field name="destination_id" attrs="{'readonly':[('state', 'in', 'done')]}"
+                                       class="oe_inline"/>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="is_sample_customer" readonly="1" force_save="True"/>
+                            <field name="is_sample_vendor" readonly="1" force_save="True"/>
+                            <field name="is_vendor_sample_customer" readonly="1" force_save="True"/>
+                            <field name="is_sample_company" readonly="1" force_save="True"/>
                         </group>
                     </group>
-<!--                    <group>-->
-<!--                        <field name="customer_id" widget="res_partner_many2one"-->
-<!--                               context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True,'default_customer_rank':1}"-->
-<!--                               options="{&quot;always_reload&quot;: True}"-->
-<!--                               attrs="{'readonly': [('state', 'in', ('purchase', 'done', 'cancel'))]}"-->
-<!--                               domain="[('customer_rank','=',1)]"-->
-<!--                               required="1"/>-->
-<!--                        <field name="sale_order_id" readonly="1"/>-->
-<!--                    </group>-->
-<!--                    <group>-->
-<!--                        <label for="shipment_date" string="Shipment"/>-->
-<!--                        <div>-->
-<!--                            <field name="shipment_date" class="oe_inline"-->
-<!--                                   attrs="{'readonly':[('state', 'in', 'done')]}"/>- -->
-<!--                            <field name="destination_id" attrs="{'readonly':[('state', 'in', 'done')]}"-->
-<!--                                   class="oe_inline"/>-->
-<!--                        </div>-->
-<!--                    </group>-->
-<!--                    <group>-->
-<!--&lt;!&ndash;                        <field name="insurance_id" attrs="{'readonly':[('state', 'in', 'done')]}"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                        <field name="payment" attrs="{'readonly':[('state', 'in', 'done')]}"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                        <field name="marks" attrs="{'readonly':[('state', 'in', 'done')]}"/>&ndash;&gt;-->
-<!--                    </group>-->
-<!--                    <group>-->
-<!--                        <field name="is_sample_customer" readonly="1" force_save="True"/>-->
-<!--                        <field name="is_sample_vendor" readonly="1" force_save="True"/>-->
-<!--                        <field name="is_vendor_sample_customer" readonly="1" force_save="True"/>-->
-<!--                        <field name="is_sample_company" readonly="1" force_save="True"/>-->
-<!--                    </group>-->
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="attributes">
                     <attribute name="domain">[('supplier_rank','=',1)]</attribute>
@@ -79,7 +55,7 @@
                 <xpath expr="//notebook" position="inside">
                     <page string="Bill Of Lading" name="bill_of_landings">
                         <field name="landing_line_ids"
-                               context="{'default_reference': name,'default_destination': destination_id}">
+                               context="{'default_reference': name,'default_destination': destination_id,'default_marks':marks}">
                             <tree editable="bottom">
                                 <field name="reference"/>
                                 <field name="landing_date_etd"/>
@@ -121,7 +97,7 @@
                                 <field name="description"/>
                                 <field name="from_date"/>
                                 <field name="to_date"/>
-                                <field name="dispatch_date"/>
+                                <!--                                <field name="dispatch_date"/>-->
                                 <field name="attachment"/>
                                 <field name="attachment_name" invisible="1" force_save="1"/>
                                 <field name="status"/>
@@ -167,10 +143,12 @@
                                widget="many2many_tags" options="{'color_field': 'color'}"
                                domain="['|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"/>
                         <field name="product_qty" string="Contract Quantity"
-                               attrs="{'readonly': [('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}" sum="Quantity"/>
+                               attrs="{'readonly': [('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}"
+                               sum="Quantity"/>
                         <field name="commission"/>
                         <field name="actual_qty"
-                               attrs="{'readonly': [('parent.state', 'not in', ('purchase', 'done'))]}" sum="Actual Quantity"/>
+                               attrs="{'readonly': [('parent.state', 'not in', ('purchase', 'done'))]}"
+                               sum="Actual Quantity"/>
                         <!--                        <field name="attachment_ids" widget="many2many_binary" options="{'no_create': False}"/>-->
                         <field name="qty_received_manual" invisible="1"/>
                         <field name="qty_received_method" invisible="1"/>
@@ -193,17 +171,26 @@
                                context="{'default_type_tax_use': 'purchase', 'search_view_ref': 'account.account_tax_view_search'}"
                                options="{'no_create': True}" optional="show"
                                attrs="{'readonly': [('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}"
-                        invisible="1"/>
+                               invisible="1"/>
                         <field name="price_subtotal" widget="monetary"/>
                     </tree>
                 </xpath>
+                <xpath expr="//field[@name='amount_tax']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='amount_untaxed']" position="attributes">
+                    <attribute name="string">Total</attribute>
+                </xpath>
+                <xpath expr="//label[@for='amount_total']" position="attributes">
+                    <attribute name="string">Grand Total</attribute>
+                </xpath>
+
                 <xpath expr="//notebook/page[1]/group/field[@name='amount_tax']" position="after">
                     <field name="total_commission" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                 </xpath>
 
             </field>
         </record>
-
         <record id="purchase_order_tree_inherit" model="ir.ui.view">
             <field name="name">odox.purchase.order.tree.inherit</field>
             <field name="model">purchase.order</field>
@@ -214,7 +201,6 @@
                 </xpath>
             </field>
         </record>
-
         <record id="purchase_order_view_tree_inherit" model="ir.ui.view">
             <field name="name">odox.purchase.order.tree.inherit</field>
             <field name="model">purchase.order</field>
@@ -225,5 +211,6 @@
                 </xpath>
             </field>
         </record>
+
     </data>
 </odoo>

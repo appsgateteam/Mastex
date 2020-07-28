@@ -5,27 +5,27 @@
                 <t t-call="web.external_layout">
                     <t t-set="o" t-value="doc.with_context(lang=doc.partner_id.lang)"/>
                     <div class="page">
-                        <div class="row">
+                        <div class="row" style="font-size: 28px;">
                             <div class="col-4">
                             </div>
                             <div class="col-4">
-                                <h2>Sale Order</h2>
+                                <strong>Sale Order</strong>
                             </div>
                             <div class="col-4">
-                                <h2>
-                                    <span t-field="o.name"/>
-                                </h2>
+                                <strong>
+                               <span t-if="o.partner_id" t-field="o.partner_id.customer_code"/> &#160;&#160;<span t-field="o.name"/>
+                                </strong>
                             </div>
                         </div>
                         <br/>
                         <br/>
-                        <table width="100%" height="100">
+                        <table width="100%" height="100" style="font-size: 20px;">
                             <tr>
                                 <th>
                                     <u>Date :</u>
                                 </th>
                                 <td>
-                                    <span t-field="o.date_order"/>
+                                    <span t-field="o.date_order" t-options='{"widget": "date"}'/>
                                 </td>
                             </tr>
                             <tr>
@@ -48,11 +48,13 @@
                         <u/>
                         <br/>
                         <br/>
+                        <p>
+                            Almasri &amp; Alsaudi as agents, here by confirms having concluded the sales contract with your company as buyer to sell the following goods of above maker on the date and on the terms &amp; conditions as below
+                        </p>
                         <table class="table table-sm o_main_table">
                             <thead>
                                 <tr>
-                                    <th name="th_description" class="text-left">Quality</th>
-<!--                                    <th name="th_quantity" class="text-right">Dimension</th>-->
+                                    <th name="th_description" class="text-right">Quality</th>
                                     <th name="th_priceunit" class="text-right">Quantity</th>
                                     <th name="th_quantity" class="text-right">Price</th>
                                     <th name="th_priceunit" class="text-right">Amount</th>
@@ -61,10 +63,7 @@
                             <tbody>
                                 <t t-foreach="o.order_line" t-as="line">
                                     <tr>
-<!--                                        <td name="td_quantity" class="text-right">-->
-<!--                                            <span t-field="line.product_id"/>-->
-<!--                                        </td>-->
-                                        <td name="td_quantity" class="text-right">
+                                        <td name="td_quantity" class="text-left">
                                             <span t-field="line.name"/>
                                         </td>
                                         <td name="td_quantity" class="text-right">
@@ -82,10 +81,12 @@
                         </table>
                         <br/>
                         <br/>
-                        <table width="50%" height="100">
+                        <table width="50%" height="100" style="font-size: 20px;">
                             <tr>
                                 <th>
                                     <u>Quantity :</u>
+                                    <br/>
+                                    <br/>
                                 </th>
                                 <td>
                                     <t t-set="qty" t-value="0"/>
@@ -98,6 +99,8 @@
                             <tr>
                                 <th>
                                     <u>Total Amount :</u>
+                                    <br/>
+                                    <br/>
                                 </th>
                                 <td>
                                     <span t-field="o.amount_total"/>
@@ -106,6 +109,8 @@
                             <tr>
                                 <th>
                                     <u>Shipment :</u>
+                                    <br/>
+                                    <br/>
                                 </th>
                                 <td>
                                     <span t-field="o.shipment_date"/>
@@ -114,6 +119,8 @@
                             <tr>
                                 <th>
                                     <u>Payment :</u>
+                                    <br/>
+                                    <br/>
                                 </th>
                                 <td>
                                     <span t-field="o.payment_term_id"/>
@@ -122,6 +129,8 @@
                             <tr>
                                 <th>
                                     <u>Insurance :</u>
+                                    <br/>
+                                    <br/>
                                 </th>
                                 <td>
                                     <span t-field="o.insurance_id"/>
@@ -130,6 +139,8 @@
                             <tr>
                                 <th>
                                     <u>Destination :</u>
+                                    <br/>
+                                    <br/>
                                 </th>
                                 <td>
                                     <span t-field="o.destination_id"/>
@@ -138,6 +149,8 @@
                             <tr>
                                 <th>
                                     <u>Packing :</u>
+                                    <br/>
+                                    <br/>
                                 </th>
                                 <td>
                                     <span t-field="o.packing"/>
@@ -146,6 +159,8 @@
                             <tr>
                                 <th>
                                     <u>Marks :</u>
+                                    <br/>
+                                    <br/>
                                 </th>
                                 <td>
                                     <span t-field="o.marks"/>

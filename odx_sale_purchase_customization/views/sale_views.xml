@@ -13,6 +13,14 @@
                         <field name="attachment_count" widget="statinfo" string="Photos"/>
                     </button>
                 </xpath>
+                <xpath expr="//group[@name='sale_shipping']" position="replace">
+                    <group name="sale_shipping">
+                        <label for="commitment_date" string="Delivery Date"/>
+                        <div class="o_row">
+                            <field name="commitment_date"/>
+                        </div>
+                    </group>
+                </xpath>
                 <xpath expr="//sheet/group" position="replace">
                     <group>
                         <group>
@@ -55,7 +63,7 @@
                                        class="oe_inline"/>
                             </div>
                             <field name="insurance_id" attrs="{'readonly':[('state', 'in', 'done')]}"/>
-<!--                            <field name="payment" attrs="{'readonly':[('state', 'in', 'done')]}"/>-->
+                            <!--                            <field name="payment" attrs="{'readonly':[('state', 'in', 'done')]}"/>-->
                             <field name="marks" attrs="{'readonly':[('state', 'in', 'done')]}"/>
                         </group>
                     </group>
@@ -186,9 +194,10 @@
                                             'company_id': parent.company_id
                                         }"
                                 attrs="{'readonly':[('state', 'in', 'sale')]}"
-                                sum = "Quantity"
+                                sum="Quantity"
                         />
-                        <field name="actual_qty" attrs="{'readonly': [('parent.state', 'not in', ['sale', 'done'])]}" sum="Actual Quantity"/>
+                        <field name="actual_qty" attrs="{'readonly': [('parent.state', 'not in', ['sale', 'done'])]}"
+                               sum="Actual Quantity"/>
                         <field
                                 name="qty_delivered"
                                 string="Delivered"
@@ -261,6 +270,9 @@
                 <xpath expr="//field[@name='amount_tax']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
+                <xpath expr="//field[@name='amount_untaxed']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
             </field>
         </record>
         <record id="view_order_tree_inherit" model="ir.ui.view">
@@ -288,6 +300,14 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
             </field>
+        </record>
+
+         <record id="sale.action_quotations_with_onboarding" model="ir.actions.act_window">
+            <field name="name">Quotations</field>
+            <field name="res_model">sale.order</field>
+
+            <field name="context"></field>
+
         </record>
     </data>
 </odoo>

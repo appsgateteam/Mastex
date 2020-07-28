@@ -7,22 +7,10 @@
                         <strong>Shipment:</strong>
                         <p class="m-0" t-field="o.shipment_date"/>
                     </div>
-<!--                    <div t-if="o.payment" class="col-auto mw-100 mb-2">-->
-<!--                        <strong>Payment:</strong>-->
-<!--                        <p class="m-0" t-field="o.payment"/>-->
-<!--                    </div>-->
-<!--                    <div t-if="o.insurance_id" class="col-auto mw-100 mb-2">-->
-<!--                        <strong>Insurance:</strong>-->
-<!--                        <p class="m-0" t-field="o.insurance_id"/>-->
-<!--                    </div>-->
                     <div t-if="o.destination_id" class="col-auto mw-100 mb-2">
                         <strong>Destination:</strong>
                         <p class="m-0" t-field="o.destination_id"/>
                     </div>
-<!--                    <div t-if="o.marks" class="col-auto mw-100 mb-2">-->
-<!--                        <strong>Marks:</strong>-->
-<!--                        <p class="m-0" t-field="o.marks"/>-->
-<!--                    </div>-->
                 </div>
             </xpath>
             <xpath expr="//table[1]/thead/tr/th[4]" position="after">

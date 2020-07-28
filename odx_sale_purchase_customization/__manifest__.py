@@ -16,7 +16,7 @@
 
     # any module necessary for this one to work correctly
     'depends': ['base', 'sale', 'purchase', 'report_xlsx', 'mail',
-                'product', 'web'],
+                'product','web'],
 
     # always loaded
     'data': [

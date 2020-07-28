@@ -27,7 +27,7 @@ class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
     _description = "Purchase Order"
 
-    @api.depends('order_line.price_total', 'order_line.commission', 'order_line.price_tax')
+    @api.depends('order_line.price_total')
     def _amount_all(self):
         for order in self:
             amount_untaxed = amount_tax = total_commission = 0.0
@@ -39,7 +39,7 @@ class PurchaseOrder(models.Model):
                 'amount_untaxed': order.currency_id.round(amount_untaxed),
                 'amount_tax': order.currency_id.round(amount_tax),
                 'total_commission': order.currency_id.round(total_commission),
-                'amount_total': amount_untaxed + amount_tax + total_commission,
+                'amount_total': amount_untaxed + amount_tax - total_commission,
             })
 
     sale_order_id = fields.Many2one(comodel_name="sale.order", string="SO#", copy=False)
@@ -62,6 +62,7 @@ class PurchaseOrder(models.Model):
     # Other details
     shipment_date = fields.Date(string="Shipment Date")
     destination_id = fields.Many2one(comodel_name='res.destination', string='Destination')
+    marks = fields.Char(string="Marks", )
 
     # Shipment details
     is_sample_customer = fields.Boolean(string='Sample received from customer')
@@ -270,7 +271,7 @@ class PurchaseOrder(models.Model):
         if values.get('name', _('New')) == _('New'):
             values['name'] = self.env['ir.sequence'].next_by_code('order.reference',
                                                                                     None) or _('New')
-            # values['marks'] = values['name']
+            values['marks'] = values['name']
         return super(PurchaseOrder, self).create(values)
 
 
@@ -334,9 +335,9 @@ class PurchaseShipment(models.Model):
 
     shipment_to = fields.Many2one(comodel_name='shipment.destination', string="Shipment To")
     shipment_from = fields.Many2one(comodel_name='shipment.destination', string="Shipment From")
-    from_date = fields.Date(string='Start Date', copy=False, default=fields.Date.today(), store=True)
+    from_date = fields.Date(string='Dispatch Date', copy=False, default=fields.Date.today(), store=True)
     to_date = fields.Date(string='Expected Delivery Date', copy=False, store=True)
-    dispatch_date = fields.Date(string='Dispatch date Date', copy=False, store=True)
+    # dispatch_date = fields.Date(string='Dispatch date Date', copy=False, store=True)
 
     reference = fields.Char(string="Reference")
     description = fields.Char(string="Description")
@@ -346,7 +347,8 @@ class PurchaseShipment(models.Model):
     type = fields.Selection([('sample_customer', 'Receive sample from customer'),
                              ('sample_vendor', 'Sent sample to vendor'),
                              ('vendor_sample_customer', 'Sent First Sample'),
-                             ('sample_company', ' Sent Final Sample')],
+                             ('sample_company', ' Sent Final Sample'),
+                             ('others', ' Others')],
                             string='Type')
     attachment = fields.Binary(string="Files", attachment=True)
     attachment_name = fields.Char(string="File Name")

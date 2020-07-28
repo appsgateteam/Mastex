@@ -56,7 +56,7 @@ class AccountMove(models.Model):
             'move_id': self.id,
             'currency_id': self.currency_id or False,
             'product_id': product_id.id,
-            'price_unit': self.purchase_id.total_commission,
+            'price_unit': self.purchase_id.total_commission * -1,
             'quantity': 1,
             'partner_id': self.partner_id.id,
         }
