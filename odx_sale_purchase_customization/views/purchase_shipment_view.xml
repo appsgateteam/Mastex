@@ -53,7 +53,7 @@
                 </p>
             </field>
         </record>
-        <menuitem name="courier" id="menu_purchase_shipment" action="action_purchase_shipment"
+        <menuitem name="Courier" id="menu_purchase_shipment" action="action_purchase_shipment"
                   parent="menu_purchase_document"/>
     </data>
 </odoo>

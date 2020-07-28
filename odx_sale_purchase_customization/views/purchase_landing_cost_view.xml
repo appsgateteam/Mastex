@@ -8,7 +8,7 @@
                     <field name="reference"/>
                     <field name="landing_date_etd"/>
                     <field name="landing_date_eta"/>
-                    <field name="landing_company_id"/>
+                    <field name="shipping_company_id"/>
                     <field name="name"/>
                     <field name="no_of_packages"/>
                     <field name="destination"/>
@@ -30,7 +30,7 @@
                                 <field name="reference"/>
                                 <field name="landing_date_etd"/>
                                 <field name="landing_date_eta"/>
-                                <field name="landing_company_id"/>
+                                <field name="shipping_company_id"/>
                                 <field name="name"/>
                             </group>
                             <group>

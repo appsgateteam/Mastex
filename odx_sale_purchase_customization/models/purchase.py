@@ -20,11 +20,27 @@
 ###################################################################################
 from odoo import fields, models, api, _
 from odoo.exceptions import UserError
+import base64
 
 
 class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
     _description = "Purchase Order"
+
+    @api.depends('order_line.price_total', 'order_line.commission', 'order_line.price_tax')
+    def _amount_all(self):
+        for order in self:
+            amount_untaxed = amount_tax = total_commission = 0.0
+            for line in order.order_line:
+                amount_untaxed += line.price_subtotal
+                total_commission += line.commission / 100 * line.price_subtotal
+                amount_tax += line.price_tax
+            order.update({
+                'amount_untaxed': order.currency_id.round(amount_untaxed),
+                'amount_tax': order.currency_id.round(amount_tax),
+                'total_commission': order.currency_id.round(total_commission),
+                'amount_total': amount_untaxed + amount_tax + total_commission,
+            })
 
     sale_order_id = fields.Many2one(comodel_name="sale.order", string="SO#", copy=False)
     customer_id = fields.Many2one(comodel_name='res.partner', string="Customer")
@@ -38,15 +54,14 @@ class PurchaseOrder(models.Model):
     face_stamp = fields.Html(string="Face Stamp on Paper and Booklet File")
     selvedge = fields.Html(string="Selvedge")
     shipping_mark = fields.Html(string="Shipping Mark")
-    shipping_sample_book = fields.Text(string="Shipping Sample Book File")
+    shipping_sample_book = fields.Text(string="Shippment Sample")
     notes = fields.Text(string="Notes")
+    total_commission = fields.Monetary(string='Total Commission', store=True, readonly=True,
+                                       compute='_amount_all', tracking=True)
 
     # Other details
     shipment_date = fields.Date(string="Shipment Date")
-    payment = fields.Many2one('res.payments', string="Payment")
-    insurance_id = fields.Many2one(comodel_name='res.insurance', string="Insurance")
     destination_id = fields.Many2one(comodel_name='res.destination', string='Destination')
-    marks = fields.Char(string="Marks", )
 
     # Shipment details
     is_sample_customer = fields.Boolean(string='Sample received from customer')
@@ -94,30 +109,30 @@ class PurchaseOrder(models.Model):
         if self.sale_order_id:
             self.sale_order_id.notes = self.notes
 
-    @api.onchange('payment')
-    def _onchange_payment(self):
-        if self.sale_order_id:
-            self.sale_order_id.payment = self.payment
+    # @api.onchange('payment')
+    # def _onchange_payment(self):
+    #     if self.sale_order_id:
+    #         self.sale_order_id.payment = self.payment
 
     @api.onchange('shipment_date')
     def _onchange_shipment_date(self):
         if self.sale_order_id:
             self.sale_order_id.shipment_date = self.shipment_date
 
-    @api.onchange('insurance_id')
-    def _onchange_insurance_id(self):
-        if self.sale_order_id and self.insurance_id:
-            self.sale_order_id.insurance_id = self.insurance_id.id
+    # @api.onchange('insurance_id')
+    # def _onchange_insurance_id(self):
+    #     if self.sale_order_id and self.insurance_id:
+    #         self.sale_order_id.insurance_id = self.insurance_id.id
 
     @api.onchange('destination_id')
     def _onchange_destination_id(self):
         if self.sale_order_id and self.destination_id:
             self.sale_order_id.destination_id = self.destination_id.id
 
-    @api.onchange('marks')
-    def _onchange_marks(self):
-        if self.sale_order_id:
-            self.sale_order_id.marks = self.marks
+    # @api.onchange('marks')
+    # def _onchange_marks(self):
+    #     if self.sale_order_id:
+    #         self.sale_order_id.marks = self.marks
 
     def photos(self):
         return {
@@ -137,6 +152,22 @@ class PurchaseOrder(models.Model):
     def _compute_attachment_count(self):
         for order in self:
             order.attachment_count = len(order.attachment_ids)
+
+    def action_rfq_send(self):
+        res = super(PurchaseOrder, self).action_rfq_send()
+        result, extension = self.env.ref('odx_sale_purchase_customization.instruction_sheet_purchase').render_qweb_pdf(self.ids)
+        result = base64.b64encode(result)
+        report_name = 'Instruction.pdf'
+        data_attach = {
+            'name': report_name,
+            'datas': result,
+            'res_model': 'mail.compose.message',
+            'res_id': 0,
+            'type': 'binary',  # override default_type from context, possibly meant for another model!
+        }
+        attachment_id = self.env['ir.attachment'].create(data_attach)
+        res['context']['default_extra_attachment_ids'] = [(6, 0, [attachment_id.id])]
+        return res
 
     @api.onchange('purchase_shipment_ids')
     def _onchange_type(self):
@@ -191,8 +222,8 @@ class PurchaseOrder(models.Model):
                     "shipping_sample_book": record.shipping_sample_book,
                     "notes": record.notes,
                     "shipment_date": record.shipment_date,
-                    "payment": record.payment.id,
-                    "insurance_id": record.insurance_id.id,
+                    # "payment": record.payment.id,
+                    # "insurance_id": record.insurance_id.id,
                     "destination_id": record.destination_id.id,
                 }
                 sale_order = sale_order_obj.create(vals)
@@ -210,7 +241,7 @@ class PurchaseOrder(models.Model):
                                                                   "product_uom": line.product_uom.id,
                                                                   'price_unit': line.price_unit,
                                                                   "order_id": sale_order.id,
-                                                                  "discount": line.discount,
+                                                                  # "discount": line.discount,
                                                                   "purchase_order_line_id": line.id,
                                                                   "actual_qty": line.actual_qty
                                                                   })
@@ -230,16 +261,16 @@ class PurchaseOrder(models.Model):
         :param values:
         :return: new record id
         """
-        code = ''
-        if values['partner_id']:
-            customer = self.env['res.partner'].browse(values['customer_id'])
-            if customer:
-                if customer.customer_code:
-                    code = customer.customer_code
+        # code = ''
+        # if values['partner_id']:
+        #     customer = self.env['res.partner'].browse(values['customer_id'])
+        #     if customer:
+        #         if customer.customer_code:
+        #             code = customer.customer_code
         if values.get('name', _('New')) == _('New'):
-            values['name'] = str(code) + " " + self.env['ir.sequence'].next_by_code('order.reference',
+            values['name'] = self.env['ir.sequence'].next_by_code('order.reference',
                                                                                     None) or _('New')
-            values['marks'] = values['name']
+            # values['marks'] = values['name']
         return super(PurchaseOrder, self).create(values)
 
 
@@ -250,6 +281,8 @@ class PurchaseOrderLine(models.Model):
                               , default=0.0)
     attachment_ids = fields.Many2many(comodel_name="ir.attachment", string="Images")
     sale_order_line_id = fields.Many2one("sale.order.line", string='Sale Order Line')
+    commission = fields.Float('Commission %')
+
 
     def _prepare_account_move_line(self, move):
         res = super(PurchaseOrderLine, self)._prepare_account_move_line(move)
@@ -283,13 +316,13 @@ class LandingCost(models.Model):
     name = fields.Char(string="B/L No", required=True)
     landing_date_etd = fields.Date(string='ETD', required=True)
     landing_date_eta = fields.Date(string='ETA', required=True)
-    landing_company_id = fields.Many2one(comodel_name='res.company', string='Shipping Line', required=True,
-                                         default=lambda self: self.env.company)
+    shipping_company_id = fields.Many2one('shipment.company', string='Shipping Line', required=True,
+                                         )
     landing_attachment = fields.Binary(string='Document', attachment=True)
     landing_attachment_name = fields.Char(string='Document Name')
     purchase_id = fields.Many2one(comodel_name='purchase.order', string="Purchase Order", ondelete='cascade')
     no_of_packages = fields.Char(string='No Of Packages')
-    destination = fields.Char(string="Destination")
+    destination = fields.Many2one(comodel_name='res.destination', string='Destination')
     marks = fields.Char(string="Marks")
     container_no = fields.Char(string="Container No")
     reference = fields.Char(string="Reference")
@@ -303,10 +336,12 @@ class PurchaseShipment(models.Model):
     shipment_from = fields.Many2one(comodel_name='shipment.destination', string="Shipment From")
     from_date = fields.Date(string='Start Date', copy=False, default=fields.Date.today(), store=True)
     to_date = fields.Date(string='Expected Delivery Date', copy=False, store=True)
+    dispatch_date = fields.Date(string='Dispatch date Date', copy=False, store=True)
+
     reference = fields.Char(string="Reference")
     description = fields.Char(string="Description")
     status = fields.Selection([('sent', 'Sent'), ('received', 'Received'), ('delivered', 'Delivered'),
-                               ('in_transit', 'In Transit'), ('cancel', 'Canceled')],
+                            ('cancel', 'Canceled')],
                               string='Status')
     type = fields.Selection([('sample_customer', 'Receive sample from customer'),
                              ('sample_vendor', 'Sent sample to vendor'),
@@ -323,3 +358,11 @@ class ShippingDestination(models.Model):
     _description = 'Shipping Destination'
 
     name = fields.Char("Name", required=True)
+
+
+class ShippingCompany(models.Model):
+    _name = 'shipment.company'
+    _description = 'Shipping Company'
+
+    name = fields.Char("Name", required=True)
+

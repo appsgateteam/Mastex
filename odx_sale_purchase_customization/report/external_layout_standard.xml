@@ -1,0 +1,33 @@
+<odoo>
+    <data>
+        <template id="external_layout_standard_inherit" inherit_id="web.external_layout_standard">
+            <xpath expr="//t/div[3]" position="replace">
+                <div class="footer o_standard_footer">
+                    <div class="text-center" style="border-top: 1px solid black;">
+                        <ul class="list-inline mb4">
+                            <!-- using the list-inline-item class from bootstrap causes weird behaviours in pdf report
+                                 adding d-inline class fixes the problem-->
+                            <li t-if="company.phone" class="list-inline-item d-inline">Phone:
+                                <span t-field="company.phone"/>
+                            </li>
+                            <li t-if="company.email" class="list-inline-item d-inline">Email:
+                                <span t-field="company.email"/>
+                            </li>
+                        </ul>
+
+                        <div name="financial_infos">
+                            <span t-field="company.report_footer"/>
+                        </div>
+
+                        <div t-if="report_type == 'pdf'" class="text-muted">
+                            Page:
+                            <span class="page"/>
+                            /
+                            <span class="topage"/>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </template>
+    </data>
+</odoo>

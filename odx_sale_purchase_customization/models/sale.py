@@ -19,11 +19,12 @@
 #
 ###################################################################################
 from datetime import datetime
-# import base64
+import base64
 
 from odoo import fields, models, api, _
 # from odoo.exceptions import UserError
 from odoo.tools import float_is_zero, float_compare
+from odoo.exceptions import UserError
 
 
 class SaleOrder(models.Model):
@@ -39,37 +40,18 @@ class SaleOrder(models.Model):
     face_stamp = fields.Html(string="Face Stamp on Paper and Booklet File")
     selvedge = fields.Html(string="Selvedge")
     shipping_mark = fields.Html(string="Shipping Mark")
-    shipping_sample_book = fields.Text(string="Shipping Sample Book File")
+    shipping_sample_book = fields.Text(string="Shippment Sample")
     notes = fields.Text(string="Notes")
 
     # Other details
     shipment_date = fields.Date(string="Shipment Date")
-    payment = fields.Many2one('res.payments', string="Payment")
+    # payment = fields.Many2one('res.payments', string="Payment")
     insurance_id = fields.Many2one(comodel_name='res.insurance', string="Insurance")
     destination_id = fields.Many2one(comodel_name='res.destination', string='Destination')
     marks = fields.Char(string="Marks")
 
     attachment_ids = fields.One2many('ir.attachment', 'sale_id', string='Attachment')
     attachment_count = fields.Integer(compute='_compute_attachment_count')
-
-    # def action_quotation_send(self):
-    #     res = super(SaleOrder, self).action_quotation_send()
-    #     pdf = self.env.ref('odx_sale_purchase_customization.instruction_sheet').render_qweb_pdf(self.ids)
-    #     b64_pdf = base64.b64encode(pdf[0])
-    #
-    #     attachment_id = self.env['ir.attachment'].create({
-    #         'name': 'Instruction',
-    #         'type': 'binary',
-    #         'datas': b64_pdf,
-    #         'display_name': 'Instruction' + '.pdf',
-    #         'store_fname': 'Instruction',
-    #         'res_model': self._name,
-    #         'res_id': self.id,
-    #         'mimetype': 'application/x-pdf'
-    #     })
-    #     res['context']['default_attachment_ids']=[(6, 0, [attachment_id])]
-    #
-    #     return res
 
     @api.onchange('colour_instructions')
     def _onchange_colour_instructions(self):
@@ -106,30 +88,30 @@ class SaleOrder(models.Model):
         if self.purchase_order_id:
             self.purchase_order_id.notes = self.notes
 
-    @api.onchange('payment')
-    def _onchange_payment(self):
-        if self.purchase_order_id and self.payment:
-            self.purchase_order_id.payment = self.payment.id
+    # @api.onchange('payment')
+    # def _onchange_payment(self):
+    #     if self.purchase_order_id and self.payment:
+    #         self.purchase_order_id.payment = self.payment.id
 
     @api.onchange('shipment_date')
     def _onchange_shipment_date(self):
         if self.purchase_order_id:
             self.purchase_order_id.shipment_date = self.shipment_date
 
-    @api.onchange('insurance_id')
-    def _onchange_insurance_id(self):
-        if self.purchase_order_id and self.insurance_id:
-            self.purchase_order_id.insurance_id = self.insurance_id.id
+    # @api.onchange('insurance_id')
+    # def _onchange_insurance_id(self):
+    #     if self.purchase_order_id and self.insurance_id:
+    #         self.purchase_order_id.insurance_id = self.insurance_id.id
 
     @api.onchange('destination_id')
     def _onchange_destination_id(self):
         if self.purchase_order_id and self.destination_id:
             self.purchase_order_id.destination_id = self.destination_id.id
 
-    @api.onchange('marks')
-    def _onchange_marks(self):
-        if self.purchase_order_id:
-            self.purchase_order_id.marks = self.marks
+    # @api.onchange('marks')
+    # def _onchange_marks(self):
+    #     if self.purchase_order_id:
+    #         self.purchase_order_id.marks = self.marks
 
     @api.onchange('attachment_ids')
     def _onchange_attachment_ids(self):
@@ -189,8 +171,8 @@ class SaleOrder(models.Model):
                     "shipping_sample_book": record.shipping_sample_book,
                     "notes": record.notes,
                     "shipment_date": record.shipment_date,
-                    "payment": record.payment.id,
-                    "insurance_id": record.insurance_id.id,
+                    # "payment": record.payment.id,
+                    # "insurance_id": record.insurance_id.id,
                     "destination_id": record.destination_id.id,
 
                 }
@@ -212,7 +194,7 @@ class SaleOrder(models.Model):
                                                                            "order_id": purchase.id,
                                                                            "actual_qty": line.actual_qty,
                                                                            "sale_order_line_id": line.id,
-                                                                           "discount": line.discount,
+                                                                           # "discount": line.discount,
                                                                            'taxes_id': [(6, 0, taxes_id.ids)],
                                                                            })
                     line.purchase_order_line_id = purchase_order_line.id
@@ -225,17 +207,17 @@ class SaleOrder(models.Model):
         :param values:
         :return: new record id
         """
-        code = ''
-        if values['partner_id']:
-            customer = self.env['res.partner'].browse(values['partner_id'])
-            if customer:
-                if customer:
-                    code = customer.customer_code
+        # code = ''
+        # if values['partner_id']:
+        #     customer = self.env['res.partner'].browse(values['partner_id'])
+        #     if customer:
+        #         if customer:
+        #             code = customer.customer_code
 
         if values.get('name', _('New')) == _('New'):
             # values['name'] = self.env['ir.sequence'].next_by_code('sale.delivery')
-            values['name'] = str(code) + " " + self.env['ir.sequence'].next_by_code('order.reference',
-                                                                                    None) or _('New')
+            values['name'] = self.env['ir.sequence'].next_by_code('order.reference',
+                                                                  None) or _('New')
             values['marks'] = values['name']
         return super(SaleOrder, self).create(values)
 
@@ -314,6 +296,23 @@ class SaleOrderLine(models.Model):
             else:
                 line.qty_to_invoice = 0
 
+    # def unlink(self):
+    #     if self.order_id:
+    #         print('aaaaaaaaaaaa')
+    #         if self.order_id.state == "sale":
+    #             raise UserError(_("You can not remove an order line once the sales order is confirmed."))
+    #     return  super(SaleOrderLine, self).unlink()
+    #
+    @api.model
+    def create(self, vals):
+        if vals['order_id']:
+            order = self.env['sale.order'].search([('id', '=', vals['order_id'])], limit=1)
+            product_id = self.env['ir.config_parameter'].sudo().get_param('sale.default_deposit_product_id')
+            if order:
+                if order.state == "sale" and vals['product_id'] != int(product_id):
+                    raise UserError(_("You can not Create an order line once the sales order is confirmed."))
+        return super(SaleOrderLine, self).create(vals)
+
 
 class ResInsurance(models.Model):
     _name = 'res.insurance'
@@ -332,8 +331,7 @@ class ResDestination(models.Model):
 
     name = fields.Char("Name", required=True)
 
-
-class ResPayments(models.Model):
-    _name = 'res.payments'
-
-    name = fields.Char("Name", required=True)
+# class ResPayments(models.Model):
+#     _name = 'res.payments'
+#
+#     name = fields.Char("Name", required=True)

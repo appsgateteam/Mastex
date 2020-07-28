@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <template id="instruction_template">
+        <template id="purchase_instruction_template">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
                     <t t-call="web.external_layout">
@@ -20,7 +20,7 @@
                                         <u>Maker</u>
                                     </th>
                                     <td>
-                                        <span t-field="o.vendor_id"/>
+                                        <span t-field="o.partner_id"/>
                                     </td>
                                 </tr>
                                 <tr>
@@ -30,7 +30,7 @@
                                     <td>
                                         <t t-set="qty" t-value="0"/>
                                         <t t-foreach="o.order_line" t-as="line">
-                                            <t t-set="qty" t-value="qty+line.product_uom_qty"/>
+                                            <t t-set="qty" t-value="qty+line.product_qty"/>
                                         </t>
                                         <span t-esc="qty"/>
                                     </td>
@@ -40,7 +40,7 @@
                                         <u>Date</u>
                                     </th>
                                     <td>
-                                        <span t-field="o.date_order" t-field-options="{'format': 'yyyy-MM-dd'}"/>
+                                        <span t-field="o.date_order"/>
                                     </td>
                                 </tr>
                                 <tr>
@@ -48,8 +48,7 @@
                                         <u>SHIPMENT</u>
                                     </th>
                                     <td>
-                                        <span t-field="o.shipment_date"/>-
-                                        <span t-field="o.destination_id"/>
+                                        <span t-field="o.shipment_date"/>-<span t-field="o.destination_id"/>
                                     </td>
                                 </tr>
                             </table>
@@ -70,14 +69,14 @@
                             </h2>
                             <h3 t-field="o.face_stamp"/>
                             <br/>
-                                <u>SELVEDGE:</u>
+                                <u >SELVEDGE:</u>
                                 <span t-field="o.selvedge"/>
                             <br/>
-                                <u>Shipping Mark:</u>
+                                <u >Shipping Mark:</u>
                             <span t-field="o.shipping_mark"/>
                             <br/>
                             <br/>
-                                <u>Shipping Sample book:</u>
+                                <u >Shipping Sample book:</u>
                                 <span t-field="o.shipping_sample_book"/>
                             <br/>
                                 <u>Notes:</u>
