@@ -145,7 +145,6 @@
                         <field name="product_qty" string="Contract Quantity"
                                attrs="{'readonly': [('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}"
                                sum="Quantity"/>
-                        <field name="commission"/>
                         <field name="actual_qty"
                                attrs="{'readonly': [('parent.state', 'not in', ('purchase', 'done'))]}"
                                sum="Actual Quantity"/>
@@ -158,7 +157,7 @@
                         <field name="qty_invoiced" string="Billed"
                                attrs="{'column_invisible': [('parent.state', 'not in', ('purchase', 'done'))]}"
                                optional="show"/>
-                        <field name="product_uom" string="UoM" groups="uom.group_uom"
+                        <field name="product_uom" width=".25" string="UoM" groups="uom.group_uom"
                                attrs="{
                                             'readonly': [('state', 'in', ('purchase', 'done', 'cancel'))],
                                             'required': [('display_type', '=', False)]
@@ -172,6 +171,7 @@
                                options="{'no_create': True}" optional="show"
                                attrs="{'readonly': [('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}"
                                invisible="1"/>
+                        <field name="commission"/>
                         <field name="price_subtotal" widget="monetary"/>
                     </tree>
                 </xpath>

@@ -40,7 +40,7 @@
                                         <u>Date</u>
                                     </th>
                                     <td>
-                                        <span t-field="o.date_order" t-field-options="{'format': 'yyyy-MM-dd'}"/>
+                                        <span t-field="o.date_order" t-options='{"widget": "date"}'/>
                                     </td>
                                 </tr>
                                 <tr>
@@ -54,31 +54,44 @@
                                 </tr>
                             </table>
                             <br/>
-                            <span style="color: #FF0000;">
+                            <span style="color: #FF0000;font-size: 25px;">
                                 <u>Color Instructions:</u>
                             </span>
-                            <span t-field="o.colour_instructions"/>
+                            <p style="padding-left:10px" t-field="o.colour_instructions"/>
                             <br/>
                             <br/>
-                                <u>PACKING:</u>
-                            <span t-field="o.packing"/>
+                            <span style="font-size: 25px;">
+                                <u>Packing:</u>
+                            </span>
+                            <p style="padding-left:10px" t-field="o.packing"/>
                             <br/>
                             <br/>
-                                <u>FACE STAMP ON PAPER AND BOOKLET:</u>
-                            <h3 t-field="o.face_stamp"/>
+                            <span style="font-size: 25px;">
+                                <u>Face Stamp On Paper And Booklet:</u>
+                            </span>
+                            <p style="padding-left:10px" t-field="o.face_stamp"/>
                             <br/>
-                                <u>SELVEDGE:</u>
-                                <span t-field="o.selvedge"/>
+                            <span style="font-size: 25px;">
+                                <u>Selvedge:</u>
+                            </span>
+                            <p style="padding-left:10px" t-field="o.selvedge"/>
                             <br/>
+                            <span style="font-size: 25px;">
                                 <u>Shipping Mark:</u>
-                            <span t-field="o.shipping_mark"/>
+                            </span>
+                            <p style="padding-left:10px" t-field="o.shipping_mark"/>
                             <br/>
                             <br/>
+                            <span style="font-size: 25px;">
                                 <u>Shipping Sample book:</u>
-                                <span t-field="o.shipping_sample_book"/>
+                            </span>
+                            <p style="padding-left:10px" t-field="o.shipping_sample_book"/>
                             <br/>
+                            <br/>
+                            <span style="font-size: 25px;">
                                 <u>Notes:</u>
-                            <h5 t-field="o.notes"/>
+                            </span>
+                            <p style="padding-left:10px" t-field="o.notes"/>
 
                         </div>
                     </t>

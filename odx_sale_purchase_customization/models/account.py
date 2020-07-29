@@ -58,6 +58,7 @@ class AccountMove(models.Model):
             'product_id': product_id.id,
             'price_unit': self.purchase_id.total_commission * -1,
             'quantity': 1,
+            'exclude_from_invoice_tab': True,
             'partner_id': self.partner_id.id,
         }
 

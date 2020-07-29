@@ -13,7 +13,8 @@
                             </div>
                             <div class="col-4">
                                 <strong>
-                               <span t-if="o.partner_id" t-field="o.partner_id.customer_code"/> &#160;&#160;<span t-field="o.name"/>
+                                    <span t-if="o.partner_id" t-field="o.partner_id.customer_code"/> &#160;&#160;<span
+                                        t-field="o.name"/>
                                 </strong>
                             </div>
                         </div>
@@ -33,7 +34,14 @@
                                     <u>Buyer :</u>
                                 </th>
                                 <td>
-                                    <span t-field="o.partner_id"/>
+                                    <t t-if="o.partner_id">
+                                        <span t-if="o.partner_id.title" t-field="o.partner_id.title"></span>
+                                        <t t-if="o.partner_id.title">&#160;:&#160;</t>
+                                        <span t-field="o.partner_id"/>&#160;&#160;
+                                        <span t-if="o.partner_id.state_id" t-field="o.partner_id.state_id"></span>
+                                        <t t-if="o.partner_id.state_id">&#160;-&#160;</t>
+                                        <span t-if="o.partner_id.country_id" t-field="o.partner_id.country_id">-</span>
+                                    </t>
                                 </td>
                             </tr>
                             <tr>
@@ -41,7 +49,14 @@
                                     <u>Maker :</u>
                                 </th>
                                 <td>
-                                    <span t-field="o.vendor_id"/>
+                                    <t t-if="o.vendor_id">
+                                        <span t-if="o.vendor_id.title" t-field="o.vendor_id.title"></span>
+                                        <t t-if="o.vendor_id.title">&#160;:&#160;</t>
+                                        <span t-field="o.vendor_id"/>&#160;&#160;
+                                        <span t-if="o.vendor_id.state_id" t-field="o.vendor_id.state_id"></span>
+                                        <t t-if="o.vendor_id.state_id">&#160;-&#160;</t>
+                                        <span t-if="o.vendor_id.country_id" t-field="o.vendor_id.country_id">-</span>
+                                    </t>
                                 </td>
                             </tr>
                         </table>
@@ -49,7 +64,9 @@
                         <br/>
                         <br/>
                         <p>
-                            Almasri &amp; Alsaudi as agents, here by confirms having concluded the sales contract with your company as buyer to sell the following goods of above maker on the date and on the terms &amp; conditions as below
+                            Almasri &amp; Alsaudi as agents, here by confirms having concluded the sales contract with
+                            your company as buyer to sell the following goods of above maker on the date and on the
+                            terms &amp; conditions as below
                         </p>
                         <table class="table table-sm o_main_table">
                             <thead>
@@ -63,7 +80,7 @@
                             <tbody>
                                 <t t-foreach="o.order_line" t-as="line">
                                     <tr>
-                                        <td name="td_quantity" class="text-left">
+                                        <td name="td_quantity" class="text-right">
                                             <span t-field="line.name"/>
                                         </td>
                                         <td name="td_quantity" class="text-right">
@@ -167,6 +184,19 @@
                                 </td>
                             </tr>
                         </table>
+                        <br/>
+                        <div class="row">
+                            <div class="col-4">
+                                <span>Accepted By Buyer</span>
+                            </div>
+                            <div class="col-4">
+                                <span t-field="o.partner_id"/>
+                            </div>
+                            <div class="col-4">
+                                <span>For Almsari &amp; Alsaudi Trading
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </t>
             </xpath>
