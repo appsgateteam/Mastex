@@ -40,7 +40,7 @@ class PurchaseOrder(models.Model):
                 'amount_untaxed': order.currency_id.round(amount_untaxed),
                 'amount_tax': order.currency_id.round(amount_tax),
                 'total_commission': order.currency_id.round(total_commission),
-                'amount_total': amount_untaxed + amount_tax - total_commission,
+                'amount_total': amount_untaxed + amount_tax,
             })
 
     sale_order_id = fields.Many2one(comodel_name="sale.order", string="SO#", copy=False)
@@ -111,30 +111,16 @@ class PurchaseOrder(models.Model):
         if self.sale_order_id:
             self.sale_order_id.notes = self.notes
 
-    # @api.onchange('payment')
-    # def _onchange_payment(self):
-    #     if self.sale_order_id:
-    #         self.sale_order_id.payment = self.payment
-
     @api.onchange('shipment_date')
     def _onchange_shipment_date(self):
         if self.sale_order_id:
             self.sale_order_id.shipment_date = self.shipment_date
-
-    # @api.onchange('insurance_id')
-    # def _onchange_insurance_id(self):
-    #     if self.sale_order_id and self.insurance_id:
-    #         self.sale_order_id.insurance_id = self.insurance_id.id
 
     @api.onchange('destination_id')
     def _onchange_destination_id(self):
         if self.sale_order_id and self.destination_id:
             self.sale_order_id.destination_id = self.destination_id.id
 
-    # @api.onchange('marks')
-    # def _onchange_marks(self):
-    #     if self.sale_order_id:
-    #         self.sale_order_id.marks = self.marks
 
     def photos(self):
         return {
@@ -225,9 +211,8 @@ class PurchaseOrder(models.Model):
                     "shipping_sample_book": record.shipping_sample_book,
                     "notes": record.notes,
                     "shipment_date": record.shipment_date,
-                    # "payment": record.payment.id,
-                    # "insurance_id": record.insurance_id.id,
                     "destination_id": record.destination_id.id,
+                    "currency_id": record.currency_id.id,
                 }
                 sale_order = sale_order_obj.create(vals)
                 record.sale_order_id = sale_order.id
@@ -264,12 +249,6 @@ class PurchaseOrder(models.Model):
         :param values:
         :return: new record id
         """
-        # code = ''
-        # if values['partner_id']:
-        #     customer = self.env['res.partner'].browse(values['customer_id'])
-        #     if customer:
-        #         if customer.customer_code:
-        #             code = customer.customer_code
         if values.get('name', _('New')) == _('New'):
             values['name'] = self.env['ir.sequence'].next_by_code('order.reference',
                                                                   None) or _('New')
@@ -282,11 +261,33 @@ class PurchaseOrderLine(models.Model):
 
     actual_qty = fields.Float(string='Actual Quantity', required=True
                               , default=0.0, copy=False)
-    attachment_ids = fields.Many2many(comodel_name="ir.attachment", string="Images")
     sale_order_line_id = fields.Many2one("sale.order.line", string='Sale Order Line')
     commission = fields.Float('Commission %')
-    total = fields.Float("Total", compute='_compute_commission')
-    com_amount = fields.Float("Com.Amount", compute='_compute_commission')
+    total = fields.Float("Total", compute='_compute_amount')
+    com_amount = fields.Float("Com.Amount", compute='_compute_amount')
+    price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', store=True)
+    price_total = fields.Monetary(compute='_compute_amount', string='Total', store=True)
+    price_tax = fields.Float(compute='_compute_amount', string='Tax', store=True)
+
+    @api.depends('product_qty', 'price_unit', 'taxes_id', 'commission')
+    def _compute_amount(self):
+        for line in self:
+            vals = line._prepare_compute_all_values()
+            taxes = line.taxes_id.compute_all(
+                vals['price_unit'],
+                vals['currency_id'],
+                vals['product_qty'],
+                vals['product'],
+                vals['partner'])
+            line.update({
+                'price_tax': sum(t.get('amount', 0.0) for t in taxes.get('taxes', [])),
+                'price_total': taxes['total_included'],
+                'total': taxes['total_excluded'],
+                'com_amount': (taxes['total_excluded'] * line.commission)/100,
+                'price_subtotal': taxes['total_excluded'] - ((taxes['total_excluded'] * line.commission)/100),
+
+            })
+
 
     @api.depends('commission', 'total', 'product_qty', 'price_unit')
     def _compute_commission(self):
@@ -344,13 +345,13 @@ class LandingCost(models.Model):
             if self.landing_date_etd < date.today():
                 self.status = False
             else:
-                self.status = 'discharged'
+                self.status = 'in_transit'
 
     def update_status(self):
         laddings = self.search([('status', '!=', 'discharged')])
         for ladding in laddings:
             if ladding.landing_date_eta:
-                if ladding.landing_date_eta >= date.today():
+                if date.today() >= ladding.landing_date_eta:
                     ladding.status = 'discharged'
 
 

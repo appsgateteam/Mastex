@@ -37,7 +37,7 @@
         </field>
     </record>
     <menuitem id="menu_tocb_report_all"
-              name="MASTEX TOCB"
+              name="MASTEX Report"
               parent="sale.menu_sale_report"
               sequence="5"
               action="action_tocb_report_all"/>

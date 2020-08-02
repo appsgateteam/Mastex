@@ -45,11 +45,9 @@ class SaleOrder(models.Model):
 
     # Other details
     shipment_date = fields.Date(string="Shipment Date")
-    # payment = fields.Many2one('res.payments', string="Payment")
     insurance_id = fields.Many2one(comodel_name='res.insurance', string="Insurance")
     destination_id = fields.Many2one(comodel_name='res.destination', string='Destination')
     marks = fields.Char(string="Marks")
-
     attachment_ids = fields.One2many('ir.attachment', 'sale_id', string='Attachment')
     attachment_count = fields.Integer(compute='_compute_attachment_count')
 
@@ -88,20 +86,11 @@ class SaleOrder(models.Model):
         if self.purchase_order_id:
             self.purchase_order_id.notes = self.notes
 
-    # @api.onchange('payment')
-    # def _onchange_payment(self):
-    #     if self.purchase_order_id and self.payment:
-    #         self.purchase_order_id.payment = self.payment.id
 
     @api.onchange('shipment_date')
     def _onchange_shipment_date(self):
         if self.purchase_order_id:
             self.purchase_order_id.shipment_date = self.shipment_date
-
-    # @api.onchange('insurance_id')
-    # def _onchange_insurance_id(self):
-    #     if self.purchase_order_id and self.insurance_id:
-    #         self.purchase_order_id.insurance_id = self.insurance_id.id
 
     @api.onchange('destination_id')
     def _onchange_destination_id(self):
@@ -172,9 +161,8 @@ class SaleOrder(models.Model):
                     "notes": record.notes,
                     "marks":record.marks,
                     "shipment_date": record.shipment_date,
-                    # "payment": record.payment.id,
-                    # "insurance_id": record.insurance_id.id,
                     "destination_id": record.destination_id.id,
+                    "currency_id": record.currency_id.id,
 
                 }
                 purchase = purchase_order_obj.create(vals)

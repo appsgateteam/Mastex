@@ -305,7 +305,6 @@
          <record id="sale.action_quotations_with_onboarding" model="ir.actions.act_window">
             <field name="name">Quotations</field>
             <field name="res_model">sale.order</field>
-
             <field name="context"></field>
 
         </record>

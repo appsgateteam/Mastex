@@ -71,7 +71,7 @@
                         <table class="table table-sm o_main_table">
                             <thead>
                                 <tr>
-                                    <th name="th_description" class="text-right">Quality</th>
+                                    <th name="th_description" class="text-left">Quality</th>
                                     <th name="th_priceunit" class="text-right">Quantity</th>
                                     <th name="th_quantity" class="text-right">Price</th>
                                     <th name="th_priceunit" class="text-right">Amount</th>
@@ -80,7 +80,7 @@
                             <tbody>
                                 <t t-foreach="o.order_line" t-as="line">
                                     <tr>
-                                        <td name="td_quantity" class="text-right">
+                                        <td name="td_quantity" class="text-left">
                                             <span t-field="line.name"/>
                                         </td>
                                         <td name="td_quantity" class="text-right">
@@ -109,7 +109,9 @@
                                     <t t-foreach="o.order_line" t-as="line">
                                         <t t-set="qty" t-value="qty+line.product_uom_qty"/>
                                     </t>
-                                    <span t-esc="qty"/>
+                                    <span t-esc="qty"/>&#160;&#160;
+                                    <span t-if="o.order_line"
+                                          t-field="o.order_line[0].product_uom"/>
                                 </td>
                             </tr>
                             <tr>
