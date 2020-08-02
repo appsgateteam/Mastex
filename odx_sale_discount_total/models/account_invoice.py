@@ -94,8 +94,10 @@ class AccountInvoice(models.Model):
                 sign = 1
             else:
                 sign = -1
-            move.amount_discount = sum((line.quantity * line.price_unit * line.discount)/100 for line in move.invoice_line_ids)
-            move.amount_untaxed = sign * (total_untaxed_currency if len(currencies) == 1 else total_untaxed)
+            move.amount_discount = sum(
+                (line.quantity * line.price_unit * line.discount) / 100 for line in move.invoice_line_ids)
+            move.amount_untaxed = sign * (total_untaxed_currency if len(currencies) == 1 else total_untaxed) + sum(
+                (line.quantity * line.price_unit * line.discount) / 100 for line in move.invoice_line_ids)
             move.amount_tax = sign * (total_tax_currency if len(currencies) == 1 else total_tax)
             move.amount_total = sign * (total_currency if len(currencies) == 1 else total)
             move.amount_residual = -sign * (total_residual_currency if len(currencies) == 1 else total_residual)
@@ -118,7 +120,8 @@ class AccountInvoice(models.Model):
 
     discount_type = fields.Selection([('percent', 'Percentage'), ('amount', 'Amount')], string='Discount Type',
                                      readonly=True, states={'draft': [('readonly', False)]}, default='percent')
-    discount_rate = fields.Float('Discount Amount', digits=(16, 2), readonly=True, states={'draft': [('readonly', False)]})
+    discount_rate = fields.Float('Discount Amount', digits=(16, 2), readonly=True,
+                                 states={'draft': [('readonly', False)]})
     amount_discount = fields.Monetary(string='Discount', store=True, readonly=True, compute='_compute_amount',
                                       track_visibility='always')
 
@@ -145,6 +148,7 @@ class AccountInvoice(models.Model):
     def button_dummy(self):
         self.supply_rate()
         return True
+
 
 class AccountInvoiceLine(models.Model):
     _inherit = "account.move.line"

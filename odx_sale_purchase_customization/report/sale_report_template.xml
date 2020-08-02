@@ -98,11 +98,10 @@
                         </table>
                         <br/>
                         <br/>
-                        <table width="50%" height="100" style="font-size: 20px;">
+                        <table width="100%" height="100" style="font-size: 20px;">
                             <tr>
                                 <th>
-                                    <u>Quantity :</u>
-                                    <br/>
+                                    <u>Total Quantity :</u>
                                     <br/>
                                 </th>
                                 <td>
@@ -117,7 +116,6 @@
                                 <th>
                                     <u>Total Amount :</u>
                                     <br/>
-                                    <br/>
                                 </th>
                                 <td>
                                     <span t-field="o.amount_total"/>
@@ -127,7 +125,6 @@
                                 <th>
                                     <u>Shipment :</u>
                                     <br/>
-                                    <br/>
                                 </th>
                                 <td>
                                     <span t-field="o.shipment_date"/>
@@ -135,8 +132,16 @@
                             </tr>
                             <tr>
                                 <th>
-                                    <u>Payment :</u>
+                                    <u>Destination :</u>
                                     <br/>
+                                </th>
+                                <td>
+                                    <span t-field="o.destination_id"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <u>Payment :</u>
                                     <br/>
                                 </th>
                                 <td>
@@ -147,26 +152,15 @@
                                 <th>
                                     <u>Insurance :</u>
                                     <br/>
-                                    <br/>
                                 </th>
                                 <td>
                                     <span t-field="o.insurance_id"/>
                                 </td>
                             </tr>
-                            <tr>
-                                <th>
-                                    <u>Destination :</u>
-                                    <br/>
-                                    <br/>
-                                </th>
-                                <td>
-                                    <span t-field="o.destination_id"/>
-                                </td>
-                            </tr>
+
                             <tr>
                                 <th>
                                     <u>Packing :</u>
-                                    <br/>
                                     <br/>
                                 </th>
                                 <td>
@@ -176,7 +170,6 @@
                             <tr>
                                 <th>
                                     <u>Marks :</u>
-                                    <br/>
                                     <br/>
                                 </th>
                                 <td>
@@ -190,7 +183,7 @@
                                 <span>Accepted By Buyer</span>
                             </div>
                             <div class="col-4">
-                                <span t-field="o.partner_id"/>
+<!--                                <span t-field="o.partner_id"/>-->
                             </div>
                             <div class="col-4">
                                 <span>For Almsari &amp; Alsaudi Trading

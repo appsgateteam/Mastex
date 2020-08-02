@@ -5,6 +5,7 @@
         <record id="seq_order_reference" model="ir.sequence">
             <field name="name">Odx Order Reference</field>
             <field name="code">order.reference</field>
+            <field name="suffix">/%(year)s</field>
             <field name="padding">6</field>
         </record>
     </data>

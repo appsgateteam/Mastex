@@ -22,6 +22,7 @@
     'data': [
         'security/ir.model.access.csv',
         'data/sale_purchase_customization_data.xml',
+        'data/bill_of_lading_status_update.xml',
         'views/res_config_settings_views.xml',
         'views/res_partner.xml',
         'views/sale_views.xml',

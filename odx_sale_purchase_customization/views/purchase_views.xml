@@ -172,6 +172,9 @@
                                attrs="{'readonly': [('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}"
                                invisible="1"/>
                         <field name="commission"/>
+                        <field name="total"/>
+                        <field name="com_amount"/>
+
                         <field name="price_subtotal" widget="monetary"/>
                     </tree>
                 </xpath>

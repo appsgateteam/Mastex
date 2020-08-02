@@ -25,16 +25,32 @@
                                 </tr>
                                 <tr>
                                     <th>
-                                        <u>TOTAL</u>
+                                        <u>TOTAL QUANTITY</u>
                                     </th>
                                     <td>
                                         <t t-set="qty" t-value="0"/>
                                         <t t-foreach="o.order_line" t-as="line">
                                             <t t-set="qty" t-value="qty+line.product_uom_qty"/>
                                         </t>
-                                        <span t-esc="qty"/>
+                                        <span t-esc="qty"/>&#160;&#160;<span t-if="o.order_line"
+                                                                             t-field="o.order_line[0].product_uom"/>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <th>
+                                        <u>ITEM DETAILS</u>
+                                    </th>
+                                    <td>
+                                        <!--                                        <t t-set="discrption" t-value=""/>-->
+                                        <!--                                        <t t-set="uom" t-value="o.order_line[0].product_uom"/>-->
+                                        <t t-foreach="o.order_line" t-as="line">
+                                            <!--                                            <t t-set="discrption" t-value="discrption+line.name"/>-->
+                                            <span t-field="line.name"/>/
+
+                                        </t>
+                                    </td>
+                                </tr>
+
                                 <tr>
                                     <th>
                                         <u>Date</u>

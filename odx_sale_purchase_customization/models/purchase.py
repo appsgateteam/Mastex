@@ -21,6 +21,7 @@
 from odoo import fields, models, api, _
 from odoo.exceptions import UserError
 import base64
+from datetime import date, timedelta, datetime
 
 
 class PurchaseOrder(models.Model):
@@ -156,7 +157,8 @@ class PurchaseOrder(models.Model):
 
     def action_rfq_send(self):
         res = super(PurchaseOrder, self).action_rfq_send()
-        result, extension = self.env.ref('odx_sale_purchase_customization.instruction_sheet_purchase').render_qweb_pdf(self.ids)
+        result, extension = self.env.ref('odx_sale_purchase_customization.instruction_sheet_purchase').render_qweb_pdf(
+            self.ids)
         result = base64.b64encode(result)
         report_name = 'Instruction.pdf'
         data_attach = {
@@ -270,7 +272,7 @@ class PurchaseOrder(models.Model):
         #             code = customer.customer_code
         if values.get('name', _('New')) == _('New'):
             values['name'] = self.env['ir.sequence'].next_by_code('order.reference',
-                                                                                    None) or _('New')
+                                                                  None) or _('New')
             values['marks'] = values['name']
         return super(PurchaseOrder, self).create(values)
 
@@ -279,11 +281,18 @@ class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
 
     actual_qty = fields.Float(string='Actual Quantity', required=True
-                              , default=0.0)
+                              , default=0.0, copy=False)
     attachment_ids = fields.Many2many(comodel_name="ir.attachment", string="Images")
     sale_order_line_id = fields.Many2one("sale.order.line", string='Sale Order Line')
     commission = fields.Float('Commission %')
+    total = fields.Float("Total", compute='_compute_commission')
+    com_amount = fields.Float("Com.Amount", compute='_compute_commission')
 
+    @api.depends('commission', 'total', 'product_qty', 'price_unit')
+    def _compute_commission(self):
+        for record in self:
+            record.total = record.product_qty * record.price_unit
+            record.com_amount = (record.total * record.commission) / 100
 
     def _prepare_account_move_line(self, move):
         res = super(PurchaseOrderLine, self)._prepare_account_move_line(move)
@@ -318,7 +327,7 @@ class LandingCost(models.Model):
     landing_date_etd = fields.Date(string='ETD', required=True)
     landing_date_eta = fields.Date(string='ETA', required=True)
     shipping_company_id = fields.Many2one('shipment.company', string='Shipping Line', required=True,
-                                         )
+                                          )
     landing_attachment = fields.Binary(string='Document', attachment=True)
     landing_attachment_name = fields.Char(string='Document Name')
     purchase_id = fields.Many2one(comodel_name='purchase.order', string="Purchase Order", ondelete='cascade')
@@ -328,6 +337,21 @@ class LandingCost(models.Model):
     container_no = fields.Char(string="Container No")
     reference = fields.Char(string="Reference")
     status = fields.Selection([('in_transit', 'In Transit'), ('discharged', 'Discharged')], string='Status')
+
+    @api.onchange('landing_date_etd')
+    def _onchange_landing_date_etd(self):
+        if self.landing_date_etd:
+            if self.landing_date_etd < date.today():
+                self.status = False
+            else:
+                self.status = 'discharged'
+
+    def update_status(self):
+        laddings = self.search([('status', '!=', 'discharged')])
+        for ladding in laddings:
+            if ladding.landing_date_eta:
+                if ladding.landing_date_eta >= date.today():
+                    ladding.status = 'discharged'
 
 
 class PurchaseShipment(models.Model):
@@ -342,7 +366,7 @@ class PurchaseShipment(models.Model):
     reference = fields.Char(string="Reference")
     description = fields.Char(string="Description")
     status = fields.Selection([('sent', 'Sent'), ('received', 'Received'), ('delivered', 'Delivered'),
-                            ('cancel', 'Canceled')],
+                               ('cancel', 'Canceled')],
                               string='Status')
     type = fields.Selection([('sample_customer', 'Receive sample from customer'),
                              ('sample_vendor', 'Sent sample to vendor'),
@@ -367,4 +391,3 @@ class ShippingCompany(models.Model):
     _description = 'Shipping Company'
 
     name = fields.Char("Name", required=True)
-

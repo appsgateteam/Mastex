@@ -16,6 +16,12 @@
                 <field name="name" readonly="True" attrs="{'invisible':[('reference', '!=', False)]}"/>
                 <field name="reference" readonly="1"/>
             </xpath>
+            <xpath expr="//field[@name='amount_untaxed']" position="attributes">
+                <attribute name="string">Total</attribute>
+            </xpath>
+            <xpath expr="//field[@name='amount_total']" position="attributes">
+                <attribute name="string">Grand Total</attribute>
+            </xpath>
         </field>
     </record>
 </odoo>
