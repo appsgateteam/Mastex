@@ -12,6 +12,7 @@
                     <newline/>
                     <field name="reconciled"/>
                     <newline/>
+                    <field name="partner_ids" widget="many2many_tags" options="{'no_create': True}"/>
                 </xpath>
             </data>
         </field>

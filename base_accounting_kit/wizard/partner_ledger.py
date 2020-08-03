@@ -32,10 +32,12 @@ class AccountPartnerLedger(models.TransientModel):
                                      help="It adds the currency column on report if the "
                                           "currency differs from the company currency.")
     reconciled = fields.Boolean('Reconciled Entries')
+    partner_ids = fields.Many2many('res.partner', string="Partner Filter")
 
     def _print_report(self, data):
         data = self.pre_print_report(data)
         data['form'].update({'reconciled': self.reconciled,
+                             'partner_ids': self.partner_ids.ids,
                              'amount_currency': self.amount_currency})
         return self.env.ref(
             'base_accounting_kit.action_report_partnerledger').report_action(

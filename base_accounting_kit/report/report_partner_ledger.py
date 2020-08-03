@@ -60,12 +60,16 @@ class ReportPartnerLedger(models.AbstractModel):
         lang_id = lang._lang_get(lang_code)
         date_format = lang_id.date_format
         for r in res:
+            print(r)
             r['date'] = r['date']
             r['displayed_name'] = '-'.join(
                 r[field_name] for field_name in ('move_name', 'ref', 'name')
                 if r[field_name] not in (None, '', '/')
             )
             sum += r['debit'] - r['credit']
+            r['currency_rate']= False
+            if r['amount_currency']:
+                r['currency_rate'] = round(abs(r['debit'] - r['credit'])/abs(r['amount_currency']),3)
             r['progress'] = sum
             r['currency_id'] = currency.browse(r.get('currency_id'))
             full_account.append(r)
@@ -143,6 +147,8 @@ class ReportPartnerLedger(models.AbstractModel):
                 AND """ + query_get_data[1] + reconcile_clause
         self.env.cr.execute(query, tuple(params))
         partner_ids = [res['partner_id'] for res in self.env.cr.dictfetchall()]
+        if data.get('form').get('partner_ids'):
+            partner_ids = data.get('form').get('partner_ids')
         partners = obj_partner.browse(partner_ids)
         partners = sorted(partners, key=lambda x: (x.ref or '', x.name or ''))
         return {
