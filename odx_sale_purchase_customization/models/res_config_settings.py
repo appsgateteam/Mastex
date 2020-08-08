@@ -25,18 +25,18 @@ from odoo import api, fields, models
 class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
-    commission_product_id = fields.Many2one(comodel_name='product.product', string="Commission Product")
+    commission_account_id = fields.Many2one(comodel_name='account.account', string="Commission Account")
 
     @api.model
     def get_values(self):
         res = super(ResConfigSettings, self).get_values()
         params = self.env['ir.config_parameter'].sudo()
         res.update(
-            commission_product_id=int(params.get_param('odx_sale_purchase_customization.commission_product_id'))
+            commission_account_id=int(params.get_param('odx_sale_purchase_customization.commission_account_id'))
         )
         return res
 
     def set_values(self):
         super(ResConfigSettings, self).set_values()
-        self.env['ir.config_parameter'].sudo().set_param("odx_sale_purchase_customization.commission_product_id",
-                                                         self.commission_product_id.id)
+        self.env['ir.config_parameter'].sudo().set_param("odx_sale_purchase_customization.commission_account_id",
+                                                         self.commission_account_id.id)

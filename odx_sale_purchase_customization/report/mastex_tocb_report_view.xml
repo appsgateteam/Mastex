@@ -26,7 +26,7 @@
         </field>
     </record>
     <record id="action_tocb_report_all" model="ir.actions.act_window">
-        <field name="name">MASTEX TOCB</field>
+        <field name="name">MASTEX Report</field>
         <field name="res_model">tocb.report</field>
         <field name="view_mode">tree,graph</field>
         <field name="view_id"></field>  <!-- force empty -->

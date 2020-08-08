@@ -35,10 +35,10 @@
                                 </th>
                                 <td>
                                     <t t-if="o.partner_id">
-                                        <span t-if="o.partner_id.title" t-field="o.partner_id.title"></span>
+                                        <span t-if="o.partner_id.title" t-field="o.partner_id.title"/>
                                         <t t-if="o.partner_id.title">&#160;:&#160;</t>
                                         <span t-field="o.partner_id"/>&#160;&#160;
-                                        <span t-if="o.partner_id.state_id" t-field="o.partner_id.state_id"></span>
+                                        <span t-if="o.partner_id.state_id" t-field="o.partner_id.state_id"/>
                                         <t t-if="o.partner_id.state_id">&#160;-&#160;</t>
                                         <span t-if="o.partner_id.country_id" t-field="o.partner_id.country_id">-</span>
                                     </t>
@@ -50,10 +50,10 @@
                                 </th>
                                 <td>
                                     <t t-if="o.vendor_id">
-                                        <span t-if="o.vendor_id.title" t-field="o.vendor_id.title"></span>
+                                        <span t-if="o.vendor_id.title" t-field="o.vendor_id.title"/>
                                         <t t-if="o.vendor_id.title">&#160;:&#160;</t>
                                         <span t-field="o.vendor_id"/>&#160;&#160;
-                                        <span t-if="o.vendor_id.state_id" t-field="o.vendor_id.state_id"></span>
+                                        <span t-if="o.vendor_id.state_id" t-field="o.vendor_id.state_id"/>
                                         <t t-if="o.vendor_id.state_id">&#160;-&#160;</t>
                                         <span t-if="o.vendor_id.country_id" t-field="o.vendor_id.country_id">-</span>
                                     </t>
@@ -73,7 +73,8 @@
                                 <tr>
                                     <th name="th_description" class="text-left">Quality</th>
                                     <th name="th_priceunit" class="text-right">Quantity</th>
-                                    <th name="th_quantity" class="text-right">Price</th>
+                                    <th name="th_productuom" class="text-right">UoM</th>
+                                    <th name="th_quantity" class="text-right">Price in ($)</th>
                                     <th name="th_priceunit" class="text-right">Amount</th>
                                 </tr>
                             </thead>
@@ -86,6 +87,10 @@
                                         <td name="td_quantity" class="text-right">
                                             <span t-field="line.product_uom_qty"/>
                                         </td>
+                                        <td name="td_quantity" class="text-right">
+                                            <span t-field="line.product_uom"/>
+                                        </td>
+
                                         <td name="td_quantity" class="text-right">
                                             <span t-field="line.price_unit"/>
                                         </td>
@@ -185,7 +190,6 @@
                                 <span>Accepted By Buyer</span>
                             </div>
                             <div class="col-4">
-<!--                                <span t-field="o.partner_id"/>-->
                             </div>
                             <div class="col-4">
                                 <span>For Almsari &amp; Alsaudi Trading

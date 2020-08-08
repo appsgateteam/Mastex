@@ -48,8 +48,18 @@ class SaleOrder(models.Model):
     insurance_id = fields.Many2one(comodel_name='res.insurance', string="Insurance")
     destination_id = fields.Many2one(comodel_name='res.destination', string='Destination')
     marks = fields.Char(string="Marks")
+
     attachment_ids = fields.One2many('ir.attachment', 'sale_id', string='Attachment')
     attachment_count = fields.Integer(compute='_compute_attachment_count')
+    actual_grand_total = fields.Float(string="Actual Grand Total", compute='_compute_grand_total')
+
+    @api.depends('order_line')
+    def _compute_grand_total(self):
+        grand_total = 0
+        for record in self:
+            for line in self.order_line:
+                grand_total = grand_total + line.actual_net_amount
+            record.actual_grand_total = grand_total
 
     @api.onchange('colour_instructions')
     def _onchange_colour_instructions(self):
@@ -85,7 +95,6 @@ class SaleOrder(models.Model):
     def _onchange_notes(self):
         if self.purchase_order_id:
             self.purchase_order_id.notes = self.notes
-
 
     @api.onchange('shipment_date')
     def _onchange_shipment_date(self):
@@ -159,7 +168,7 @@ class SaleOrder(models.Model):
                     "shipping_mark": record.shipping_mark,
                     "shipping_sample_book": record.shipping_sample_book,
                     "notes": record.notes,
-                    "marks":record.marks,
+                    "marks": record.marks,
                     "shipment_date": record.shipment_date,
                     "destination_id": record.destination_id.id,
                     "currency_id": record.currency_id.id,
@@ -196,24 +205,39 @@ class SaleOrder(models.Model):
         :param values:
         :return: new record id
         """
-        # code = ''
-        # if values['partner_id']:
-        #     customer = self.env['res.partner'].browse(values['partner_id'])
-        #     if customer:
-        #         if customer:
-        #             code = customer.customer_code
 
         if values.get('name', _('New')) == _('New'):
             # values['name'] = self.env['ir.sequence'].next_by_code('sale.delivery')
             values['name'] = self.env['ir.sequence'].next_by_code('order.reference',
                                                                   None) or _('New')
-            values['marks'] = values['name']
+            # values['marks'] = values['name']
+        customer_code = ''
+        if values.get('partner_id'):
+            customer = self.env['res.partner'].browse(values.get('partner_id'))
+            customer_code = customer.customer_code
+        if values.get('marks'):
+            marks_field = values.get('marks')
+        else:
+            marks_field = ' '
+
+        values['marks'] = '%s %s %s' % (marks_field, customer_code, values['name'])
+
         return super(SaleOrder, self).create(values)
 
     def _prepare_invoice(self):
         res = super(SaleOrder, self)._prepare_invoice()
         res['reference'] = self.name
+        res['sale_id'] = self.id
         res['ref'] = self.name
+        return res
+
+    def create_invoices(self):
+        self._create_invoices(self)
+        return self.action_view_invoice()
+
+    def _create_invoices(self, grouped=False, final=False):
+        res = super(SaleOrder, self)._create_invoices()
+        res.action_post()
         return res
 
 
@@ -221,13 +245,19 @@ class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
     actual_qty = fields.Float(string='Actual Quantity', required=True
-                              , default=0.0,copy=False)
+                              , default=0.0, copy=False)
     purchase_order_line_id = fields.Many2one("purchase.order.line", string='Purchase Order Line')
+    actual_net_amount = fields.Float(string='Actual NetAmount', compute='_compute_actual_net')
 
     def _prepare_invoice_line(self):
         res = super(SaleOrderLine, self)._prepare_invoice_line()
         res.update({'quantity': self.actual_qty})
         return res
+
+    @api.depends('actual_qty', 'price_unit')
+    def _compute_actual_net(self):
+        for record in self:
+            record.actual_net_amount = record.actual_qty * record.price_unit
 
     @api.onchange('actual_qty')
     def _onchange_actual_qty(self):
@@ -285,13 +315,6 @@ class SaleOrderLine(models.Model):
             else:
                 line.qty_to_invoice = 0
 
-    # def unlink(self):
-    #     if self.order_id:
-    #         print('aaaaaaaaaaaa')
-    #         if self.order_id.state == "sale":
-    #             raise UserError(_("You can not remove an order line once the sales order is confirmed."))
-    #     return  super(SaleOrderLine, self).unlink()
-    #
     @api.model
     def create(self, vals):
         if vals['order_id']:
@@ -320,7 +343,8 @@ class ResDestination(models.Model):
 
     name = fields.Char("Name", required=True)
 
-# class ResPayments(models.Model):
-#     _name = 'res.payments'
-#
-#     name = fields.Char("Name", required=True)
+
+class ResCurrency(models.Model):
+    _inherit = "res.currency"
+    _description = "Currency"
+    name = fields.Char("Currency", size=6)

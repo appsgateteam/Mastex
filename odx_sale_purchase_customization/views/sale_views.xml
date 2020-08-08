@@ -7,6 +7,26 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//form/header/button[@name='action_quotation_send']" position="replace">
+                    <button name="action_quotation_send" string="Send by Email" type="object" states="draft" class="btn"/>
+                </xpath>
+                <xpath expr="//form/header/button[@name='action_confirm'][2]" position="replace">
+
+                    <button name="action_confirm" string="Confirm" class="oe_highlight" type="object"
+                            attrs="{'invisible': [('state', 'not in', ['draft'])]}"/>
+                 </xpath>
+
+                 <xpath expr="//form/header/button[4]" position="replace">
+                     <button name="create_invoices" string="Create Invoice" class="oe_highlight" type="object"
+                        attrs="{'invisible': [('invoice_status', '!=', 'to invoice')]}"/>
+                </xpath>
+                <xpath expr="//form/header/button[3]" position="replace">
+                     <button name="create_invoices" string="Create Invoice" class="oe_highlight" type="object"
+                             attrs="{'invisible': ['|',('invoice_status', '!=', 'no'), ('state', '!=', 'sale')]}"/>
+                </xpath>
+
+
+
                 <xpath expr="//sheet/div[@name='button_box']" position="inside">
                     <button name="photos" type="object" class="oe_stat_button" icon="fa-picture-o">
                         <field name="attachment_ids" invisible="1"/>
@@ -32,7 +52,7 @@
                             <field name="partner_shipping_id" groups="sale.group_delivery_invoice_address"
                                    context="{'default_type':'delivery'}" options="{&quot;always_reload&quot;: True}"/>
 
-                            <field name="validity_date" attrs="{'invisible': [('state', 'in', ['sale', 'done'])]}"/>
+                            <field name="validity_date" invisible="1" attrs="{'invisible': [('state', 'in', ['sale', 'done'])]}"/>
                             <div class="o_td_label" groups="base.group_no_one"
                                  attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}">
                                 <label for="date_order" string="Quotation Date"/>
@@ -63,33 +83,9 @@
                                        class="oe_inline"/>
                             </div>
                             <field name="insurance_id" attrs="{'readonly':[('state', 'in', 'done')]}"/>
-                            <!--                            <field name="payment" attrs="{'readonly':[('state', 'in', 'done')]}"/>-->
                             <field name="marks" attrs="{'readonly':[('state', 'in', 'done')]}"/>
                         </group>
                     </group>
-                    <!--                    <group>-->
-                    <!--                        <field name="vendor_id" widget="res_partner_many2one"-->
-                    <!--                               context="{'res_partner_search_mode': 'supplier', 'show_vat': True}"-->
-                    <!--                               placeholder="Name, TIN, Email, or Reference"-->
-                    <!--                               attrs="{'readonly': [('state', 'not in', ('draft', 'sent'))],'required': True}"-->
-                    <!--                               domain="[('supplier_rank','=',1)]"/>-->
-                    <!--                        <field name="purchase_order_id" readonly="1"/>-->
-                    <!--                        -->
-                    <!--                    </group>-->
-                    <!--                    <group>-->
-                    <!--                        <label for="shipment_date" string="Shipment"/>-->
-                    <!--                        <div>-->
-                    <!--                            <field name="shipment_date" class="oe_inline"-->
-                    <!--                                   attrs="{'readonly':[('state', 'in', 'done')]}"/>- -->
-                    <!--                            <field name="destination_id" attrs="{'readonly':[('state', 'in', 'done')]}"-->
-                    <!--                                   class="oe_inline"/>-->
-                    <!--                        </div>-->
-                    <!--                    </group>-->
-                    <!--                    <group>-->
-                    <!--                        <field name="insurance_id" attrs="{'readonly':[('state', 'in', 'done')]}"/>-->
-                    <!--                        <field name="payment" attrs="{'readonly':[('state', 'in', 'done')]}"/>-->
-                    <!--                        <field name="marks" attrs="{'readonly':[('state', 'in', 'done')]}"/>-->
-                    <!--                    </group>-->
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="attributes">
                     <attribute name="domain">[('customer_rank','=',1)]</attribute>
@@ -207,6 +203,7 @@
                                         }"
                                 optional="show" invisible="1"
                         />
+
                         <field name="qty_delivered_manual" invisible="1"/>
                         <field name="qty_delivered_method" invisible="1"/>
                         <field
@@ -250,6 +247,7 @@
                         <field name="discount" string="Commission %" groups="product.group_discount_per_so_line"
                                optional="show"
                                attrs="{'readonly': [('parent.state', 'not in', ['draft', 'sent'])]}"/>
+                        <field name="actual_net_amount"/>
                         <field name="price_subtotal" widget="monetary"
                                groups="account.group_show_line_subtotals_tax_excluded"/>
                         <field name="price_total" widget="monetary"
@@ -272,6 +270,13 @@
                 </xpath>
                 <xpath expr="//field[@name='amount_untaxed']" position="attributes">
                     <attribute name="invisible">1</attribute>
+                </xpath>
+                 <xpath expr="//group[@name='sale_total']/div/label" position="attributes">
+                    <attribute name="string">Planned Grand Total</attribute>
+                </xpath>
+                <xpath expr="//field[@name='amount_total']" position="after">
+
+                    <field name="actual_grand_total" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                 </xpath>
             </field>
         </record>

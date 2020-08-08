@@ -12,5 +12,6 @@
             menu="True"
             print_report_name="'Instruction Sheet - %s' % (object.name)"
         />
+
     </data>
 </odoo>

@@ -32,8 +32,8 @@
                                         <t t-foreach="o.order_line" t-as="line">
                                             <t t-set="qty" t-value="qty+line.product_uom_qty"/>
                                         </t>
-                                        <span t-esc="qty"/>&#160;&#160;
-                                        <span t-if="o.order_line"
+                                         <span t-esc="qty"/>&#160;&#160;
+                                         <span t-if="o.order_line"
                                               t-field="o.order_line[0].product_uom"/>
                                     </td>
                                 </tr>
@@ -42,7 +42,7 @@
                                         <u>Item Details</u>
                                     </th>
                                     <td>
-                                        <t t-foreach="o.order_line" t-as="line">
+                                      <t t-foreach="o.order_line" t-as="line">
                                             <span t-field="line.name"/>/
                                         </t>
                                     </td>
@@ -105,6 +105,7 @@
                                 <u>Notes:</u>
                             </span>
                             <p style="padding-left:10px" t-field="o.notes"/>
+
                         </div>
                     </t>
                 </t>

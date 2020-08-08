@@ -60,17 +60,17 @@ class ReportPartnerLedger(models.AbstractModel):
         lang_id = lang._lang_get(lang_code)
         date_format = lang_id.date_format
         for r in res:
-            print(r)
             r['date'] = r['date']
             r['displayed_name'] = '-'.join(
                 r[field_name] for field_name in ('move_name', 'ref', 'name')
                 if r[field_name] not in (None, '', '/')
             )
             sum += r['debit'] - r['credit']
-            r['currency_rate']= False
+            r['currency_rate'] = False
             if r['amount_currency']:
-                r['currency_rate'] = round(abs(r['debit'] - r['credit'])/abs(r['amount_currency']),3)
+                r['currency_rate'] = round(abs(r['debit'] - r['credit']) / abs(r['amount_currency']), 3)
             r['progress'] = sum
+            r['progress_currency'] = sum * r['currency_rate']
             r['currency_id'] = currency.browse(r.get('currency_id'))
             full_account.append(r)
         return full_account

@@ -35,7 +35,7 @@ class TocbReport(models.Model):
     vendor_total = fields.Float('Vendor Total', readonly=True)
     customer_total = fields.Float('Customer Total', readonly=True)
     # customer_total_with_rate_diffrence = fields.Float('Customer Total With rate Diffrence', readonly=True)
-    # commission = fields.Float('Commission', readonly=True)
+    commission = fields.Float('Commission', readonly=True)
     notes = fields.Char('Notes', readonly=True)
 
     def _query(self, with_clause='', fields={}, groupby='', from_clause=''):
@@ -61,6 +61,7 @@ class TocbReport(models.Model):
             partner.country_id as country_id,
             pl.price_unit as purchase_price,
             sl.price_unit as selling_price,
+            pl.commission as commission,
             po.notes as notes
         """
 
@@ -72,7 +73,7 @@ class TocbReport(models.Model):
                 join sale_order_line sl on (pl.sale_order_line_id=sl.id)
                       join purchase_order po on (pl.order_id=po.id)
                       join sale_order so on (sl.order_id=so.id)
-                      join purchase_landing_cost plc on (pl.order_id=plc.purchase_id)
+                      left outer join purchase_landing_cost plc on (pl.order_id=plc.purchase_id) 
                       join res_partner partner on po.partner_id = partner.id
                         left join product_product p on (pl.product_id=p.id)
                             left join product_template t on (p.product_tmpl_id=t.id)
@@ -100,6 +101,7 @@ class TocbReport(models.Model):
             p.product_tmpl_id,
             plc.landing_date_etd,
             plc.landing_date_eta,
+            pl.commission,
             po.notes %s
         """ % (groupby)
 

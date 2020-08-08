@@ -63,7 +63,7 @@ class PurchaseOrder(models.Model):
     # Other details
     shipment_date = fields.Date(string="Shipment Date")
     destination_id = fields.Many2one(comodel_name='res.destination', string='Destination')
-    marks = fields.Char(string="Marks", )
+    marks = fields.Char(string="Marks")
 
     # Shipment details
     is_sample_customer = fields.Boolean(string='Sample received from customer')
@@ -75,6 +75,16 @@ class PurchaseOrder(models.Model):
     # attachments
     attachment_ids = fields.One2many('ir.attachment', 'purchase_id', string='Attachment', copy=False)
     attachment_count = fields.Integer(compute='_compute_attachment_count')
+    actual_grand_total = fields.Float(string="Actual Grand Total", compute='_compute_grand_total')
+
+    @api.depends('order_line')
+    def _compute_grand_total(self):
+        grand_total = 0
+        for record in self:
+
+            for line in self.order_line:
+                grand_total = grand_total + line.actual_net_amount
+            record.actual_grand_total = grand_total
 
     @api.onchange('colour_instructions')
     def _onchange_colour_instructions(self):
@@ -120,7 +130,6 @@ class PurchaseOrder(models.Model):
     def _onchange_destination_id(self):
         if self.sale_order_id and self.destination_id:
             self.sale_order_id.destination_id = self.destination_id.id
-
 
     def photos(self):
         return {
@@ -239,7 +248,8 @@ class PurchaseOrder(models.Model):
 
     def action_view_invoice(self):
         res = super(PurchaseOrder, self).action_view_invoice()
-        res['context'].update({'default_ref': self.name})
+        res['context'].update({'default_ref': self.name, 'default_purchase_order_id': self.id},
+                              )
         return res
 
     @api.model
@@ -253,6 +263,16 @@ class PurchaseOrder(models.Model):
             values['name'] = self.env['ir.sequence'].next_by_code('order.reference',
                                                                   None) or _('New')
             values['marks'] = values['name']
+            customer_code = ''
+            if values.get('customer_id'):
+                customer = self.env['res.partner'].browse(values.get('customer_id'))
+                customer_code = customer.customer_code
+            if values.get('marks'):
+                marks_field = values.get('marks')
+            else:
+                marks_field = ' '
+
+            values['marks'] = '%s %s %s' % (marks_field, customer_code, values['name'])
         return super(PurchaseOrder, self).create(values)
 
 
@@ -263,6 +283,8 @@ class PurchaseOrderLine(models.Model):
                               , default=0.0, copy=False)
     sale_order_line_id = fields.Many2one("sale.order.line", string='Sale Order Line')
     commission = fields.Float('Commission %')
+    actual_net_amount = fields.Float(string='Actual NetAmount', compute='_compute_actual_net')
+    actual_com_amount = fields.Float("Actual Com.Amount", compute='_compute_actual_com')
     total = fields.Float("Total", compute='_compute_amount')
     com_amount = fields.Float("Com.Amount", compute='_compute_amount')
     price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', store=True)
@@ -283,21 +305,31 @@ class PurchaseOrderLine(models.Model):
                 'price_tax': sum(t.get('amount', 0.0) for t in taxes.get('taxes', [])),
                 'price_total': taxes['total_included'],
                 'total': taxes['total_excluded'],
-                'com_amount': (taxes['total_excluded'] * line.commission)/100,
-                'price_subtotal': taxes['total_excluded'] - ((taxes['total_excluded'] * line.commission)/100),
+                'com_amount': (taxes['total_excluded'] * line.commission) / 100,
+                'price_subtotal': taxes['total_excluded'] - ((taxes['total_excluded'] * line.commission) / 100),
 
             })
 
-
-    @api.depends('commission', 'total', 'product_qty', 'price_unit')
-    def _compute_commission(self):
+    @api.depends('actual_qty', 'price_unit', 'commission')
+    def _compute_actual_com(self):
         for record in self:
-            record.total = record.product_qty * record.price_unit
-            record.com_amount = (record.total * record.commission) / 100
+            total = record.actual_qty * record.price_unit
+            record.actual_com_amount = (total * record.commission) / 100
+
+    @api.depends('actual_qty', 'price_unit', 'commission')
+    def _compute_actual_net(self):
+        for record in self:
+            total = record.actual_qty * record.price_unit
+            record.actual_net_amount = record.actual_qty * record.price_unit - ((total * record.commission) / 100)
 
     def _prepare_account_move_line(self, move):
         res = super(PurchaseOrderLine, self)._prepare_account_move_line(move)
-        res.update({'quantity': self.actual_qty})
+
+        res.update({'quantity': self.actual_qty,
+                    'commission': self.commission,
+                    'com_amount': self.actual_com_amount,
+                    'total': self.actual_net_amount,
+                    })
         return res
 
     @api.onchange('actual_qty')
@@ -347,6 +379,12 @@ class LandingCost(models.Model):
             else:
                 self.status = 'in_transit'
 
+    @api.onchange('landing_date_eta')
+    def _onchange_landing_date_eta(self):
+        if self.landing_date_eta:
+            if self.landing_date_eta < date.today():
+                self.status = 'discharged'
+
     def update_status(self):
         laddings = self.search([('status', '!=', 'discharged')])
         for ladding in laddings:
@@ -362,8 +400,6 @@ class PurchaseShipment(models.Model):
     shipment_from = fields.Many2one(comodel_name='shipment.destination', string="Shipment From")
     from_date = fields.Date(string='Dispatch Date', copy=False, default=fields.Date.today(), store=True)
     to_date = fields.Date(string='Expected Delivery Date', copy=False, store=True)
-    # dispatch_date = fields.Date(string='Dispatch date Date', copy=False, store=True)
-
     reference = fields.Char(string="Reference")
     description = fields.Char(string="Description")
     status = fields.Selection([('sent', 'Sent'), ('received', 'Received'), ('delivered', 'Delivered'),

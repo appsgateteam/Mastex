@@ -172,10 +172,11 @@
                                attrs="{'readonly': [('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}"
                                invisible="1"/>
                         <field name="commission"/>
-                        <field name="total"/>
-                        <field name="com_amount"/>
-
-                        <field name="price_subtotal" widget="monetary"/>
+                        <field name="total" sum="Total"/>
+                        <field name="com_amount" sum="Pl Com.Amt"/>
+                        <field name="actual_com_amount" sum="Act Com.Amt"/>
+                        <field name="price_subtotal" widget="monetary" string="Net Amount"/>
+                        <field name="actual_net_amount"/>
                     </tree>
                 </xpath>
                 <xpath expr="//field[@name='amount_tax']" position="attributes">
@@ -183,13 +184,18 @@
                 </xpath>
                 <xpath expr="//field[@name='amount_untaxed']" position="attributes">
                     <attribute name="string">Total</attribute>
+                    <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//label[@for='amount_total']" position="attributes">
-                    <attribute name="string">Grand Total</attribute>
+                    <attribute name="string">Planned Grand Total</attribute>
                 </xpath>
 
-                <xpath expr="//notebook/page[1]/group/field[@name='amount_tax']" position="after">
-                    <field name="total_commission" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+
+<!--                <xpath expr="//notebook/page[1]/group/field[@name='amount_tax']" position="after">-->
+<!--                    <field name="total_commission" widget="monetary" options="{'currency_field': 'currency_id'}"/>-->
+<!--                </xpath>-->
+                <xpath expr="//notebook/page[1]/group/field[@name='amount_total']" position="after">
+                    <field name="actual_grand_total" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                 </xpath>
 
             </field>

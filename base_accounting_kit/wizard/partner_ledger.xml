@@ -12,7 +12,14 @@
                     <newline/>
                     <field name="reconciled"/>
                     <newline/>
-                    <field name="partner_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                </xpath>
+                <xpath expr="//group[1]" position="after">
+                    <group>
+                        <field name="partner_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='journal_ids']" position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </xpath>
             </data>
         </field>

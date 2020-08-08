@@ -43,6 +43,7 @@
                                 <th>Balance</th>
                                 <th t-if="data['form']['amount_currency']">Currency Rate</th>
                                 <th t-if="data['form']['amount_currency']">Amount in USD</th>
+                                <th t-if="data['form']['amount_currency']">Balance in USD</th>
                             </tr>
                         </thead>
                         <t t-foreach="docs" t-as="o">
@@ -95,7 +96,6 @@
                                         <t t-if="line['currency_id']">
                                             <span t-esc="line['currency_rate']" t-options=""/>
                                         </t>
-
                                     </td>
                                     <td class="text-right" t-if="data['form']['amount_currency']">
                                         <t t-if="line['currency_id']">
@@ -103,6 +103,13 @@
                                                   t-options="{'widget': 'monetary', 'display_currency': line['currency_id']}"/>
                                         </t>
                                     </td>
+                                    <td class="text-right" t-if="data['form']['amount_currency']">
+                                        <t t-if="line['currency_id']">
+                                            <span t-esc="line['progress_currency']"
+                                                  t-options="{'widget': 'monetary', 'display_currency': line['currency_id']}"/>
+                                        </t>
+                                    </td>
+
                                 </tr>
                             </tbody>
                         </t>
