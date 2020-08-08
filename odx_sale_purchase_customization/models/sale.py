@@ -208,7 +208,7 @@ class SaleOrder(models.Model):
 
         if values.get('name', _('New')) == _('New'):
             # values['name'] = self.env['ir.sequence'].next_by_code('sale.delivery')
-            values['name'] = self.env['ir.sequence'].next_by_code('order.reference',
+            values['name'] = 'SO ' + self.env['ir.sequence'].next_by_code('order.reference',
                                                                   None) or _('New')
             # values['marks'] = values['name']
         customer_code = ''
@@ -220,7 +220,7 @@ class SaleOrder(models.Model):
         else:
             marks_field = ' '
 
-        values['marks'] = '%s %s %s' % (marks_field, customer_code, values['name'])
+        values['marks'] = '%s %s %s' % (customer_code, values['name'], marks_field)
 
         return super(SaleOrder, self).create(values)
 

@@ -142,7 +142,7 @@
                         <field name="analytic_tag_ids" optional="hide" groups="analytic.group_analytic_tags"
                                widget="many2many_tags" options="{'color_field': 'color'}"
                                domain="['|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"/>
-                        <field name="product_qty" string="Contract Quantity"
+                        <field name="product_qty" string="Quantity"
                                attrs="{'readonly': [('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}"
                                sum="Quantity"/>
                         <field name="actual_qty"
@@ -154,7 +154,7 @@
                         <field name="qty_received" string="Received" invisible="1"
                                attrs="{'column_invisible': [('parent.state', 'not in', ('purchase', 'done'))], 'readonly': [('qty_received_method', '!=', 'manual')]}"
                                optional="show"/>
-                        <field name="qty_invoiced" string="Billed"
+                        <field name="qty_invoiced" string="Billed Qty"
                                attrs="{'column_invisible': [('parent.state', 'not in', ('purchase', 'done'))]}"
                                optional="show"/>
                         <field name="product_uom" width=".25" string="UoM" groups="uom.group_uom"
@@ -173,10 +173,10 @@
                                invisible="1"/>
                         <field name="commission"/>
                         <field name="total" sum="Total"/>
-                        <field name="com_amount" sum="Pl Com.Amt"/>
-                        <field name="actual_com_amount" sum="Act Com.Amt"/>
-                        <field name="price_subtotal" widget="monetary" string="Net Amount"/>
-                        <field name="actual_net_amount"/>
+                        <field name="com_amount" string="Comm Amt" sum="Planned Commission Amount"/>
+                        <field name="actual_com_amount" string="Act. Comm. Amt" sum="Actual Commission Amount"/>
+                        <field name="price_subtotal" widget="monetary" string="Net Total"/>
+                        <field name="actual_net_amount" string="Act. Net Total"/>
                     </tree>
                 </xpath>
                 <xpath expr="//field[@name='amount_tax']" position="attributes">

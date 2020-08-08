@@ -73,7 +73,7 @@
                                    context="{'res_partner_search_mode': 'supplier', 'show_vat': True}"
                                    placeholder="Name, TIN, Email, or Reference"
                                    attrs="{'readonly': [('state', 'not in', ('draft', 'sent'))],'required': True}"
-                                   domain="[('supplier_rank','=',1)]"/>
+                                   domain="[('supplier_rank','>=',1)]"/>
                             <field name="purchase_order_id" readonly="1"/>
                             <label for="shipment_date" string="Shipment"/>
                             <div>
@@ -247,11 +247,12 @@
                         <field name="discount" string="Commission %" groups="product.group_discount_per_so_line"
                                optional="show"
                                attrs="{'readonly': [('parent.state', 'not in', ['draft', 'sent'])]}"/>
-                        <field name="actual_net_amount"/>
                         <field name="price_subtotal" widget="monetary"
                                groups="account.group_show_line_subtotals_tax_excluded"/>
                         <field name="price_total" widget="monetary"
                                groups="account.group_show_line_subtotals_tax_included"/>
+                        <field name="actual_net_amount" string="Actual Total"/>
+
                         <field name="state" invisible="1"/>
                         <field name="invoice_status" invisible="1"/>
                         <field name="currency_id" invisible="1"/>

@@ -260,7 +260,7 @@ class PurchaseOrder(models.Model):
         :return: new record id
         """
         if values.get('name', _('New')) == _('New'):
-            values['name'] = self.env['ir.sequence'].next_by_code('order.reference',
+            values['name'] = 'PO ' + self.env['ir.sequence'].next_by_code('order.reference',
                                                                   None) or _('New')
             values['marks'] = values['name']
             customer_code = ''
@@ -272,7 +272,7 @@ class PurchaseOrder(models.Model):
             else:
                 marks_field = ' '
 
-            values['marks'] = '%s %s %s' % (marks_field, customer_code, values['name'])
+            values['marks'] = '%s %s %s' % (customer_code, values['name'], marks_field)
         return super(PurchaseOrder, self).create(values)
 
 
