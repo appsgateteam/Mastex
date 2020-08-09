@@ -74,7 +74,7 @@
                                     <th name="th_description" class="text-left">Quality</th>
                                     <th name="th_priceunit" class="text-right">Quantity</th>
                                     <th name="th_productuom" class="text-right">UoM</th>
-                                    <th name="th_quantity" class="text-right">Price in ($)</th>
+                                    <th name="th_quantity" class="text-right">Price</th>
                                     <th name="th_priceunit" class="text-right">Amount</th>
                                 </tr>
                             </thead>
@@ -92,7 +92,7 @@
                                         </td>
 
                                         <td name="td_quantity" class="text-right">
-                                            <span t-field="line.price_unit"/>
+                                            <span t-field="line.price_unit" /> <t t-esc="o.currency_id.symbol"/>
                                         </td>
                                         <td name="td_quantity" class="text-right">
                                             <span t-field="line.price_subtotal"/>

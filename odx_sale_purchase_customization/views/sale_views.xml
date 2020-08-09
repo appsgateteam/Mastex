@@ -244,7 +244,7 @@
                                 optional="show"
                                 invisible="1"
                         />
-                        <field name="discount" string="Commission %" groups="product.group_discount_per_so_line"
+                        <field name="discount" string="Disc %" groups="product.group_discount_per_so_line"
                                optional="show"
                                attrs="{'readonly': [('parent.state', 'not in', ['draft', 'sent'])]}"/>
                         <field name="price_subtotal" widget="monetary"
@@ -276,8 +276,13 @@
                     <attribute name="string">Planned Grand Total</attribute>
                 </xpath>
                 <xpath expr="//field[@name='amount_total']" position="after">
-
-                    <field name="actual_grand_total" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <div class="oe_subtotal_footer oe_inline">
+                        <label for="actual_grand_total"/>
+                    </div>
+                    <field name="actual_grand_total" readonly="1" class="oe_subtotal_footer_separator"
+                           widget="monetary"
+                           nolabel="1"
+                           options="{'currency_field': 'currency_id'}"/>
                 </xpath>
             </field>
         </record>

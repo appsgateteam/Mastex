@@ -189,17 +189,19 @@
                 <xpath expr="//label[@for='amount_total']" position="attributes">
                     <attribute name="string">Planned Grand Total</attribute>
                 </xpath>
-
-
-<!--                <xpath expr="//notebook/page[1]/group/field[@name='amount_tax']" position="after">-->
-<!--                    <field name="total_commission" widget="monetary" options="{'currency_field': 'currency_id'}"/>-->
-<!--                </xpath>-->
                 <xpath expr="//notebook/page[1]/group/field[@name='amount_total']" position="after">
-                    <field name="actual_grand_total" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <div class="oe_subtotal_footer oe_inline">
+                        <label for="actual_grand_total"/>
+                    </div>
+                    <field name="actual_grand_total" readonly="1" class="oe_subtotal_footer_separator"
+                           widget="monetary"
+                           nolabel="1"
+                           options="{'currency_field': 'currency_id'}"/>
                 </xpath>
-
             </field>
         </record>
+
+
         <record id="purchase_order_tree_inherit" model="ir.ui.view">
             <field name="name">odox.purchase.order.tree.inherit</field>
             <field name="model">purchase.order</field>

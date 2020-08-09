@@ -208,7 +208,7 @@ class SaleOrder(models.Model):
 
         if values.get('name', _('New')) == _('New'):
             # values['name'] = self.env['ir.sequence'].next_by_code('sale.delivery')
-            values['name'] = 'SO ' + self.env['ir.sequence'].next_by_code('order.reference',
+            values['name'] = self.env['ir.sequence'].next_by_code('order.reference',
                                                                   None) or _('New')
             # values['marks'] = values['name']
         customer_code = ''
@@ -223,6 +223,14 @@ class SaleOrder(models.Model):
         values['marks'] = '%s %s %s' % (customer_code, values['name'], marks_field)
 
         return super(SaleOrder, self).create(values)
+
+    def name_get(self):
+        """adding SO to the name"""
+        result = []
+        for r in self:
+            result.append((r.id, u"%s %s" % ('SO', r.name)))
+        return result
+
 
     def _prepare_invoice(self):
         res = super(SaleOrder, self)._prepare_invoice()
