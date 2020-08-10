@@ -81,20 +81,20 @@
                             <tbody>
                                 <t t-foreach="o.order_line" t-as="line">
                                     <tr>
-                                        <td name="td_quantity" class="text-left">
+                                        <td name="td_name" class="text-left">
                                             <span t-field="line.name"/>
                                         </td>
                                         <td name="td_quantity" class="text-right">
                                             <span t-field="line.product_uom_qty"/>
                                         </td>
-                                        <td name="td_quantity" class="text-right">
+                                        <td name="td_uom" class="text-right">
                                             <span t-field="line.product_uom"/>
                                         </td>
 
-                                        <td name="td_quantity" class="text-right">
-                                            <span t-field="line.price_unit" /> <t t-esc="o.currency_id.symbol"/>
+                                        <td name="td_unit_price" class="text-right">
+                                           <t t-esc="o.currency_id.symbol"/> &#160;&#160;<span t-field="line.price_unit" />
                                         </td>
-                                        <td name="td_quantity" class="text-right">
+                                        <td name="td_subtotal" class="text-right">
                                             <span t-field="line.price_subtotal"/>
                                         </td>
                                     </tr>

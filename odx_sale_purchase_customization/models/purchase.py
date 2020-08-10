@@ -75,16 +75,24 @@ class PurchaseOrder(models.Model):
     # attachments
     attachment_ids = fields.One2many('ir.attachment', 'purchase_id', string='Attachment', copy=False)
     attachment_count = fields.Integer(compute='_compute_attachment_count')
-    actual_grand_total = fields.Float(string="Actual Grand Total", compute='_compute_grand_total')
+    actual_grand_total = fields.Float(string="Net Total", compute='_compute_grand_total')
+    actual_total = fields.Float(string="Actual Total", compute='_compute_grand_total')
+    actual_commission = fields.Float(string="Actual Commission", compute='_compute_grand_total')
 
     @api.depends('order_line')
     def _compute_grand_total(self):
         grand_total = 0
+        actual_total = 0
+        actual_commission = 0
         for record in self:
 
             for line in self.order_line:
                 grand_total = grand_total + line.actual_net_amount
+                actual_total = actual_total +  line.actual_total_amount
+                actual_commission = actual_commission + line.actual_com_amount
             record.actual_grand_total = grand_total
+            record.actual_total = actual_total
+            record.actual_commission = actual_commission
 
     @api.onchange('colour_instructions')
     def _onchange_colour_instructions(self):
@@ -248,7 +256,8 @@ class PurchaseOrder(models.Model):
 
     def action_view_invoice(self):
         res = super(PurchaseOrder, self).action_view_invoice()
-        res['context'].update({'default_ref': self.name, 'default_purchase_order_id': self.id},
+        res['context'].update({'default_ref': self.name, 'default_purchase_order_id': self.id,
+                               'default_is_order_to_invoice':True},
                               )
         return res
 
@@ -297,6 +306,7 @@ class PurchaseOrderLine(models.Model):
     price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', store=True)
     price_total = fields.Monetary(compute='_compute_amount', string='Total', store=True)
     price_tax = fields.Float(compute='_compute_amount', string='Tax', store=True)
+    actual_total_amount = fields.Float(string='Actual Total', compute='_compute_actual_net')
 
     @api.depends('product_qty', 'price_unit', 'taxes_id', 'commission')
     def _compute_amount(self):
@@ -327,6 +337,7 @@ class PurchaseOrderLine(models.Model):
     def _compute_actual_net(self):
         for record in self:
             total = record.actual_qty * record.price_unit
+            record.actual_total_amount = total
             record.actual_net_amount = record.actual_qty * record.price_unit - ((total * record.commission) / 100)
 
     def _prepare_account_move_line(self, move):
@@ -378,19 +389,21 @@ class LandingCost(models.Model):
     reference = fields.Char(string="Reference")
     status = fields.Selection([('in_transit', 'In Transit'), ('discharged', 'Discharged')], string='Status')
 
-    @api.onchange('landing_date_etd')
+    @api.onchange('landing_date_etd','landing_date_eta')
     def _onchange_landing_date_etd(self):
-        if self.landing_date_etd:
-            if self.landing_date_etd < date.today():
-                self.status = False
-            else:
+        if self.landing_date_etd and self.landing_date_eta:
+            if not self.landing_date_etd < self.landing_date_eta:
+                raise UserError(_('ETD Cannot be greaterthan ETA '))
+            if self.landing_date_etd <= date.today() <= self.landing_date_eta:
                 self.status = 'in_transit'
 
-    @api.onchange('landing_date_eta')
-    def _onchange_landing_date_eta(self):
+        if self.landing_date_etd:
+            if date.today() < self.landing_date_etd:
+                self.status = False
         if self.landing_date_eta:
-            if self.landing_date_eta < date.today():
+            if date.today() > self.landing_date_eta:
                 self.status = 'discharged'
+
 
     def update_status(self):
         laddings = self.search([('status', '!=', 'discharged')])

@@ -16,11 +16,17 @@
              <xpath expr="//field[@name='reference']" position="after">
                 <field name="sale_id" attrs="{'invisible': [('type', 'not in', ('out_invoice', 'out_refund', 'out_receipt'))]}"/>
                 <field name="purchase_order_id" attrs="{'invisible': [('type', 'not in', ('in_invoice', 'in_refund', 'in_receipt'))]}" readonly="True"/>
+                 <field name="is_order_to_invoice" invisible="1"/>
             </xpath>
             <xpath expr="//field[@name='name']" position="replace">
                 <field name="name" readonly="True" attrs="{'invisible':[('reference', '!=', False)]}"/>
                 <field name="reference" readonly="1"/>
             </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']" position="attributes">
+                <attribute name="attrs">{'readonly': [('is_order_to_invoice', '=', True)]}</attribute>
+            </xpath>
+
+
             <xpath expr="//field[@name='amount_untaxed']" position="attributes">
                 <attribute name="string">Total</attribute>
             </xpath>

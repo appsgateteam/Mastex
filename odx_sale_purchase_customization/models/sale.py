@@ -231,12 +231,12 @@ class SaleOrder(models.Model):
             result.append((r.id, u"%s %s" % ('SO', r.name)))
         return result
 
-
     def _prepare_invoice(self):
         res = super(SaleOrder, self)._prepare_invoice()
         res['reference'] = self.name
         res['sale_id'] = self.id
         res['ref'] = self.name
+        res['is_order_to_invoice'] = True
         return res
 
     def create_invoices(self):
@@ -354,5 +354,6 @@ class ResDestination(models.Model):
 
 class ResCurrency(models.Model):
     _inherit = "res.currency"
-    _description = "Currency"
-    name = fields.Char("Currency", size=6)
+
+
+    name = fields.Char("Currency", size=8)

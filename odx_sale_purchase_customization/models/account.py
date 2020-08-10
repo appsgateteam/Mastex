@@ -132,6 +132,7 @@ class AccountMove(models.Model):
                                       track_visibility='always')
     amount_commission = fields.Monetary(string='Commission', store=True, readonly=True, compute='_compute_amount',
                                         track_visibility='always')
+    is_order_to_invoice = fields.Boolean('Order To Invoice')
 
     @api.onchange('discount_type', 'discount_rate', 'invoice_line_ids')
     def supply_rate(self):
@@ -273,7 +274,7 @@ class AccountMove(models.Model):
                 # Only synchronize one2many in onchange.
                 if invoice != invoice._origin:
                     invoice.invoice_line_ids = invoice.line_ids.filtered(lambda line: not line.exclude_from_invoice_tab)
-
+            # invoice.action_post()
 
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'

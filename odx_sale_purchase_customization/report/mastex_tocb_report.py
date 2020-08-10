@@ -69,12 +69,12 @@ class TocbReport(models.Model):
             select_ += field
 
         from_ = """
-                purchase_order_line pl
-                join sale_order_line sl on (pl.sale_order_line_id=sl.id)
-                      join purchase_order po on (pl.order_id=po.id)
-                      join sale_order so on (sl.order_id=so.id)
+                sale_order_line sl
+                left outer join purchase_order_line pl on (sl.purchase_order_line_id=pl.id)
+                      left outer join purchase_order po on (pl.order_id=po.id)
+                      left outer join sale_order so on (sl.order_id=so.id)
                       left outer join purchase_landing_cost plc on (pl.order_id=plc.purchase_id) 
-                      join res_partner partner on po.partner_id = partner.id
+                      left outer join res_partner partner on po.partner_id = partner.id
                         left join product_product p on (pl.product_id=p.id)
                             left join product_template t on (p.product_tmpl_id=t.id)
                     left join uom_uom u on (u.id=pl.product_uom)
