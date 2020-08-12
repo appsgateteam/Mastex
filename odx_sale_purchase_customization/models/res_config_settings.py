@@ -26,17 +26,35 @@ class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
     commission_account_id = fields.Many2one(comodel_name='account.account', string="Commission Account")
+    discount_account_id = fields.Many2one(comodel_name='account.account', string="Discount Account")
+    bank_fee_account_id = fields.Many2one(comodel_name='account.account', string="Bank Fee Account")
 
     @api.model
     def get_values(self):
         res = super(ResConfigSettings, self).get_values()
         params = self.env['ir.config_parameter'].sudo()
         res.update(
-            commission_account_id=int(params.get_param('odx_sale_purchase_customization.commission_account_id'))
+            commission_account_id=int(params.get_param('odx_sale_purchase_customization.commission_account_id')),
+
         )
+        res.update(
+            discount_account_id=int(params.get_param('odx_sale_purchase_customization.discount_account_id')),
+
+        )
+        res.update(
+            bank_fee_account_id=int(params.get_param('odx_sale_purchase_customization.bank_fee_account_id')),
+
+        )
+
         return res
 
     def set_values(self):
         super(ResConfigSettings, self).set_values()
         self.env['ir.config_parameter'].sudo().set_param("odx_sale_purchase_customization.commission_account_id",
                                                          self.commission_account_id.id)
+        self.env['ir.config_parameter'].sudo().set_param("odx_sale_purchase_customization.discount_account_id",
+                                                         self.discount_account_id.id)
+        self.env['ir.config_parameter'].sudo().set_param("odx_sale_purchase_customization.bank_fee_account_id",
+                                                         self.bank_fee_account_id.id)
+
+

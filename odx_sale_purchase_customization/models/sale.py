@@ -355,5 +355,4 @@ class ResDestination(models.Model):
 class ResCurrency(models.Model):
     _inherit = "res.currency"
 
-
     name = fields.Char("Currency", size=8)

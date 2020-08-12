@@ -295,18 +295,18 @@ class PurchaseOrder(models.Model):
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
 
-    actual_qty = fields.Float(string='Actual Quantity', required=True
+    actual_qty = fields.Float(string='ACTUAL QTY', required=True
                               , default=0.0, copy=False)
     sale_order_line_id = fields.Many2one("sale.order.line", string='Sale Order Line')
-    commission = fields.Float('Commission %')
-    actual_net_amount = fields.Float(string='Actual NetAmount', compute='_compute_actual_net')
-    actual_com_amount = fields.Float("Actual Com.Amount", compute='_compute_actual_com')
+    commission = fields.Float('COMMISSION %')
+    actual_net_amount = fields.Float(string='NET TOTAL', compute='_compute_actual_net')
+    actual_com_amount = fields.Float("ACTUAL COMMISSION", compute='_compute_actual_com')
     total = fields.Float("Total", compute='_compute_amount')
-    com_amount = fields.Float("Com.Amount", compute='_compute_amount')
+    com_amount = fields.Float("COM AMT", compute='_compute_amount')
     price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', store=True)
     price_total = fields.Monetary(compute='_compute_amount', string='Total', store=True)
     price_tax = fields.Float(compute='_compute_amount', string='Tax', store=True)
-    actual_total_amount = fields.Float(string='Actual Total', compute='_compute_actual_net')
+    actual_total_amount = fields.Float(string='ACTUAL TOTAL', compute='_compute_actual_net')
 
     @api.depends('product_qty', 'price_unit', 'taxes_id', 'commission')
     def _compute_amount(self):
@@ -393,7 +393,7 @@ class LandingCost(models.Model):
     def _onchange_landing_date_etd(self):
         if self.landing_date_etd and self.landing_date_eta:
             if not self.landing_date_etd < self.landing_date_eta:
-                raise UserError(_('ETD Cannot be greaterthan ETA '))
+                raise UserError(_('ETD Cannot be greater than ETA '))
             if self.landing_date_etd <= date.today() <= self.landing_date_eta:
                 self.status = 'in_transit'
 
@@ -403,7 +403,6 @@ class LandingCost(models.Model):
         if self.landing_date_eta:
             if date.today() > self.landing_date_eta:
                 self.status = 'discharged'
-
 
     def update_status(self):
         laddings = self.search([('status', '!=', 'discharged')])

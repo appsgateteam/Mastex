@@ -2,12 +2,12 @@
 <odoo>
     <data>
         <!-- Inherit Purchase Settings View to Modify it -->
-        <record id="res_config_settings_view_form_purchase_inherit" model="ir.ui.view">
+        <record id="res_config_settings_view_form_inherit" model="ir.ui.view">
             <field name="name">odox.res.config.settings.view.form.inherit.purchase</field>
             <field name="model">res.config.settings</field>
-            <field name="inherit_id" ref="purchase.res_config_settings_view_form_purchase"/>
+            <field name="inherit_id" ref="account.res_config_settings_view_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//div[@data-key='purchase']" position="inside">
+                <xpath expr="//div[@data-key='account']" position="inside">
                     <h2>Commission</h2>
                     <div class="row mt16 o_settings_container" id="bank_cash">
                         <div class="col-xs-12 col-md-6 o_setting_box">
@@ -15,11 +15,37 @@
                                 <div class="o_setting_right_pane">
                                     <label for="commission_account_id"/>
                                     <div class="text-muted">
-                                        Taken as commission account while creating vendor bill from purchase order
+                                        Taken as commission account while creating vendor bill
                                     </div>
                                     <field name="commission_account_id"/>
                                 </div>
                             </div>
+                    </div>
+                    <h2>Discount</h2>
+                    <div class="row mt16 o_settings_container" id="bank_cash">
+                        <div class="col-xs-12 col-md-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label for="discount_account_id"/>
+                                <div class="text-muted">
+                                    Taken as discount account while creating invoice
+                                </div>
+                                <field name="discount_account_id"/>
+                            </div>
+                        </div>
+                    </div>
+                    <h2>Bank Fee</h2>
+                    <div class="row mt16 o_settings_container" id="bank_cash">
+                        <div class="col-xs-12 col-md-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label for="bank_fee_account_id"/>
+                                <div class="text-muted">
+                                    Taken as Bank Fee account while creating invoice
+                                </div>
+                                <field name="bank_fee_account_id"/>
+                            </div>
+                        </div>
                     </div>
                 </xpath>
             </field>

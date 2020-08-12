@@ -18,6 +18,9 @@
                 <field name="purchase_order_id" attrs="{'invisible': [('type', 'not in', ('in_invoice', 'in_refund', 'in_receipt'))]}" readonly="True"/>
                  <field name="is_order_to_invoice" invisible="1"/>
             </xpath>
+            <xpath expr="//div[@class='d-flex']" position="after">
+                <field name="bank_charge"  attrs="{'invisible': [('type', 'not in', ('out_invoice', 'out_refund'))]}"/>
+            </xpath>
             <xpath expr="//field[@name='name']" position="replace">
                 <field name="name" readonly="True" attrs="{'invisible':[('reference', '!=', False)]}"/>
                 <field name="reference" readonly="1"/>
@@ -34,9 +37,13 @@
                 <attribute name="string">Grand Total</attribute>
             </xpath>
             <xpath expr="//field[@name='invoice_line_ids']/tree//field[@name='price_unit']" position="after">
-                <field name="commission" readonly="0" force_save="1"/>
-                <field name="com_amount" readonly="1" force_save="1"/>
+                <field name="commission" readonly="0" force_save="1"
+                       attrs="{'column_invisible': [('parent.type', 'not in', ('in_invoice', 'in_refund'))]}"/>
+                <field name="com_amount" readonly="1" force_save="1"
+                       attrs="{'column_invisible': [('parent.state', 'not in', ('purchase', 'done'))]}"/>
                 <field name="is_commission_line" invisible="1"/>
+                <field name="is_discount_line" invisible="1"/>
+                <field name="is_bank_fee_line" invisible="1"/>
             </xpath>
             <xpath expr="//field[@name='invoice_line_ids']/tree//field[@name='price_total']" position="after">
                 <field name="total" readonly="1" force_save="1" string="Net Amount"/>
@@ -45,11 +52,15 @@
                 <field name="commission" readonly="0" force_save="1"/>
                 <field name="com_amount" readonly="1" force_save="1"/>
                 <field name="is_commission_line" invisible="1"/>
+                <field name="is_discount_line" invisible="1"/>
+                <field name="is_bank_fee_line" invisible="1"/>
             </xpath>
             <xpath expr="//field[@name='line_ids']/tree//field[@name='price_unit']" position="after">
                 <field name="commission" readonly="0" force_save="1" invisible="1"/>
                 <field name="com_amount" readonly="1" force_save="1" invisible="1"/>
                 <field name="is_commission_line" invisible="1"/>
+                <field name="is_discount_line" invisible="1"/>
+                <field name="is_bank_fee_line" invisible="1"/>
             </xpath>
             <xpath expr="//field[@name='line_ids']/tree//field[@name='price_total']" position="after">
                 <field name="total" readonly="1" force_save="1" string="Net Amount" invisible="1"/>

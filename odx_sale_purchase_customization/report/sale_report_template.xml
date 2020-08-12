@@ -92,7 +92,7 @@
                                         </td>
 
                                         <td name="td_unit_price" class="text-right">
-                                           <t t-esc="o.currency_id.symbol"/> &#160;&#160;<span t-field="line.price_unit" />
+                                           <t t-esc="o.currency_id.symbol"/> &#160;<span t-field="line.price_unit" />
                                         </td>
                                         <td name="td_subtotal" class="text-right">
                                             <span t-field="line.price_subtotal"/>

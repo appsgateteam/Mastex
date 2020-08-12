@@ -142,13 +142,13 @@
                         <field name="analytic_tag_ids" optional="hide" groups="analytic.group_analytic_tags"
                                widget="many2many_tags" options="{'color_field': 'color'}"
                                domain="['|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"/>
-                        <field name="product_qty" string="Planned QTy"
+                        <field name="product_qty" string="PLANNED QTY"
                                attrs="{'readonly': [('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}"
                                sum="Quantity"/>
                         <field name="actual_qty"
+                               string="ACTUAL QTY"
                                attrs="{'readonly': [('parent.state', 'not in', ('purchase', 'done'))]}"
                                sum="Actual Qty"/>
-                        <!--                        <field name="attachment_ids" widget="many2many_binary" options="{'no_create': False}"/>-->
                         <field name="qty_received_manual" invisible="1"/>
                         <field name="qty_received_method" invisible="1"/>
                         <field name="qty_received" string="Received" invisible="1"
@@ -157,13 +157,13 @@
                         <field name="qty_invoiced" invisible="1" string="Billed Qty"
                                attrs="{'column_invisible': [('parent.state', 'not in', ('purchase', 'done'))]}"
                                optional="show"/>
-                        <field name="product_uom" width=".25" string="UoM" groups="uom.group_uom"
+                        <field name="product_uom" width=".25" string="UOM" groups="uom.group_uom"
                                attrs="{
                                             'readonly': [('state', 'in', ('purchase', 'done', 'cancel'))],
                                             'required': [('display_type', '=', False)]
                                         }"
                                force_save="1" optional="show"/>
-                        <field name="price_unit" string="Unit Price"
+                        <field name="price_unit" string="UNIT PRICE"
                                attrs="{'readonly': ['|',('invoice_lines', '!=', []),('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}"/>
                         <field name="taxes_id" widget="many2many_tags"
                                domain="[('type_tax_use','=','purchase'), ('company_id', '=', parent.company_id)]"
@@ -172,12 +172,12 @@
                                attrs="{'readonly': [('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}"
                                invisible="1"/>
                         <field name="commission"/>
-                        <field name="total" sum="Total" invisible="1"/>
-                        <field name="com_amount" string="Comm Amt" sum="Planned Commission Amount" invisible="1"/>
-                        <field name="price_subtotal" widget="monetary" string="Planned Total" sum="Planned Sub total"/>
+                        <field name="total" invisible="0" string="TOTAL" sum="Planned Sub total"/>
+                        <field name="com_amount" string="COM AMT" sum="Planned Commission Amount" invisible="1"/>
+                        <field name="price_subtotal" widget="monetary" string="PLANNED TOTAL" invisible="1"/>
                         <field name="actual_total_amount" sum="Actual Total"/>
-                        <field name="actual_com_amount" string="Actual Comm.Amt" sum="Actual Commission Amount"/>
-                        <field name="actual_net_amount" string="Net Total" sum=" Net Total"/>
+                        <field name="actual_com_amount" string="ACTUAL COMMISSION" sum="Actual Commission Amount"/>
+                        <field name="actual_net_amount" string="NET TOTAL" sum=" Net Total"/>
                     </tree>
                 </xpath>
                 <xpath expr="//field[@name='amount_tax']" position="attributes">
@@ -199,7 +199,7 @@
                 </xpath>
                 <xpath expr="//notebook/page[1]/group/field[@name='amount_total']" position="after">
                     <div class="oe_subtotal_footer oe_inline">
-                        <label for="actual_grand_total"/>
+                        <label class="oe_subtotal_footer_separator" for="actual_grand_total" align="left"/>
                     </div>
                     <field name="actual_grand_total" readonly="1" class="oe_subtotal_footer_separator"
                            widget="monetary"
