@@ -66,6 +66,11 @@
                                         <strong t-esc="sum_partner(data, o, 'debit - credit')"
                                                 t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                     </td>
+                                    <td class="text-right" colspan="3">
+                                        <strong t-esc="sum_partner(data, o, 'amount_currency')"
+                                                />$
+                                    </td>
+
                                 </tr>
                                 <tr t-foreach="lines(data, o)" t-as="line">
                                     <td>

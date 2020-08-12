@@ -200,7 +200,7 @@ class AccountMove(models.Model):
                 'account_id': bank_fee_account_id.id,
                 'exclude_from_invoice_tab': True,
                 'partner_id': self.partner_id.id,
-                'amount_currency': abs(amount_currency),
+                'amount_currency': -amount_currency,
                 'quantity': 1.0,
                 'is_bank_fee_line': True
 
@@ -227,7 +227,7 @@ class AccountMove(models.Model):
                      'receivable' if self.type in ('out_invoice', 'out_refund', 'out_receipt') else 'payable'), ]
                 partner_account = self.env['account.account'].search(domain, limit=1)
             amount_currency = 0.0
-            bank_fee_amount =   self.bank_charge
+            bank_fee_amount = self.bank_charge
             if self.currency_id != self.company_id.currency_id:
                 amount_currency = abs(bank_fee_amount)
                 bank_fee_amount = self.currency_id._convert(amount_currency, self.company_currency_id,
@@ -242,7 +242,7 @@ class AccountMove(models.Model):
                 'account_id': partner_account.id,
                 'exclude_from_invoice_tab': True,
                 'partner_id': self.partner_id.id,
-                'amount_currency': abs(amount_currency),
+                'amount_currency': amount_currency,
                 'quantity': 1.0,
                 'is_bank_fee_line': True
             }
@@ -313,7 +313,7 @@ class AccountMove(models.Model):
                 'account_id': discount_account_id.id,
                 'exclude_from_invoice_tab': True,
                 'partner_id': self.partner_id.id,
-                'amount_currency': abs(amount_currency),
+                'amount_currency': -amount_currency,
                 'quantity': 1.0,
                 'is_discount_line': True
 
@@ -362,7 +362,7 @@ class AccountMove(models.Model):
                 'account_id': partner_account.id,
                 'exclude_from_invoice_tab': True,
                 'partner_id': self.partner_id.id,
-                'amount_currency': abs(amount_currency),
+                'amount_currency': amount_currency,
                 'quantity': 1.0,
                 'is_discount_line': True
             }
@@ -431,7 +431,7 @@ class AccountMove(models.Model):
                 'account_id': account_id.id,
                 'exclude_from_invoice_tab': True,
                 'partner_id': self.partner_id.id,
-                'amount_currency': abs(amount_currency),
+                'amount_currency': -amount_currency,
                 'quantity': 1.0,
                 'is_commission_line': True
 
@@ -480,7 +480,7 @@ class AccountMove(models.Model):
                 'account_id': partner_account.id,
                 'exclude_from_invoice_tab': True,
                 'partner_id': self.partner_id.id,
-                'amount_currency': abs(amount_currency),
+                'amount_currency': amount_currency,
                 'quantity': 1.0,
                 'is_commission_line': True
             }

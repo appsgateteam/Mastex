@@ -76,7 +76,7 @@ class ReportPartnerLedger(models.AbstractModel):
         return full_account
 
     def _sum_partner(self, data, partner, field):
-        if field not in ['debit', 'credit', 'debit - credit']:
+        if field not in ['debit', 'credit', 'debit - credit', 'amount_currency']:
             return
         result = 0.0
         query_get_data = self.env['account.move.line'].with_context(
