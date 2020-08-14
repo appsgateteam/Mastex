@@ -103,7 +103,6 @@ class AccountMove(models.Model):
             if move.discount_type:
                 if move.discount_type == 'percent':
                     amount_discount = (sign * total * move.discount_rate) / 100
-                    print(amount_discount, total)
                 else:
                     amount_discount = move.discount_rate
 
@@ -347,7 +346,7 @@ class AccountMove(models.Model):
                 sign = -1
             discount_amount = sign * self.amount_discount
             if self.currency_id != self.company_id.currency_id:
-                amount_currency = abs(discount_amount)
+                amount_currency = discount_amount
                 discount_amount = self.currency_id._convert(amount_currency, self.company_currency_id,
                                                             self.company_id,
                                                             self.date)
@@ -396,7 +395,7 @@ class AccountMove(models.Model):
                 sign = -1
             discount_amount = sign * self.amount_discount
             if self.currency_id != self.company_id.currency_id:
-                amount_currency = abs(discount_amount)
+                amount_currency = discount_amount
                 discount_amount = self.currency_id._convert(amount_currency, self.company_currency_id,
                                                             self.company_id,
                                                             self.date)
