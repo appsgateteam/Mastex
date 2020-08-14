@@ -22,11 +22,11 @@ import ast
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
+from odoo.tools import float_is_zero
 
 
 class AccountMove(models.Model):
     _inherit = 'account.move'
-
 
     @api.depends(
         'discount_type',
@@ -101,8 +101,8 @@ class AccountMove(models.Model):
             else:
                 sign = -1
             if move.discount_type:
-                if move.discount_type == 'percentage':
-                    amount_discount = (total * move.discount_rate)/100
+                if move.discount_type == 'percent':
+                    amount_discount = (-total * move.discount_rate) / 100
                 else:
                     amount_discount = move.discount_rate
 
@@ -112,7 +112,13 @@ class AccountMove(models.Model):
             move.amount_untaxed = sign * (total_untaxed_currency if len(currencies) == 1 else total_untaxed) + sum(
                 (line.quantity * line.price_unit * line.discount) / 100 for line in move.invoice_line_ids)
             move.amount_tax = sign * (total_tax_currency if len(currencies) == 1 else total_tax)
-            move.amount_total = sign * (total_currency if len(currencies) == 1 else total) - total_commission - amount_discount
+
+            move.amount_total = sign * (
+                total_currency if len(currencies) == 1 else total) - total_commission - amount_discount
+            if move.type in ['out_invoice', 'out_refund']:
+                move.amount_total = sign * (total_currency if len(
+                    currencies) == 1 else total) - total_commission - amount_discount + move.bank_charge
+
             move.amount_residual = -sign * (total_residual_currency if len(currencies) == 1 else total_residual)
             move.amount_untaxed_signed = -total_untaxed
             move.amount_tax_signed = -total_tax
@@ -138,8 +144,8 @@ class AccountMove(models.Model):
             return self._context.get('default_ref')
         return False
 
-    reference = fields.Char(string='Reference', copy=False, store=True, default=_get_default_reference)
-
+    reference = fields.Char(string='Reference', copy=False, store=True, default=_get_default_reference,
+                            readonly=True, states={'draft': [('readonly', False)]})
     sale_id = fields.Many2one('sale.order', string="Sale Order", store=True, readonly=True)
     purchase_order_id = fields.Many2one('purchase.order', string='Purchase Order', store=True, readonly=True)
     discount_type = fields.Selection([('percent', 'Percentage'), ('amount', 'Amount')], string='Discount Type',
@@ -151,7 +157,56 @@ class AccountMove(models.Model):
     amount_commission = fields.Monetary(string='Commission', store=True, readonly=True, compute='_compute_amount',
                                         track_visibility='always')
     is_order_to_invoice = fields.Boolean('Order To Invoice')
-    bank_charge = fields.Float(string="Bank Charge", default=100)
+    bank_charge = fields.Float(string="Bank Charge", default=100, copy=True, readonly=True,
+                               states={'draft': [('readonly', False)]})
+
+
+    def _get_reconciled_info_JSON_values(self):
+        self.ensure_one()
+        foreign_currency = self.currency_id if self.currency_id != self.company_id.currency_id else False
+
+        reconciled_vals = []
+        pay_term_line_ids = self.line_ids.filtered(lambda line: line.account_id.user_type_id.type in ('receivable', 'payable'))
+        pay_term_line_ids = pay_term_line_ids.filtered(lambda line: not line.is_commission_line)
+        pay_term_line_ids = pay_term_line_ids.filtered(lambda line: not line.is_discount_line)
+        pay_term_line_ids = pay_term_line_ids.filtered(lambda line: not line.is_bank_fee_line)
+        partials = pay_term_line_ids.mapped('matched_debit_ids') + pay_term_line_ids.mapped('matched_credit_ids')
+
+        for partial in partials:
+            counterpart_lines = partial.debit_move_id + partial.credit_move_id
+            commission_line_ids = counterpart_lines.filtered(lambda line: line.is_commission_line)
+            discount_line_ids = counterpart_lines.filtered(lambda line: line.is_discount_line)
+            bank_fee_line_ids = counterpart_lines.filtered(lambda line: line.is_bank_fee_line)
+            if bank_fee_line_ids or discount_line_ids or commission_line_ids:
+                continue
+            counterpart_line = counterpart_lines.filtered(lambda line: line not in self.line_ids)
+
+            if foreign_currency and partial.currency_id == foreign_currency:
+                amount = partial.amount_currency
+            else:
+                amount = partial.company_currency_id._convert(partial.amount, self.currency_id, self.company_id, self.date)
+
+            if float_is_zero(amount, precision_rounding=self.currency_id.rounding):
+                continue
+            ref = counterpart_line.move_id.name
+            if counterpart_line.move_id.ref:
+                ref += ' (' + counterpart_line.move_id.ref + ')'
+
+            reconciled_vals.append({
+                'name': counterpart_line.name,
+                'journal_name': counterpart_line.journal_id.name,
+                'amount': amount,
+                'currency': self.currency_id.symbol,
+                'digits': [69, self.currency_id.decimal_places],
+                'position': self.currency_id.position,
+                'date': counterpart_line.date,
+                'payment_id': counterpart_line.id,
+                'account_payment_id': counterpart_line.payment_id.id,
+                'payment_method_name': counterpart_line.payment_id.payment_method_id.name if counterpart_line.journal_id.type == 'bank' else None,
+                'move_id': counterpart_line.move_id.id,
+                'ref': ref,
+            })
+        return reconciled_vals
 
 
     @api.onchange('discount_type', 'discount_rate', 'invoice_line_ids')
@@ -164,7 +219,6 @@ class AccountMove(models.Model):
 
     @api.onchange('bank_charge')
     def _onchange_bank_charge(self):
-        print("ssssssss")
         self._recompute_dynamic_lines()
 
     def _recompute_bank_fee_lines(self):
@@ -189,8 +243,8 @@ class AccountMove(models.Model):
             if self.currency_id != self.company_id.currency_id:
                 amount_currency = abs(bank_fee_amount)
                 bank_fee_amount = self.currency_id._convert(amount_currency, self.company_currency_id,
-                                                              self.company_id,
-                                                              self.date)
+                                                            self.company_id,
+                                                            self.date)
             bank_fee_move_line = {
                 'debit': bank_fee_amount < 0.0 and - bank_fee_amount or 0.0,
                 'credit': bank_fee_amount > 0.0 and bank_fee_amount or 0.0,
@@ -231,8 +285,8 @@ class AccountMove(models.Model):
             if self.currency_id != self.company_id.currency_id:
                 amount_currency = abs(bank_fee_amount)
                 bank_fee_amount = self.currency_id._convert(amount_currency, self.company_currency_id,
-                                                              self.company_id,
-                                                              self.date)
+                                                            self.company_id,
+                                                            self.date)
             bank_fee_move_partner_line = {
                 'credit': bank_fee_amount < 0.0 and - bank_fee_amount or 0.0,
                 'debit': bank_fee_amount > 0.0 and bank_fee_amount or 0.0,
@@ -248,14 +302,7 @@ class AccountMove(models.Model):
             }
             return bank_fee_move_partner_line
 
-        get_param = self.env['ir.config_parameter'].sudo().get_param
-        account = get_param('odx_sale_purchase_customization.bank_fee_account_id')
-        if not account:
-            raise UserError(_("Please configure a account for bank_fee in settings."))
-        account = ast.literal_eval(account)
-        account_id = self.env["account.account"].search([('id', '=', account)], limit=1)
-
-        existing_bank_fee_lines = self.line_ids.filtered(lambda line: line.account_id == account_id)
+        existing_bank_fee_lines = self.line_ids.filtered(lambda line: line.is_bank_fee_line)
         if existing_bank_fee_lines:
             self.line_ids -= existing_bank_fee_lines
         bank_fee_amount = self.bank_charge
@@ -271,7 +318,6 @@ class AccountMove(models.Model):
                 new_bank_fee_line._onchange_balance()
                 new_bank_fee_partner_line._onchange_amount_currency()
                 new_bank_fee_partner_line._onchange_balance()
-
 
     def _recompute_discount_lines(self):
         """ thi function is used to create journal item for discount"""
@@ -302,8 +348,8 @@ class AccountMove(models.Model):
             if self.currency_id != self.company_id.currency_id:
                 amount_currency = abs(discount_amount)
                 discount_amount = self.currency_id._convert(amount_currency, self.company_currency_id,
-                                                              self.company_id,
-                                                              self.date)
+                                                            self.company_id,
+                                                            self.date)
             discount_move_line = {
                 'debit': discount_amount < 0.0 and - discount_amount or 0.0,
                 'credit': discount_amount > 0.0 and discount_amount or 0.0,
@@ -351,8 +397,8 @@ class AccountMove(models.Model):
             if self.currency_id != self.company_id.currency_id:
                 amount_currency = abs(discount_amount)
                 discount_amount = self.currency_id._convert(amount_currency, self.company_currency_id,
-                                                              self.company_id,
-                                                              self.date)
+                                                            self.company_id,
+                                                            self.date)
             discount_move_partner_line = {
                 'credit': discount_amount < 0.0 and - discount_amount or 0.0,
                 'debit': discount_amount > 0.0 and discount_amount or 0.0,
@@ -368,14 +414,7 @@ class AccountMove(models.Model):
             }
             return discount_move_partner_line
 
-        get_param = self.env['ir.config_parameter'].sudo().get_param
-        account = get_param('odx_sale_purchase_customization.discount_account_id')
-        if not account:
-            raise UserError(_("Please configure a account for discount in settings."))
-        account = ast.literal_eval(account)
-        account_id = self.env["account.account"].search([('id', '=', account)], limit=1)
-
-        existing_discount_lines = self.line_ids.filtered(lambda line: line.account_id == account_id)
+        existing_discount_lines = self.line_ids.filtered(lambda line: line.is_discount_line)
         if existing_discount_lines:
             self.line_ids -= existing_discount_lines
         discount_amount = self.amount_discount
@@ -486,14 +525,7 @@ class AccountMove(models.Model):
             }
             return commission_move_partner_line
 
-        get_param = self.env['ir.config_parameter'].sudo().get_param
-        account = get_param('odx_sale_purchase_customization.commission_account_id')
-        if not account:
-            raise UserError(_("Please configure a account for commission in settings."))
-        account = ast.literal_eval(account)
-        account_id = self.env["account.account"].search([('id', '=', account)], limit=1)
-
-        existing_commission_lines = self.line_ids.filtered(lambda line: line.account_id == account_id)
+        existing_commission_lines = self.line_ids.filtered(lambda line: line.is_commission_line)
         if existing_commission_lines:
             self.line_ids -= existing_commission_lines
         commission_amount = 0.00
@@ -512,7 +544,6 @@ class AccountMove(models.Model):
                 new_commission_line._onchange_balance()
                 new_commission_partner_line._onchange_amount_currency()
                 new_commission_partner_line._onchange_balance()
-
 
     def _recompute_payment_terms_lines(self):
         ''' Compute the dynamic payment term lines of the journal entry.'''
@@ -550,7 +581,8 @@ class AccountMove(models.Model):
                 # Search new account.
                 domain = [
                     ('company_id', '=', self.company_id.id),
-                    ('internal_type', '=', 'receivable' if self.type in ('out_invoice', 'out_refund', 'out_receipt') else 'payable'),
+                    ('internal_type', '=',
+                     'receivable' if self.type in ('out_invoice', 'out_refund', 'out_receipt') else 'payable'),
                 ]
                 return self.env['account.account'].search(domain, limit=1)
 
@@ -563,10 +595,12 @@ class AccountMove(models.Model):
             :return:                        A list <to_pay_company_currency, to_pay_invoice_currency, due_date>.
             '''
             if self.invoice_payment_term_id:
-                to_compute = self.invoice_payment_term_id.compute(total_balance, date_ref=date, currency=self.currency_id)
+                to_compute = self.invoice_payment_term_id.compute(total_balance, date_ref=date,
+                                                                  currency=self.currency_id)
                 if self.currency_id != self.company_id.currency_id:
                     # Multi-currencies.
-                    to_compute_currency = self.invoice_payment_term_id.compute(total_amount_currency, date_ref=date, currency=self.currency_id)
+                    to_compute_currency = self.invoice_payment_term_id.compute(total_amount_currency, date_ref=date,
+                                                                               currency=self.currency_id)
                     return [(b[0], b[1], ac[1]) for b, ac in zip(to_compute, to_compute_currency)]
                 else:
                     # Single-currency.
@@ -603,7 +637,8 @@ class AccountMove(models.Model):
                     })
                 else:
                     # Create new line.
-                    create_method = in_draft_mode and self.env['account.move.line'].new or self.env['account.move.line'].create
+                    create_method = in_draft_mode and self.env['account.move.line'].new or self.env[
+                        'account.move.line'].create
                     candidate = create_method({
                         'name': self.invoice_payment_ref or '',
                         'debit': balance < 0.0 and -balance or 0.0,
@@ -623,8 +658,17 @@ class AccountMove(models.Model):
                     candidate._onchange_balance()
             return new_terms_lines
 
-        existing_terms_lines = self.line_ids.filtered(lambda line: line.account_id.user_type_id.type in ('receivable', 'payable'))
-        others_lines = self.line_ids.filtered(lambda line: line.account_id.user_type_id.type not in ('receivable', 'payable'))
+        existing_terms_lines = self.line_ids.filtered(
+            lambda line: line.account_id.user_type_id.type in ('receivable', 'payable'))
+        # remove commission line
+        others_lines = existing_terms_lines.filtered(lambda line: not line.is_commission_line)
+        # remove discount line
+        existing_terms_lines = existing_terms_lines.filtered(lambda line: not line.is_discount_line)
+        # remove bank fee line
+        existing_terms_lines = existing_terms_lines.filtered(lambda line: not line.is_bank_fee_line)
+
+        others_lines = self.line_ids.filtered(
+            lambda line: line.account_id.user_type_id.type not in ('receivable', 'payable'))
         # remove commission line
         others_lines = others_lines.filtered(lambda line: not line.is_commission_line)
         # remove discount line
@@ -650,8 +694,6 @@ class AccountMove(models.Model):
         if new_terms_lines:
             self.invoice_payment_ref = new_terms_lines[-1].name or ''
             self.invoice_date_due = new_terms_lines[-1].date_maturity
-
-
 
     def _recompute_dynamic_lines(self, recompute_all_taxes=False, recompute_tax_base_amount=False):
         ''' Recompute all lines that depend of others.
@@ -692,12 +734,19 @@ class AccountMove(models.Model):
                 invoice._recompute_discount_lines()
 
                 # compute bank fee lines
-                if invoice.type in ['out_invoice', 'out_refund']:
+                if invoice.type in ['out_invoice', 'out_refund'] and invoice.partner_id:
                     invoice._recompute_bank_fee_lines()
 
                 # Only synchronize one2many in onchange.
                 if invoice != invoice._origin:
                     invoice.invoice_line_ids = invoice.line_ids.filtered(lambda line: not line.exclude_from_invoice_tab)
+
+    def action_post(self):
+        res = super(AccountMove, self).action_post()
+        existing_terms_lines = self.line_ids.filtered(
+            lambda line: line.account_id.user_type_id.type in ('receivable', 'payable'))
+        existing_terms_lines.reconcile()
+        return res
 
 
 class AccountMoveLine(models.Model):
