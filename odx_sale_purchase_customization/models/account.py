@@ -102,7 +102,8 @@ class AccountMove(models.Model):
                 sign = -1
             if move.discount_type:
                 if move.discount_type == 'percent':
-                    amount_discount = (-total * move.discount_rate) / 100
+                    amount_discount = (sign * total * move.discount_rate) / 100
+                    print(amount_discount, total)
                 else:
                     amount_discount = move.discount_rate
 
