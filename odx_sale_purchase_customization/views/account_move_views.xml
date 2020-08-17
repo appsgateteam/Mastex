@@ -13,7 +13,7 @@
                 <field name="reference" readonly="1"/>
             </xpath>
             <xpath expr="//div[@class='d-flex']" position="after">
-                <field name="bank_charge"/>
+                <field name="bank_charge" attrs="{'invisible': [('type', 'not in', ('out_invoice', 'out_refund', 'out_receipt'))]}"/>
             </xpath>
              <xpath expr="//field[@name='reference']" position="after">
                 <field name="sale_id" attrs="{'invisible': [('type', 'not in', ('out_invoice', 'out_refund', 'out_receipt'))]}"/>
