@@ -66,9 +66,8 @@
                                         <strong t-esc="sum_partner(data, o, 'debit - credit')"
                                                 t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                     </td>
-                                    <td class="text-right" colspan="3">
-                                        <strong t-esc="sum_partner(data, o, 'amount_currency')"
-                                                />$
+                                    <td class="text-right" colspan="3" t-if="data['form']['amount_currency']">
+                                        $ <strong t-esc="sum_partner(data, o, 'debit - credit') / 3.67"/>
                                     </td>
 
                                 </tr>
@@ -98,21 +97,13 @@
                                               t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                     </td>
                                     <td class="text-right" t-if="data['form']['amount_currency']">
-                                        <t t-if="line['currency_id']">
-                                            <span t-esc="line['currency_rate']" t-options=""/>
-                                        </t>
+                                            <span t-esc="line['currency_rate']"/>
                                     </td>
                                     <td class="text-right" t-if="data['form']['amount_currency']">
-                                        <t t-if="line['currency_id']">
-                                            <span t-esc="line['amount_currency']"
-                                                  t-options="{'widget': 'monetary', 'display_currency': line['currency_id']}"/>
-                                        </t>
+                                            $ <span t-esc="round(line['amount_currency'], 2)"/>
                                     </td>
                                     <td class="text-right" t-if="data['form']['amount_currency']">
-                                        <t t-if="line['currency_id']">
-                                            <span t-esc="line['progress_currency']"
-                                                  t-options="{'widget': 'monetary', 'display_currency': line['currency_id']}"/>
-                                        </t>
+                                            $ <span t-esc="round(line['progress_currency'], 2)"/>
                                     </td>
 
                                 </tr>

@@ -162,7 +162,8 @@ class AccountMove(models.Model):
     is_order_to_invoice = fields.Boolean('Order To Invoice')
     bank_charge = fields.Float(string="Bank Charge", default=100, copy=True, readonly=True,
                                states={'draft': [('readonly', False)]})
-
+    bank_charge_currency = fields.Float(string="Bank Charge", default=100, copy=True, readonly=True,
+                               states={'draft': [('readonly', False)]})
 
     def _get_reconciled_info_JSON_values(self):
         self.ensure_one()
@@ -220,8 +221,17 @@ class AccountMove(models.Model):
         self.supply_rate()
         return True
 
-    @api.onchange('bank_charge')
+    @api.onchange('bank_charge', 'currency_id')
     def _onchange_bank_charge(self):
+        if self.currency_id != self.company_id.currency_id:
+            amount_currency = abs(self.bank_charge)
+            print("ssssssssss")
+            self.bank_charge_currency = self.company_currency_id._convert(amount_currency, self.currency_id,
+                                                        self.company_id,
+                                                        self.date)
+            print(self.bank_charge_currency)
+        else:
+            self.bank_charge_currency = self.bank_charge
         self._recompute_dynamic_lines()
 
     def _recompute_bank_fee_lines(self):
@@ -242,7 +252,7 @@ class AccountMove(models.Model):
             bank_fee_account = ast.literal_eval(bank_fee_account)
             bank_fee_account_id = self.env["account.account"].search([('id', '=', bank_fee_account)], limit=1)
             amount_currency = 0.0
-            bank_fee_amount = self.bank_charge
+            bank_fee_amount = self.bank_charge_currency
             if self.currency_id != self.company_id.currency_id:
                 amount_currency = abs(bank_fee_amount)
                 bank_fee_amount = self.currency_id._convert(amount_currency, self.company_currency_id,
@@ -284,7 +294,7 @@ class AccountMove(models.Model):
                      'receivable' if self.type in ('out_invoice', 'out_refund', 'out_receipt') else 'payable'), ]
                 partner_account = self.env['account.account'].search(domain, limit=1)
             amount_currency = 0.0
-            bank_fee_amount = self.bank_charge
+            bank_fee_amount = self.bank_charge_currency
             if self.currency_id != self.company_id.currency_id:
                 amount_currency = abs(bank_fee_amount)
                 bank_fee_amount = self.currency_id._convert(amount_currency, self.company_currency_id,

@@ -60,9 +60,11 @@
                         </td>
 
                         <td class="text-right">
-                            <p class="m-0"
-                               t-esc="o.company_id.currency_id._convert(o.bank_charge, o.currency_id, o.company_id, o.invoice_date or datetime.date.today())"
-                               t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                            <t t-set="bank_charge" t-value="((o.amount_total_signed + o.bank_charge)/3.67)-o.amount_untaxed"/>
+                            <p class="m-0" t-esc="bank_charge" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+<!--                            <p class="m-0"-->
+<!--                               t-esc="o.company_id.currency_id._convert(o.bank_charge, o.currency_id, o.company_id, o.invoice_date or datetime.date.today())"-->
+<!--                               t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>-->
 
                             <!--                            <span t-field="o.bank_charge"/>-->
                         </td>
@@ -97,9 +99,9 @@
                         </td>
                         <td class="text-right">
 
-                            <t t-set="total"
-                               t-value="o.amount_total+o.company_id.currency_id._convert(o.bank_charge, o.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
-                            <span t-esc="total"
+<!--                            <t t-set="total"-->
+<!--                               t-value="o.amount_total+o.company_id.currency_id._convert(o.bank_charge, o.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>-->
+                            <span t-esc="bank_charge+o.amount_untaxed"
                                   t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
                         </td>
                     </tr>

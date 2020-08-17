@@ -66,11 +66,12 @@ class ReportPartnerLedger(models.AbstractModel):
                 if r[field_name] not in (None, '', '/')
             )
             sum += r['debit'] - r['credit']
+            progress = r['debit'] - r['credit']
             r['currency_rate'] = False
-            if r['amount_currency']:
-                r['currency_rate'] = round(abs(r['debit'] - r['credit']) / abs(r['amount_currency']), 3)
+            r['currency_rate'] = 3.67
             r['progress'] = sum
-            r['progress_currency'] = sum * r['currency_rate']
+            r['amount_currency'] = progress / r['currency_rate']
+            r['progress_currency'] = sum / r['currency_rate']
             r['currency_id'] = currency.browse(r.get('currency_id'))
             full_account.append(r)
         return full_account

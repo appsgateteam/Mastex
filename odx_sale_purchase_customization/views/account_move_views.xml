@@ -12,7 +12,9 @@
                 <field name="ref" invisible="1"/>
                 <field name="reference" readonly="1"/>
             </xpath>
-
+            <xpath expr="//div[@class='d-flex']" position="after">
+                <field name="bank_charge"/>
+            </xpath>
              <xpath expr="//field[@name='reference']" position="after">
                 <field name="sale_id" attrs="{'invisible': [('type', 'not in', ('out_invoice', 'out_refund', 'out_receipt'))]}"/>
                 <field name="purchase_order_id" attrs="{'invisible': [('type', 'not in', ('in_invoice', 'in_refund', 'in_receipt'))]}" readonly="True"/>
@@ -25,7 +27,6 @@
             <xpath expr="//field[@name='invoice_line_ids']" position="attributes">
                 <attribute name="attrs">{'readonly': [('is_order_to_invoice', '=', True)]}</attribute>
             </xpath>
-
 
             <xpath expr="//field[@name='amount_untaxed']" position="attributes">
                 <attribute name="string">Total</attribute>
@@ -68,8 +69,8 @@
             <xpath expr="//field[@name='amount_untaxed']" position="after">
                 <field name="amount_commission" attrs="{'invisible': [('type', 'not in', ('in_invoice', 'in_refund'))]}"/>
                 <field name="amount_discount"/>
-                <field name="bank_charge"  attrs="{'invisible': [('type', 'not in', ('out_invoice', 'out_refund'))]}"/>
-
+                <field name="bank_charge_currency" readonly="1" force_save="1"
+                       attrs="{'invisible': [('type', 'not in', ('out_invoice', 'out_refund'))]}"/>
             </xpath>
             <xpath expr="//field[@name='narration']" position="after">
                 <div>
