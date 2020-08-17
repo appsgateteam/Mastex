@@ -120,7 +120,7 @@ class AccountMove(models.Model):
                 total_currency if len(currencies) == 1 else total) - total_commission - amount_discount
             if move.type in ['out_invoice', 'out_refund']:
                 move.amount_total = sign * (total_currency if len(
-                    currencies) == 1 else total) - total_commission - amount_discount + move.bank_charge
+                    currencies) == 1 else total) - total_commission - amount_discount + move.bank_charge_currency
 
             move.amount_residual = -sign * (total_residual_currency if len(currencies) == 1 else total_residual)
             move.amount_untaxed_signed = -total_untaxed
