@@ -245,7 +245,6 @@ class SaleOrder(models.Model):
 
     def _create_invoices(self, grouped=False, final=False):
         res = super(SaleOrder, self)._create_invoices()
-        res.action_post()
         return res
 
 

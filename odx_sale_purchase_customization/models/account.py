@@ -36,6 +36,7 @@ class AccountMove(models.Model):
         'line_ids.amount_currency',
         'line_ids.amount_residual',
         'line_ids.amount_residual_currency',
+        'currency_charge',
         'line_ids.payment_id.state')
     def _compute_amount(self):
 
@@ -117,10 +118,11 @@ class AccountMove(models.Model):
             move.amount_tax = sign * (total_tax_currency if len(currencies) == 1 else total_tax)
 
             move.amount_total = sign * (
-                total_currency if len(currencies) == 1 else total) - total_commission - amount_discount
+                total_currency if len(currencies) == 1 else total) - total_commission - amount_discount + move.currency_charge
             if move.type in ['out_invoice', 'out_refund']:
                 move.amount_total = sign * (total_currency if len(
-                    currencies) == 1 else total) - total_commission - amount_discount + move.bank_charge_currency
+                    currencies) == 1 else total) - total_commission - amount_discount + move.bank_charge_currency + \
+                                    move.currency_charge
 
             move.amount_residual = -sign * (total_residual_currency if len(currencies) == 1 else total_residual)
             move.amount_untaxed_signed = -total_untaxed
@@ -163,14 +165,33 @@ class AccountMove(models.Model):
     bank_charge = fields.Float(string="Bank Charge", default=100, copy=True, readonly=True,
                                states={'draft': [('readonly', False)]})
     bank_charge_currency = fields.Float(string="Bank Charge", default=100, copy=True, readonly=True,
-                               states={'draft': [('readonly', False)]})
+                                        states={'draft': [('readonly', False)]})
+    customer_currency_id = fields.Many2one('res.currency', string='Customer Currency')
+    currency_charge = fields.Float('Currency Charge', compute='_compute_currency_charge')
+
+    @api.depends('customer_currency_id', 'currency_id', 'amount_untaxed_signed')
+    def _compute_currency_charge(self):
+        for record in self:
+            if record.customer_currency_id and record.currency_id:
+                currency_amount = record.company_id.currency_id._convert(record.amount_untaxed_signed,
+                                                                         record.currency_id, record.company_id,
+                                                                         record.date)
+                customer_currency_amount = record.company_id.currency_id._convert(record.amount_untaxed_signed,
+                                                                                  record.customer_currency_id,
+                                                                                  record.company_id,
+                                                                                  record.date)
+                print(customer_currency_amount, currency_amount)
+                record.currency_charge = currency_amount - customer_currency_amount
+            else:
+                record.currency_charge = 0
 
     def _get_reconciled_info_JSON_values(self):
         self.ensure_one()
         foreign_currency = self.currency_id if self.currency_id != self.company_id.currency_id else False
 
         reconciled_vals = []
-        pay_term_line_ids = self.line_ids.filtered(lambda line: line.account_id.user_type_id.type in ('receivable', 'payable'))
+        pay_term_line_ids = self.line_ids.filtered(
+            lambda line: line.account_id.user_type_id.type in ('receivable', 'payable'))
         pay_term_line_ids = pay_term_line_ids.filtered(lambda line: not line.is_commission_line)
         pay_term_line_ids = pay_term_line_ids.filtered(lambda line: not line.is_discount_line)
         pay_term_line_ids = pay_term_line_ids.filtered(lambda line: not line.is_bank_fee_line)
@@ -188,7 +209,8 @@ class AccountMove(models.Model):
             if foreign_currency and partial.currency_id == foreign_currency:
                 amount = partial.amount_currency
             else:
-                amount = partial.company_currency_id._convert(partial.amount, self.currency_id, self.company_id, self.date)
+                amount = partial.company_currency_id._convert(partial.amount, self.currency_id, self.company_id,
+                                                              self.date)
 
             if float_is_zero(amount, precision_rounding=self.currency_id.rounding):
                 continue
@@ -212,7 +234,6 @@ class AccountMove(models.Model):
             })
         return reconciled_vals
 
-
     @api.onchange('discount_type', 'discount_rate', 'invoice_line_ids')
     def supply_rate(self):
         self._recompute_dynamic_lines()
@@ -221,15 +242,13 @@ class AccountMove(models.Model):
         self.supply_rate()
         return True
 
-    @api.onchange('bank_charge', 'currency_id')
+    @api.onchange('bank_charge', 'currency_id', 'customer_currency_id')
     def _onchange_bank_charge(self):
         if self.currency_id != self.company_id.currency_id:
             amount_currency = abs(self.bank_charge)
-            print("ssssssssss")
             self.bank_charge_currency = self.company_currency_id._convert(amount_currency, self.currency_id,
-                                                        self.company_id,
-                                                        self.date)
-            print(self.bank_charge_currency)
+                                                                          self.company_id,
+                                                                          self.date)
         else:
             self.bank_charge_currency = self.bank_charge
         self._recompute_dynamic_lines()
@@ -558,6 +577,67 @@ class AccountMove(models.Model):
                 new_commission_partner_line._onchange_amount_currency()
                 new_commission_partner_line._onchange_balance()
 
+    def _recompute_currency_charge_lines(self):
+            """ thi function is used to create journal item for currency charge"""
+            self.ensure_one()
+            in_draft_mode = self != self._origin
+
+            def _prepare_currency_move_line(self):
+                """
+                This function searches a specific product i.e, discount and
+                returns field values required in purchase journal entry line.
+                The whole purpose is to add a new product for discount from
+                the product configured in account.move.line
+                :return:{dict} containing {field: value} for the account.move.line
+                """
+                self.ensure_one()
+                get_param = self.env['ir.config_parameter'].sudo().get_param
+                currency_diff_account = get_param('odx_sale_purchase_customization.currency_diff_account_id')
+                if not currency_diff_account:
+                    raise UserError(_("Please configure a account for Currency Diff in settings."))
+                currency_diff_account = ast.literal_eval(currency_diff_account)
+                currency_diff_account_id = self.env["account.account"].search([('id', '=', currency_diff_account)],
+                                                                              limit=1)
+                amount_currency = 0.0
+                if self.type == 'entry' or self.is_outbound():
+                    sign = 1
+                else:
+                    sign = -1
+                currency_charge = sign * self.currency_charge
+                if self.currency_id != self.company_id.currency_id:
+                    amount_currency = currency_charge
+                    currency_charge = self.currency_id._convert(amount_currency, self.company_currency_id,
+                                                                self.company_id,
+                                                                self.date)
+                currency_move_line = {
+                    'credit': currency_charge < 0.0 and - currency_charge or 0.0,
+                    'debit': currency_charge > 0.0 and currency_charge or 0.0,
+                    'name': '%s: %s' % (self.reference, 'Currency Charge'),
+                    'move_id': self.id,
+                    'currency_id': self.currency_id.id if self.currency_id != self.company_id.currency_id else False,
+                    'account_id': currency_diff_account_id.id,
+                    'exclude_from_invoice_tab': True,
+                    'partner_id': self.partner_id.id,
+                    'amount_currency': amount_currency,
+                    'quantity': 1.0,
+                    'is_currency_charge_line': True
+                }
+                return currency_move_line
+
+            existing_currency_charge_lines = self.line_ids.filtered(lambda line: line.is_currency_charge_line)
+            if existing_currency_charge_lines:
+                self.line_ids -= existing_currency_charge_lines
+            currency_charge = self.currency_charge
+            if currency_charge:
+                currency_charge_move_line = _prepare_currency_move_line(self)
+                create_method = in_draft_mode and self.env['account.move.line'].new or self.env[
+                    'account.move.line'].create
+                new_discount_line = create_method(currency_charge_move_line)
+
+                if in_draft_mode:
+                    new_discount_line._onchange_amount_currency()
+                    new_discount_line._onchange_balance()
+
     def _recompute_payment_terms_lines(self):
         ''' Compute the dynamic payment term lines of the journal entry.'''
         self.ensure_one()
@@ -736,6 +816,9 @@ class AccountMove(models.Model):
                 # Compute cash rounding.
                 invoice._recompute_cash_rounding_lines()
 
+                # compute currency charge
+                invoice._recompute_currency_charge_lines()
+
                 # Compute payment terms.
                 invoice._recompute_payment_terms_lines()
 
@@ -771,6 +854,7 @@ class AccountMoveLine(models.Model):
     is_commission_line = fields.Boolean(string="Is commission Line")
     is_discount_line = fields.Boolean(string="Is Discount Line")
     is_bank_fee_line = fields.Boolean(string="Is Bank Fee Line")
+    is_currency_charge_line = fields.Boolean(string="Is Bank Fee Line")
 
     @api.onchange('commission', 'price_unit', 'quantity', 'price_subtotal')
     def _onchange_commission(self):

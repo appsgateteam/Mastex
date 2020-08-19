@@ -67,7 +67,7 @@
                                                 t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                     </td>
                                     <td class="text-right" colspan="3" t-if="data['form']['amount_currency']">
-                                        $ <strong t-esc="sum_partner(data, o, 'debit - credit') / 3.67"/>
+                                        <strong t-esc="sum_partner(data, o, 'debit - credit') / 3.67"/>
                                     </td>
 
                                 </tr>

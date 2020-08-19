@@ -28,6 +28,7 @@ class ResConfigSettings(models.TransientModel):
     commission_account_id = fields.Many2one(comodel_name='account.account', string="Commission Account")
     discount_account_id = fields.Many2one(comodel_name='account.account', string="Discount Account")
     bank_fee_account_id = fields.Many2one(comodel_name='account.account', string="Bank Fee Account")
+    currency_diff_account_id = fields.Many2one(comodel_name='account.account', string="Currency Diff Account")
 
     @api.model
     def get_values(self):
@@ -45,6 +46,10 @@ class ResConfigSettings(models.TransientModel):
             bank_fee_account_id=int(params.get_param('odx_sale_purchase_customization.bank_fee_account_id')),
 
         )
+        res.update(
+            currency_diff_account_id=int(params.get_param('odx_sale_purchase_customization.currency_diff_account_id')),
+
+        )
 
         return res
 
@@ -56,5 +61,8 @@ class ResConfigSettings(models.TransientModel):
                                                          self.discount_account_id.id)
         self.env['ir.config_parameter'].sudo().set_param("odx_sale_purchase_customization.bank_fee_account_id",
                                                          self.bank_fee_account_id.id)
+        self.env['ir.config_parameter'].sudo().set_param("odx_sale_purchase_customization.currency_diff_account_id",
+                                                         self.currency_diff_account_id.id)
+
 
 

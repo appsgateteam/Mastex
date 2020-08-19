@@ -47,6 +47,19 @@
                             </div>
                         </div>
                     </div>
+                    <h2>Currency Diff</h2>
+                    <div class="row mt16 o_settings_container" id="bank_cash">
+                        <div class="col-xs-12 col-md-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label for="currency_diff_account_id"/>
+                                <div class="text-muted">
+                                    Taken as Currency difference while creating invoice
+                                </div>
+                                <field name="currency_diff_account_id"/>
+                            </div>
+                        </div>
+                    </div>
                 </xpath>
             </field>
         </record>
