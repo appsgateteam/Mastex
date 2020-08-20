@@ -7,10 +7,6 @@
                      id="aed_amounts" class="row clearfix ml-auto my-3 text-nowrap table">
                     <t t-set="aed_rate"
                        t-value="o.env['res.currency']._get_conversion_rate(o.customer_currency_id, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
-                    <t t-set="aed_amount"
-                       t-value="o.env['res.currency']._convert(o.amount_total, o.company_currency_id,
-                                 o.company_id,o.date or datetime.date.today())"/>
-
                     <table>
                         <tr>
                             <th>Exchange Rate</th>
@@ -22,7 +18,8 @@
                         <tr>
                             <th>Subtotal (AED)</th>
                             <td>
-                                <p class="m-0" t-esc="aed_amount"
+                                <t t-set="subtotal" t-value="o.customer_currency_id._convert(o.amount_untaxed, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
+                                <p class="m-0" t-esc="subtotal"
                                    t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_currency_id}"/>
                             </td>
                         </tr>
@@ -36,7 +33,7 @@
                         <tr>
                             <th>Total (AED)</th>
                             <td>
-                                <p class="m-0" t-esc="aed_amount + o.bank_charge"
+                                <p class="m-0" t-esc="subtotal + o.bank_charge"
                                    t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_currency_id}"/>
                             </td>
                         </tr>
