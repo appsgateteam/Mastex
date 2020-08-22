@@ -77,9 +77,9 @@
                 <attribute name="digits">[16, 2]</attribute>
             </xpath>
             <xpath expr="//field[@name='amount_untaxed']" position="after">
-                <field name="amount_commission"
+                <field name="amount_commission" force_save="1"
                        attrs="{'invisible': [('type', 'not in', ('in_invoice', 'in_refund'))]}"/>
-                <field name="currency_charge"
+                <field name="currency_charge" force_save="1"
                        attrs="{'invisible': [('type', 'not in', ('out_invoice', 'out_refund', 'out_receipt'))]}"/>
                 <field name="bank_charge_currency" readonly="1" force_save="1"
                        attrs="{'invisible': [('type', 'not in', ('out_invoice', 'out_refund'))]}"/>

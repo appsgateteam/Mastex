@@ -38,8 +38,9 @@
                                    t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_currency_id}"/>
                             </td>
                         </tr>
-                        <tr t-if="o.bank_charge">
+                        <tr t-if="o.bank_charge_currency">
                             <th>Bank Charge</th>
+                            <t t-set="bank_charge" t-value="o.bank_charge"/>
                             <td>
                                 <p class="m-0" t-esc="o.bank_charge"
                                    t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_currency_id}"/>
@@ -48,7 +49,7 @@
                         <tr>
                             <th>Total (AED)</th>
                             <td>
-                                <p class="m-0" t-esc="subtotal + o.bank_charge"
+                                <p class="m-0" t-esc="subtotal + bank_charge"
                                    t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_currency_id}"/>
                             </td>
                         </tr>

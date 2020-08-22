@@ -36,7 +36,8 @@ class AccountMove(models.Model):
         'line_ids.amount_currency',
         'line_ids.amount_residual',
         'line_ids.amount_residual_currency',
-        'currency_charge',
+        'customer_currency_id',
+        'currency_id',
         'line_ids.payment_id.state')
     def _compute_amount(self):
 
@@ -74,6 +75,9 @@ class AccountMove(models.Model):
             currencies = set()
             total_commission = 0.0
             amount_discount = 0.0
+            currency_charge = 0.0
+
+
             for line in move.line_ids:
                 if line.currency_id:
                     currencies.add(line.currency_id)
@@ -117,13 +121,24 @@ class AccountMove(models.Model):
                 (line.quantity * line.price_unit * line.discount) / 100 for line in move.invoice_line_ids)
             move.amount_tax = sign * (total_tax_currency if len(currencies) == 1 else total_tax)
 
+            if move.customer_currency_id and move.currency_id:
+                currency_amount = move.company_id.currency_id._convert(-total_untaxed,
+                                                                         move.currency_id, move.company_id,
+                                                                         move.date)
+                customer_currency_amount = move.company_id.currency_id._convert(-total_untaxed,
+                                                                                  move.customer_currency_id,
+                                                                                  move.company_id,
+                                                                                  move.date)
+                currency_charge = currency_amount - customer_currency_amount
+
+            move.currency_charge = currency_charge
             move.amount_total = sign * (
-                total_currency if len(currencies) == 1 else total) - total_commission - amount_discount + move.currency_charge
+                total_currency if len(currencies) == 1 else total) - total_commission - amount_discount + currency_charge
             if move.type in ['out_invoice', 'out_refund']:
+
                 move.amount_total = sign * (total_currency if len(
                     currencies) == 1 else total) - total_commission - amount_discount + move.bank_charge_currency + \
-                                    move.currency_charge
-
+                                    currency_charge
             move.amount_residual = -sign * (total_residual_currency if len(currencies) == 1 else total_residual)
             move.amount_untaxed_signed = -total_untaxed
             move.amount_tax_signed = -total_tax
@@ -167,23 +182,7 @@ class AccountMove(models.Model):
     bank_charge_currency = fields.Float(string="Bank Charge", default=False, copy=True, readonly=True,
                                         states={'draft': [('readonly', False)]})
     customer_currency_id = fields.Many2one('res.currency', string='Customer Currency')
-    currency_charge = fields.Float('Currency Charge', compute='_compute_currency_charge')
-
-    @api.depends('customer_currency_id', 'currency_id', 'amount_untaxed_signed')
-    def _compute_currency_charge(self):
-        for record in self:
-            if record.customer_currency_id and record.currency_id:
-                currency_amount = record.company_id.currency_id._convert(record.amount_untaxed_signed,
-                                                                         record.currency_id, record.company_id,
-                                                                         record.date)
-                customer_currency_amount = record.company_id.currency_id._convert(record.amount_untaxed_signed,
-                                                                                  record.customer_currency_id,
-                                                                                  record.company_id,
-                                                                                  record.date)
-                record.currency_charge = currency_amount - customer_currency_amount
-            else:
-                record.currency_charge = 0
-
+    currency_charge = fields.Monetary('Currency Charge', compute='_compute_amount', default=0.00, store=True, readonly=True)
 
     @api.onchange('discount_type', 'discount_rate', 'invoice_line_ids')
     def supply_rate(self):
@@ -409,7 +408,9 @@ class AccountMove(models.Model):
                     sign = 1
                 else:
                     sign = -1
-                currency_charge = sign * self.currency_charge
+                currency_charge = 0.0
+                if self.currency_charge:
+                    currency_charge = sign * self.currency_charge
                 if self.currency_id != self.company_id.currency_id:
                     amount_currency = currency_charge
                     currency_charge = self.currency_id._convert(amount_currency, self.company_currency_id,
@@ -433,7 +434,10 @@ class AccountMove(models.Model):
             existing_currency_charge_lines = self.line_ids.filtered(lambda line: line.is_currency_charge_line)
             if existing_currency_charge_lines:
                 self.line_ids -= existing_currency_charge_lines
-            currency_charge = self.currency_charge
+            currency_charge = 0.0
+            if self.currency_charge:
+                currency_charge = self.currency_charge
+
             if currency_charge:
                 currency_charge_move_line = _prepare_currency_move_line(self)
                 create_method = in_draft_mode and self.env['account.move.line'].new or self.env[
