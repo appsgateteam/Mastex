@@ -12,6 +12,9 @@
                        t-value="o.customer_currency_id._convert(o.bank_charge_currency, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
                         <t t-set="currency_charge_aed"
                        t-value="o.customer_currency_id._convert(o.currency_charge, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
+                        <t t-set="discount"
+                       t-value="o.customer_currency_id._convert(o.amount_discount, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
+
 
 
                     </t>
@@ -22,11 +25,12 @@
                        t-value="o.currency_id._convert(o.bank_charge_currency, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
                         <t t-set="currency_charge_aed"
                        t-value="o.currency_id._convert(o.currency_charge, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
+                        <t t-set="discount"
+                       t-value="o.currency_id._convert(o.amount_discount, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
+
 
 
                     </t>
-                    <t t-set="discount"
-                       t-value="o.customer_currency_id._convert(o.amount_discount, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
                     <t t-set="commission"
                        t-value="o.currency_id._convert(o.amount_commission, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
 
