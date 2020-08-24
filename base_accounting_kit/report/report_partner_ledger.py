@@ -68,9 +68,12 @@ class ReportPartnerLedger(models.AbstractModel):
             sum += r['debit'] - r['credit']
             progress = r['debit'] - r['credit']
             r['progress'] = sum
-            r['exchange_rate'] = progress / r['amount_currency']
+            r['exchange_rate'] = 0.0
+            r['balance_currency'] = 0.0
+            if r['amount_currency']:
+                r['exchange_rate'] = progress / r['amount_currency']
+                r['balance_currency'] = sum / r['exchange_rate']
             r['currency_id'] = currency.browse(r.get('currency_id'))
-            r['balance_currency'] = sum / r['exchange_rate']
             full_account.append(r)
         return full_account
 
