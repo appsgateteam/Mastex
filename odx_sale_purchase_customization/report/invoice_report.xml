@@ -40,6 +40,7 @@
                                    t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_currency_id}"/>
                             </td>
                         </tr>
+                        <t t-set="bank_charge" t-value="0.00"/>
                         <tr t-if="o.bank_charge_currency">
                             <th>Bank Charge</th>
                             <t t-set="bank_charge" t-value="o.bank_charge"/>
