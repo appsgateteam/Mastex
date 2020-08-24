@@ -8,13 +8,27 @@
                     <t t-if="o.customer_currency_id">
                         <t t-set="aed_rate"
                            t-value="o.env['res.currency']._get_conversion_rate(o.customer_currency_id, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
+                        <t t-set="bank_charge_aed"
+                       t-value="o.customer_currency_id._convert(o.bank_charge_currency, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
+                        <t t-set="currency_charge_aed"
+                       t-value="o.customer_currency_id._convert(o.currency_charge, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
+
+
                     </t>
                     <t t-else="">
                         <t t-set="aed_rate"
                            t-value="o.env['res.currency']._get_conversion_rate(o.currency_id, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
+                        <t t-set="bank_charge_aed"
+                       t-value="o.currency_id._convert(o.bank_charge_currency, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
+                        <t t-set="currency_charge_aed"
+                       t-value="o.currency_id._convert(o.currency_charge, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
+
+
                     </t>
                     <t t-set="discount"
                        t-value="o.customer_currency_id._convert(o.amount_discount, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
+                    <t t-set="commission"
+                       t-value="o.currency_id._convert(o.amount_commission, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
 
                     <table>
                         <tr>
@@ -33,11 +47,14 @@
                                 </t>
                                 <t t-else="">
                                     <t t-set="subtotal"
-                                       t-value="o.amount_untaxed"/>
+                                       t-value="o.amount_untaxed_signed"/>
                                 </t>
 
-                                <p class="m-0" t-esc="subtotal"
+                                <p t-if="o.type in ('in_invoice', 'in_refund')" class="m-0" t-esc="-subtotal"
                                    t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_currency_id}"/>
+                                <p t-if="o.type in ('out_invoice', 'out_refund')" class="m-0" t-esc="subtotal"
+                                   t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_currency_id}"/>
+
                             </td>
                         </tr>
                         <t t-set="bank_charge" t-value="0.00"/>
@@ -51,8 +68,12 @@
                         </tr>
                         <tr>
                             <th>Total (AED)</th>
-                            <td>
-                                <p class="m-0" t-esc="subtotal + bank_charge - discount"
+                            <td t-if="o.type in ('in_invoice', 'in_refund')">
+                                <p class="m-0" t-esc="-subtotal - discount - commission"
+                                   t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_currency_id}"/>
+                            </td>
+                            <td t-if="o.type in ('out_invoice', 'out_refund')">
+                                <p class="m-0" t-esc="subtotal - discount + bank_charge_aed + currency_charge_aed "
                                    t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_currency_id}"/>
                             </td>
                         </tr>

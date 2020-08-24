@@ -144,7 +144,9 @@ class AccountMove(models.Model):
             move.amount_tax_signed = -total_tax
             move.amount_total_signed = -total
             move.amount_residual_signed = total_residual
-
+            print(move.amount_untaxed_signed)
+            print(move.amount_total_signed)
+            print(move.amount_untaxed)
             currency = len(currencies) == 1 and currencies.pop() or move.company_id.currency_id
             is_paid = currency and currency.is_zero(move.amount_residual) or not move.amount_residual
 
