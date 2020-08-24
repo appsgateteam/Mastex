@@ -13,6 +13,8 @@
                         <t t-set="aed_rate"
                            t-value="o.env['res.currency']._get_conversion_rate(o.currency_id, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
                     </t>
+                    <t t-set="discount"
+                       t-value="o.customer_currency_id._convert(o.amount_discount, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
 
                     <table>
                         <tr>
@@ -31,7 +33,7 @@
                                 </t>
                                 <t t-else="">
                                     <t t-set="subtotal"
-                                       t-value="o.amount_untaxed_signed"/>
+                                       t-value="o.amount_untaxed"/>
                                 </t>
 
                                 <p class="m-0" t-esc="subtotal"
@@ -49,7 +51,7 @@
                         <tr>
                             <th>Total (AED)</th>
                             <td>
-                                <p class="m-0" t-esc="subtotal + bank_charge"
+                                <p class="m-0" t-esc="subtotal + bank_charge - discount"
                                    t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_currency_id}"/>
                             </td>
                         </tr>
@@ -71,7 +73,7 @@
                     </tr>
                     <tr class="border-black o_subtotal" style="" t-if="o.amount_commission">
                         <td>
-                            <strong>Discount</strong>
+                            <strong>Commission</strong>
                         </td>
 
                         <td class="text-right">

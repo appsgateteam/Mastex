@@ -67,7 +67,7 @@
                                                 t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                     </td>
                                     <td class="text-right" colspan="3" t-if="data['form']['amount_currency']">
-                                        <strong t-esc="round(sum_partner(data, o, 'debit - credit') / 3.67, 2)"/>
+                                        <strong t-esc="sum_partner(data, o, 'amount_currency')" t-options="{'widget': 'monetary', 'display_currency': get_currency(data, o)}"/>
                                     </td>
 
                                 </tr>
@@ -96,14 +96,15 @@
                                         <span t-esc="line['progress']"
                                               t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                     </td>
+
                                     <td class="text-right" t-if="data['form']['amount_currency']">
-                                            <span t-esc="line['currency_rate']"/>
+                                            <span t-esc="round(line['exchange_rate'], 2)"/>
                                     </td>
                                     <td class="text-right" t-if="data['form']['amount_currency']">
-                                            $ <span t-esc="round(line['amount_currency'], 2)"/>
+                                            <span t-esc="line['amount_currency']" t-options="{'widget': 'monetary', 'display_currency': line['currency_id']}"/>
                                     </td>
                                     <td class="text-right" t-if="data['form']['amount_currency']">
-                                            $ <span t-esc="round(line['progress_currency'], 2)"/>
+                                            <span t-esc="line['balance_currency']" t-options="{'widget': 'monetary', 'display_currency': line['currency_id']}"/>
                                     </td>
 
                                 </tr>

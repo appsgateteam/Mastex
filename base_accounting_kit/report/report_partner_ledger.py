@@ -67,12 +67,10 @@ class ReportPartnerLedger(models.AbstractModel):
             )
             sum += r['debit'] - r['credit']
             progress = r['debit'] - r['credit']
-            r['currency_rate'] = False
-            r['currency_rate'] = 3.67
             r['progress'] = sum
-            r['amount_currency'] = progress / r['currency_rate']
-            r['progress_currency'] = sum / r['currency_rate']
+            r['exchange_rate'] = progress / r['amount_currency']
             r['currency_id'] = currency.browse(r.get('currency_id'))
+            r['balance_currency'] = sum / r['exchange_rate']
             full_account.append(r)
         return full_account
 
@@ -101,6 +99,35 @@ class ReportPartnerLedger(models.AbstractModel):
         if contemp is not None:
             result = contemp[0] or 0.0
         return result
+
+    def _get_partner_currency(self, data, partner):
+        currency = self.env['res.currency']
+
+        query_get_data = self.env['account.move.line'].with_context(
+            data['form'].get('used_context', {}))._query_get()
+        reconcile_clause = "" if data['form'][
+            'reconciled'] else ' AND "account_move_line".full_reconcile_id IS NULL '
+
+        params = [partner.id, tuple(data['computed']['move_state']),
+                  tuple(data['computed']['account_ids'])] + \
+                 query_get_data[2]
+        query = """SELECT DISTINCT account_move_line.currency_id
+                FROM """ + query_get_data[0] + """, account_move AS m
+                WHERE "account_move_line".partner_id = %s
+                    AND m.id = "account_move_line".move_id
+                    AND m.state IN %s
+                    AND account_id IN %s
+                    AND """ + query_get_data[1] + reconcile_clause
+        self.env.cr.execute(query, tuple(params))
+
+        contemp = self.env.cr.fetchone()
+        result = self.env.company.currency_id
+        if contemp is not None:
+            if contemp and contemp[0]:
+                result = currency.browse(contemp[0])
+        return result
+
+
 
     @api.model
     def _get_report_values(self, docids, data=None):
@@ -160,4 +187,5 @@ class ReportPartnerLedger(models.AbstractModel):
             'time': time,
             'lines': self._lines,
             'sum_partner': self._sum_partner,
+            'get_currency': self._get_partner_currency,
         }
