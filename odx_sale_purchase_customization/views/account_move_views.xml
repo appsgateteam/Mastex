@@ -52,7 +52,7 @@
                 <field name="is_currency_charge_line" invisible="1"/>
             </xpath>
             <xpath expr="//field[@name='invoice_line_ids']/tree//field[@name='price_total']" position="after">
-                <field name="total" readonly="1" force_save="1" string="Net Amount"/>
+                <field name="total" readonly="1" force_save="1" string="Net Amount" attrs="{'column_invisible': [('parent.type', 'not in', ('in_invoice', 'in_refund'))]}"/>
             </xpath>
             <xpath expr="//field[@name='invoice_line_ids']/form/sheet/group[1]/field[@name='price_unit']" position="after">
                 <field name="commission" readonly="0" force_save="1"/>
@@ -84,7 +84,6 @@
                 <field name="bank_charge_currency" readonly="1" force_save="1"
                        attrs="{'invisible': [('type', 'not in', ('out_invoice', 'out_refund'))]}"/>
                 <field name="amount_discount"/>
-
             </xpath>
             <xpath expr="//field[@name='narration']" position="after">
                 <div>

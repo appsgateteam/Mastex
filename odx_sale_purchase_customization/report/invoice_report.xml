@@ -19,6 +19,8 @@
                     <t t-set="commission"
                        t-value="o.currency_id._convert(o.amount_commission, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
 
+
+
                     <table>
 <!--                        <tr>-->
 <!--                            <th>Exchange Rate</th>-->
@@ -40,6 +42,21 @@
 
                             </td>
                         </tr>
+                         <tr t-if="o.amount_commission">
+                           <th>Commission</th>
+                            <td>
+                                <p class="m-0" t-esc="commission"
+                                   t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_currency_id}"/>
+                            </td>
+                        </tr>
+                        <tr class="border-black o_subtotal" style="" t-if="o.currency_charge">
+                        <td>
+                            <strong>Currency Charge</strong>
+                        </td>
+                        <td class="text-right">
+                            <span t-esc="currency_charge_aed" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                        </td>
+                    </tr>
                         <t t-set="bank_charge" t-value="0.00"/>
                         <tr t-if="o.bank_charge_currency">
                             <th>Bank Charge</th>
@@ -49,13 +66,7 @@
                                    t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_currency_id}"/>
                             </td>
                         </tr>
-                        <tr t-if="o.amount_commission">
-                           <th>Commission</th>
-                            <td>
-                                <p class="m-0" t-esc="commission"
-                                   t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_currency_id}"/>
-                            </td>
-                        </tr>
+
                         <tr t-if="o.amount_discount">
                            <th>Discount</th>
                             <td>
@@ -70,7 +81,7 @@
                                    t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_currency_id}"/>
                             </td>
                             <td t-if="o.type in ('out_invoice', 'out_refund')">
-                                <p class="m-0" t-esc="subtotal - discount + bank_charge_aed + currency_charge_aed "
+                                <p class="m-0" t-esc="subtotal - discount + bank_charge_aed + currency_charge_aed"
                                    t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_currency_id}"/>
                             </td>
                         </tr>

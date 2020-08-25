@@ -366,16 +366,16 @@ class AccountMove(models.Model):
         bank_fee_amount = self.bank_charge
         if bank_fee_amount:
             bank_fee_move_line = _prepare_bank_fee_move_line(self)
-            bank_fee_move_partner_line = _prepare_bank_fee_move_partner_line(self)
+            # bank_fee_move_partner_line = _prepare_bank_fee_move_partner_line(self)
             create_method = in_draft_mode and self.env['account.move.line'].new or self.env[
                 'account.move.line'].create
             new_bank_fee_line = create_method(bank_fee_move_line)
-            new_bank_fee_partner_line = create_method(bank_fee_move_partner_line)
+            # new_bank_fee_partner_line = create_method(bank_fee_move_partner_line)
             if in_draft_mode:
                 new_bank_fee_line._onchange_amount_currency()
                 new_bank_fee_line._onchange_balance()
-                new_bank_fee_partner_line._onchange_amount_currency()
-                new_bank_fee_partner_line._onchange_balance()
+                # new_bank_fee_partner_line._onchange_amount_currency()
+                # new_bank_fee_partner_line._onchange_balance()
 
     def _recompute_discount_lines(self):
         """ thi function is used to create journal item for discount"""
@@ -791,11 +791,11 @@ class AccountMove(models.Model):
         existing_terms_lines = self.line_ids.filtered(
             lambda line: line.account_id.user_type_id.type in ('receivable', 'payable'))
         # remove commission line
-        others_lines = existing_terms_lines.filtered(lambda line: not line.is_commission_line)
+        existing_terms_lines = existing_terms_lines.filtered(lambda line: not line.is_commission_line)
         # remove discount line
         existing_terms_lines = existing_terms_lines.filtered(lambda line: not line.is_discount_line)
         # remove bank fee line
-        existing_terms_lines = existing_terms_lines.filtered(lambda line: not line.is_bank_fee_line)
+        # existing_terms_lines = existing_terms_lines.filtered(lambda line: not line.is_bank_fee_line)
 
         others_lines = self.line_ids.filtered(
             lambda line: line.account_id.user_type_id.type not in ('receivable', 'payable'))
@@ -804,7 +804,7 @@ class AccountMove(models.Model):
         # remove discount line
         others_lines = others_lines.filtered(lambda line: not line.is_discount_line)
         # remove bank fee line
-        others_lines = others_lines.filtered(lambda line: not line.is_bank_fee_line)
+        # others_lines = others_lines.filtered(lambda line: not line.is_bank_fee_line)
         company_currency_id = self.company_id.currency_id
         total_balance = sum(others_lines.mapped(lambda l: company_currency_id.round(l.balance)))
         total_amount_currency = sum(others_lines.mapped('amount_currency'))
