@@ -188,7 +188,7 @@
                                                 </td>
                                                 <td/>
                                                 <td class="text-right">
-                                                    <span t-esc="round(o.amount_untaxed)"/>
+                                                    <span t-esc="round(o.amount_untaxed)" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
                                                 </td>
                                                 <td/>
                                                 <td class="text-right">
@@ -197,10 +197,10 @@
 
                                                     <p t-if="o.type in ('in_invoice', 'in_refund')" class="m-0"
                                                        t-esc="-subtotal"
-                                                       t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_currency_id}"/>
+                                                       t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
                                                     <p t-if="o.type in ('out_invoice', 'out_refund')" class="m-0"
                                                        t-esc="subtotal"
-                                                       t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_currency_id}"/>
+                                                       t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
                                                 </td>
 
                                             </tr>
