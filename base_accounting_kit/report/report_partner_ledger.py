@@ -51,7 +51,7 @@ class ReportPartnerLedger(models.AbstractModel):
                 AND m.state IN %s
                 AND "account_move_line".account_id IN %s AND """ + \
                 query_get_data[1] + reconcile_clause + """
-                ORDER BY "account_move_line".date"""
+                ORDER BY account_move_line.date, account_move_line.id"""
         self.env.cr.execute(query, tuple(params))
         res = self.env.cr.dictfetchall()
         sum = 0.0

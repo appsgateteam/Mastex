@@ -304,7 +304,7 @@ class AccountMove(models.Model):
             bank_fee_move_line = {
                 'debit': bank_fee_amount < 0.0 and - bank_fee_amount or 0.0,
                 'credit': bank_fee_amount > 0.0 and bank_fee_amount or 0.0,
-                'name': '%s: %s' % (self.reference, 'Bank Fee'),
+                'name': 'Bank Fee',
                 'move_id': self.id,
                 'currency_id': self.currency_id.id if self.currency_id != self.company_id.currency_id else False,
                 'account_id': bank_fee_account_id.id,
@@ -347,7 +347,7 @@ class AccountMove(models.Model):
             bank_fee_move_partner_line = {
                 'credit': bank_fee_amount < 0.0 and - bank_fee_amount or 0.0,
                 'debit': bank_fee_amount > 0.0 and bank_fee_amount or 0.0,
-                'name': '%s: %s' % (self.reference, 'Bank Fee'),
+                'name': 'Bank Fee',
                 'move_id': self.id,
                 'currency_id': self.currency_id.id if self.currency_id != self.company_id.currency_id else False,
                 'account_id': partner_account.id,
@@ -411,7 +411,7 @@ class AccountMove(models.Model):
             discount_move_line = {
                 'debit': discount_amount < 0.0 and - discount_amount or 0.0,
                 'credit': discount_amount > 0.0 and discount_amount or 0.0,
-                'name': '%s: %s' % (self.reference, 'Discount'),
+                'name': 'Discount',
                 'move_id': self.id,
                 'currency_id': self.currency_id.id if self.currency_id != self.company_id.currency_id else False,
                 'account_id': discount_account_id.id,
@@ -460,7 +460,7 @@ class AccountMove(models.Model):
             discount_move_partner_line = {
                 'credit': discount_amount < 0.0 and - discount_amount or 0.0,
                 'debit': discount_amount > 0.0 and discount_amount or 0.0,
-                'name': '%s: %s' % (self.reference, 'Discount'),
+                'name': 'Discount',
                 'move_id': self.id,
                 'currency_id': self.currency_id.id if self.currency_id != self.company_id.currency_id else False,
                 'account_id': partner_account.id,
@@ -523,7 +523,7 @@ class AccountMove(models.Model):
             commission_move_line = {
                 'debit': commission_amount < 0.0 and - commission_amount or 0.0,
                 'credit': commission_amount > 0.0 and commission_amount or 0.0,
-                'name': '%s: %s' % (self.reference, 'Commission'),
+                'name': 'Commission',
                 'move_id': self.id,
                 'currency_id': self.currency_id.id if self.currency_id != self.company_id.currency_id else False,
                 'account_id': account_id.id,
@@ -573,7 +573,7 @@ class AccountMove(models.Model):
             commission_move_partner_line = {
                 'credit': commission_amount < 0.0 and - commission_amount or 0.0,
                 'debit': commission_amount > 0.0 and commission_amount or 0.0,
-                'name': '%s: %s' % (self.reference, 'Commission'),
+                'name': 'Commission',
                 'move_id': self.id,
                 'currency_id': self.currency_id.id if self.currency_id != self.company_id.currency_id else False,
                 'account_id': partner_account.id,
@@ -646,7 +646,7 @@ class AccountMove(models.Model):
                 currency_move_line = {
                     'credit': currency_charge < 0.0 and - currency_charge or 0.0,
                     'debit': currency_charge > 0.0 and currency_charge or 0.0,
-                    'name': '%s: %s' % (self.reference, 'Currency Charge'),
+                    'name': 'Currency Charge',
                     'move_id': self.id,
                     'currency_id': self.currency_id.id if self.currency_id != self.company_id.currency_id else False,
                     'account_id': currency_diff_account_id.id,
@@ -892,6 +892,7 @@ class AccountMoveLine(models.Model):
     is_discount_line = fields.Boolean(string="Is Discount Line")
     is_bank_fee_line = fields.Boolean(string="Is Bank Fee Line")
     is_currency_charge_line = fields.Boolean(string="Is Bank Fee Line")
+    user_type_id = fields.Many2one('account.account.type', string='Account Type', related='account_id.user_type_id', store=True, readonly=True)
 
     @api.onchange('commission', 'price_unit', 'quantity', 'price_subtotal')
     def _onchange_commission(self):
