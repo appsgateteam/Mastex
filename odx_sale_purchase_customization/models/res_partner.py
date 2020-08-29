@@ -32,7 +32,13 @@ class ResPartner(models.Model):
 
     def name_get(self):
         """adding sequence to the name"""
-        return [(r.id, u"%s-%s" % (r.name, r.customer_code)) for r in self]
+        result = []
+        for r in self:
+            if r.customer_code:
+                result.append((r.id, u"%s-%s" % (r.name, r.customer_code)))
+            else:
+                result.append((r.id, u"%s" % (r.name)))
+        return result
 
     @api.model
     def name_search(self, name, args=None, operator='ilike', limit=100):

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report
+            id="instruction_sheet_purchase"
+            model="purchase.order"
+            string="Instruction"
+            report_type="qweb-pdf"
+            name="odx_sale_purchase_customization.purchase_instruction_template"
+            file="odx_sale_purchase_customization.purchase_instruction_template"
+            attachment_use="False"
+            menu="True"
+            print_report_name="'Instruction Sheet - %s' % (object.name)"
+        />
+
+
+        <report
+            id="invoice_report"
+            model="account.move"
+            string="Invoices"
+            report_type="qweb-pdf"
+            name="odx_sale_purchase_customization.invoice_new_report"
+            file="odx_sale_purchase_customization.invoice_new_report"
+            attachment="(object.state == 'posted') and ((object.name or 'INV').replace('/','_')+'.pdf')"
+            print_report_name="(object._get_report_base_filename())"
+            groups="account.group_account_invoice"
+            menu="True"
+        />
+        <report
+            id="account.account_invoices"
+            model="account.move"
+            string="Invoices"
+            report_type="qweb-pdf"
+            name="account.report_invoice_with_payments"
+            file="account.report_invoice_with_payments"
+            attachment="(object.state == 'posted') and ((object.name or 'INV').replace('/','_')+'.pdf')"
+            print_report_name="(object._get_report_base_filename())"
+            groups="account.group_account_invoice"
+            menu="False"
+        />
+        <report
+            id="account.account_invoices_without_payment"
+            model="account.move"
+            string="Invoices without Payment"
+            report_type="qweb-pdf"
+            name="account.report_invoice"
+            file="account.report_invoice"
+            attachment="(object.state == 'posted') and ((object.name or 'INV').replace('/','_')+'.pdf')"
+            print_report_name="(object._get_report_base_filename())"
+            menu="False"
+        />
+
+    </data>
+</odoo>
