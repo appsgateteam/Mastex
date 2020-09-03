@@ -80,7 +80,7 @@
                 <field name="amount_commission" force_save="1"
                        attrs="{'invisible': [('type', 'not in', ('in_invoice', 'in_refund'))]}"/>
                 <field name="currency_charge" force_save="1"
-                       attrs="{'invisible': [('type', 'not in', ('out_invoice', 'out_refund', 'out_receipt'))]}"/>
+                       />
                 <field name="bank_charge_currency" readonly="1" force_save="1"
                        attrs="{'invisible': [('type', 'not in', ('out_invoice', 'out_refund'))]}"/>
                 <field name="amount_discount"/>

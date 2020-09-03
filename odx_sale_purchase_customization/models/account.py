@@ -121,7 +121,7 @@ class AccountMove(models.Model):
                 (line.quantity * line.price_unit * line.discount) / 100 for line in move.invoice_line_ids)
             move.amount_tax = sign * (total_tax_currency if len(currencies) == 1 else total_tax)
 
-            if move.customer_currency_id and move.currency_id:
+            if move.customer_currency_id and move.currency_id and move.company_id:
                 currency_amount = move.company_id.currency_id._convert(-total_untaxed,
                                                                          move.currency_id, move.company_id,
                                                                          move.date)
@@ -131,22 +131,21 @@ class AccountMove(models.Model):
                                                                                   move.date)
                 currency_charge = currency_amount - customer_currency_amount
 
-            move.currency_charge = currency_charge
+
             move.amount_total = sign * (
-                total_currency if len(currencies) == 1 else total) - total_commission - amount_discount + currency_charge
+                total_currency if len(currencies) == 1 else total) - total_commission - amount_discount
             if move.type in ['out_invoice', 'out_refund']:
 
                 move.amount_total = sign * (total_currency if len(
                     currencies) == 1 else total) - total_commission - amount_discount + move.bank_charge_currency + \
                                     currency_charge
+                move.currency_charge = currency_charge
+
             move.amount_residual = -sign * (total_residual_currency if len(currencies) == 1 else total_residual)
             move.amount_untaxed_signed = -total_untaxed
             move.amount_tax_signed = -total_tax
             move.amount_total_signed = -total
             move.amount_residual_signed = total_residual
-            print(move.amount_untaxed_signed)
-            print(move.amount_total_signed)
-            print(move.amount_untaxed)
             currency = len(currencies) == 1 and currencies.pop() or move.company_id.currency_id
             is_paid = currency and currency.is_zero(move.amount_residual) or not move.amount_residual
 
@@ -223,19 +222,12 @@ class AccountMove(models.Model):
                     continue
                 else:
                     is_discount_found = True
-            # if bank_fee_line_ids:
-            #     if is_bank_fee_found:
-            #         continue
-            #     else:
-            #         is_bank_fee_found = True
-
             if foreign_currency and partial.currency_id == foreign_currency:
                 amount = partial.amount_currency
             else:
                 amount = partial.company_currency_id._convert(partial.amount, self.currency_id, self.company_id,
                                                               self.date)
 
-            print(amount)
             if float_is_zero(amount, precision_rounding=self.currency_id.rounding):
                 continue
             ref = counterpart_line.move_id.name
@@ -854,7 +846,9 @@ class AccountMove(models.Model):
                 invoice._recompute_cash_rounding_lines()
 
                 # compute currency charge
-                invoice._recompute_currency_charge_lines()
+                if invoice.type in ['out_invoice', 'out_refund'] and invoice.partner_id:
+                    print("dddddddddddd")
+                    invoice._recompute_currency_charge_lines()
 
                 # Compute payment terms.
                 invoice._recompute_payment_terms_lines()
