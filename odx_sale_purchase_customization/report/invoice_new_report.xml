@@ -195,12 +195,12 @@
                                                 </td>
                                                 <td/>
                                                 <td class="text-right">
-                                                    <span t-esc="round(o.amount_untaxed)" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                                    <span t-esc="round(o.amount_untaxed, 2)" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
                                                 </td>
                                                 <td/>
                                                 <td class="text-right">
                                                     <t t-set="subtotal"
-                                                       t-value="round(o.amount_untaxed_signed)"/>
+                                                       t-value="round(o.amount_untaxed_signed, 2)"/>
 
                                                     <p t-if="o.type in ('in_invoice', 'in_refund')" class="m-0"
                                                        t-esc="-subtotal"
@@ -217,12 +217,12 @@
                                                 </td>
                                                 <td/>
                                                 <td class="text-right">
-                                                    <p class="m-0" t-esc="round(o.amount_commission)"
+                                                    <p class="m-0" t-esc="round(o.amount_commission, 2)"
                                                        t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
                                                 </td>
                                                 <td/>
                                                 <td class="text-right">
-                                                    <p class="m-0" t-esc="round(commission)"
+                                                    <p class="m-0" t-esc="round(commission, 2)"
                                                        t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_id.currency_id}"/>
                                                 </td>
 
@@ -230,16 +230,16 @@
 
                                             <tr class="border-black o_subtotal" style="" t-if="o.currency_charge">
                                                 <td >
-                                                    <strong>Currency Charge(<span t-esc="round(aed_rate,2)"></span>)</strong>
+                                                    <strong>Currency Charge(<span t-esc="round(aed_rate,2)"/>)</strong>
                                                 </td>
                                                 <td/>
                                                 <td class="text-right">
-                                                    <span t-esc="round(o.currency_charge)"
+                                                    <span t-esc="round(o.currency_charge, 2)"
                                                           t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
                                                 </td>
                                                 <td/>
                                                 <td class="text-right">
-                                                    <span t-esc="round(currency_charge_aed)"
+                                                    <span t-esc="round(currency_charge_aed, 2)"
                                                           t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_id.currency_id}"/>
                                                 </td>
 
@@ -250,13 +250,13 @@
                                                 </td>
                                                 <td/>
                                                 <td class="text-right">
-                                                    <p class="m-0" t-esc="round(o.bank_charge_currency)"
+                                                    <p class="m-0" t-esc="round(o.bank_charge_currency, 2)"
                                                        t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
                                                 </td>
                                                 <td/>
                                                 <t t-set="bank_charge" t-value="o.bank_charge"/>
                                                 <td class="text-right">
-                                                    <p class="m-0" t-esc="round(o.bank_charge)"
+                                                    <p class="m-0" t-esc="round(o.bank_charge, 2)"
                                                        t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_id.currency_id}"/>
                                                 </td>
 
@@ -267,12 +267,12 @@
                                                 </td>
                                                 <td/>
                                                 <td class="text-right">
-                                                    <p class="m-0" t-esc="round(o.amount_discount)"
+                                                    <p class="m-0" t-esc="round(o.amount_discount, 2)"
                                                        t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
                                                 </td>
                                                 <td/>
                                                 <td class="text-right">
-                                                    <p class="m-0" t-esc="round(discount)"
+                                                    <p class="m-0" t-esc="round(discount, 2)"
                                                        t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_id.currency_id}"/>
                                                 </td>
 
@@ -284,7 +284,7 @@
                                                 <td/>
                                                 <td class="text-right">
 
-                                                    <span t-esc="round(o.bank_charge_currency+o.amount_untaxed+o.currency_charge - o.amount_discount - o.amount_commission)"
+                                                    <span t-esc="round(o.bank_charge_currency+o.amount_untaxed+o.currency_charge - o.amount_discount - o.amount_commission, 2)"
                                                           t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
                                                 </td>
                                                 <td/>
@@ -294,7 +294,7 @@
                                                 </td>
                                                 <td t-if="o.type in ('out_invoice', 'out_refund')" class="text-right">
                                                     <p class="m-0"
-                                                       t-esc="round(subtotal - discount + bank_charge_aed + currency_charge_aed)"
+                                                       t-esc="round(subtotal - discount + bank_charge_aed + currency_charge_aed, 2)"
                                                        t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_id.currency_id}"/>
                                                 </td>
 
@@ -317,7 +317,7 @@
                                                     </td>
                                                     <td/>
                                                     <td class="text-right">
-                                                        <span t-esc="round(payment_aed)"
+                                                        <span t-esc="round(payment_aed, 2)"
                                                               t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_currency_id}"/>
                                                     </td>
 
@@ -334,7 +334,7 @@
                                                     </td>
                                                     <td/>
                                                     <td class="text-right">
-                                                        <span t-esc="round(amount_residual_aed)"
+                                                        <span t-esc="round(amount_residual_aed, 2)"
                                                               t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_currency_id}"/>
                                                     </td>
                                                 </tr>
