@@ -123,14 +123,16 @@ class AccountMove(models.Model):
 
             if move.customer_currency_id and move.currency_id and move.company_id:
                 currency_amount = move.company_id.currency_id._convert(-total_untaxed,
-                                                                         move.currency_id, move.company_id,
-                                                                         move.date)
-                customer_currency_amount = move.company_id.currency_id._convert(-total_untaxed,
-                                                                                  move.customer_currency_id,
-                                                                                  move.company_id,
-                                                                                  move.date)
-                currency_charge = currency_amount - customer_currency_amount
-
+                                                                       move.currency_id, move.company_id,
+                                                                       move.date)
+                customer_currency_rate = self.env['res.currency']._get_conversion_rate(move.customer_currency_id,
+                                                                                       move.company_id.currency_id,
+                                                                                       move.company_id, move.date)
+                currency_rate = self.env['res.currency']._get_conversion_rate(move.currency_id,
+                                                                              move.company_id.currency_id,
+                                                                              move.company_id, move.date)
+                customer_currency_amount = ((currency_amount * customer_currency_rate) / currency_rate)
+                currency_charge = customer_currency_amount - currency_amount
 
             move.amount_total = sign * (
                 total_currency if len(currencies) == 1 else total) - total_commission - amount_discount

@@ -175,6 +175,8 @@
                                         <t t-set="discount"
                                            t-value="o.currency_id._convert(o.amount_discount, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
                                         <t t-set="commission" t-value="o.currency_id._convert(o.amount_commission, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
+                                         <t t-set="amount_residual_aed"
+                                           t-value="o.currency_id._convert(o.amount_residual, o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
                                         <br/>
                                         <table width="100%">
                                             <tr class="border-black o_subtotal" style="">
@@ -300,27 +302,40 @@
                                             <tr> </tr>
                                             <t t-set="payments_vals" t-value="o._get_reconciled_info_JSON_values()"/>
                                             <t t-foreach="payments_vals" t-as="payment_vals">
+                                                <t t-set="payment_aed"
+                                                   t-value="o.currency_id._convert(payment_vals['amount'], o.company_id.currency_id, o.company_id, o.invoice_date or datetime.date.today())"/>
                                                 <tr>
-                                                    <td colspan="3"/>
                                                     <td>
                                                         <i class="oe_form_field text-right oe_payment_label">Paid on
                                                             <t t-esc="payment_vals['date']"/>
                                                         </i>
                                                     </td>
+                                                    <td> </td>
                                                     <td class="text-right">
-                                                        <span t-esc="round(payment_vals['amount'])"
+                                                        <span t-esc="payment_vals['amount']"
                                                               t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
                                                     </td>
+                                                    <td/>
+                                                    <td class="text-right">
+                                                        <span t-esc="round(payment_aed)"
+                                                              t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_currency_id}"/>
+                                                    </td>
+
                                                 </tr>
                                             </t>
                                             <t t-if="len(payments_vals) &gt; 0">
                                                 <tr class="border-black">
-                                                    <td colspan="3"/>
                                                     <td>
                                                         <strong>Amount Due</strong>
                                                     </td>
+                                                    <td></td>
                                                     <td class="text-right">
-                                                        <span t-esc="round(o.amount_residual)"/>
+                                                        <span t-field="o.amount_residual"/>
+                                                    </td>
+                                                    <td/>
+                                                    <td class="text-right">
+                                                        <span t-esc="round(amount_residual_aed)"
+                                                              t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_currency_id}"/>
                                                     </td>
                                                 </tr>
                                             </t>
