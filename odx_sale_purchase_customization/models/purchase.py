@@ -256,10 +256,17 @@ class PurchaseOrder(models.Model):
 
     def action_view_invoice(self):
         res = super(PurchaseOrder, self).action_view_invoice()
+        if self.invoice_ids:
+            raise UserError(_('Vendor bill is already created '))
         res['context'].update({'default_ref': self.name, 'default_purchase_order_id': self.id,
                                'default_is_order_to_invoice':True},
                               )
         return res
+
+    def unlink(self):
+        if self.invoice_ids:
+            raise UserError(_('You can not remove an Purchase order  once the Vendor bill is created '))
+        return super(PurchaseOrder, self).unlink()
 
     @api.model
     def create(self, values):
