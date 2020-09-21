@@ -69,7 +69,10 @@ class PurchaseOrder(models.Model):
     is_sample_customer = fields.Boolean(string='Sample received from customer')
     is_sample_vendor = fields.Boolean(string='Samples sent to supplier')
     is_vendor_sample_customer = fields.Boolean(string='Supplier initial Sample')
-    is_sample_company = fields.Boolean(string='Supplier final samples')
+    is_sample_company = fields.Boolean(string='Supplier final samples to Customer')
+    is_sample_to_mastex = fields.Boolean(string='Supplier final samples to Mastex')
+    is_receive_document_supplier = fields.Boolean(string='Receive documents from supplier')
+    is_send_document_customer= fields.Boolean(string='Send documents to customer')
     purchase_shipment_ids = fields.One2many('purchase.shipment', 'purchase_id', string="Shipment Details")
 
     # attachments
@@ -78,20 +81,23 @@ class PurchaseOrder(models.Model):
     actual_grand_total = fields.Float(string="Net Total", compute='_compute_grand_total')
     actual_total = fields.Float(string="Actual Total", compute='_compute_grand_total')
     actual_commission = fields.Float(string="Actual Commission", compute='_compute_grand_total')
+    planned_total = fields.Float(string="Planned Total", compute='_compute_grand_total')
 
     @api.depends('order_line')
     def _compute_grand_total(self):
-        grand_total = 0
-        actual_total = 0
-        actual_commission = 0
         for record in self:
-
-            for line in self.order_line:
+            grand_total = 0
+            actual_total = 0
+            actual_commission = 0
+            planned_total = 0
+            for line in record.order_line:
                 grand_total = grand_total + line.actual_net_amount
-                actual_total = actual_total +  line.actual_total_amount
+                actual_total = actual_total + line.actual_total_amount
                 actual_commission = actual_commission + line.actual_com_amount
+                planned_total = planned_total + line.total
             record.actual_grand_total = grand_total
             record.actual_total = actual_total
+            record.planned_total = planned_total
             record.actual_commission = actual_commission
 
     @api.onchange('colour_instructions')
@@ -182,6 +188,9 @@ class PurchaseOrder(models.Model):
             record.is_sample_vendor = False
             record.is_vendor_sample_customer = False
             record.is_sample_company = False
+            record.is_sample_to_mastex = False
+            record.is_receive_document_supplier = False
+            record.is_send_document_customer = False
             if record.purchase_shipment_ids:
                 for shipment in record.purchase_shipment_ids:
                     if shipment.type:
@@ -193,6 +202,12 @@ class PurchaseOrder(models.Model):
                             record.is_vendor_sample_customer = True
                         elif shipment.type == 'sample_company':
                             record.is_sample_company = True
+                        elif shipment.type == 'sample_to_mastex':
+                            record.is_sample_to_mastex = True
+                        elif shipment.type == 'receive_document_suppler':
+                            record.is_receive_document_supplier = True
+                        elif shipment.type == 'send_document_customer':
+                            record.is_send_document_customer = True
 
     def button_confirm(self):
         """ inherited to create sale order,
@@ -256,7 +271,8 @@ class PurchaseOrder(models.Model):
 
     def action_view_invoice(self):
         res = super(PurchaseOrder, self).action_view_invoice()
-        if self.invoice_ids:
+        create_bill = self.env.context.get('create_bill', False)
+        if self.invoice_ids and create_bill:
             raise UserError(_('Vendor bill is already created '))
         res['context'].update({'default_ref': self.name, 'default_purchase_order_id': self.id,
                                'default_is_order_to_invoice':True},
@@ -393,7 +409,7 @@ class LandingCost(models.Model):
     destination = fields.Many2one(comodel_name='res.destination', string='Destination')
     marks = fields.Char(string="Marks")
     container_no = fields.Char(string="Container No")
-    reference = fields.Char(string="Reference")
+    reference = fields.Char(string="Order Number")
     status = fields.Selection([('in_transit', 'In Transit'), ('discharged', 'Discharged')], string='Status')
 
     @api.onchange('landing_date_etd','landing_date_eta')
@@ -426,15 +442,18 @@ class PurchaseShipment(models.Model):
     shipment_from = fields.Many2one(comodel_name='shipment.destination', string="Shipment From")
     from_date = fields.Date(string='Dispatch Date', copy=False, default=fields.Date.today(), store=True)
     to_date = fields.Date(string='Expected Delivery Date', copy=False, store=True)
-    reference = fields.Char(string="Reference")
+    reference = fields.Char(string="Order Number")
     description = fields.Char(string="Description")
     status = fields.Selection([('sent', 'Sent'), ('received', 'Received'), ('delivered', 'Delivered'),
                                ('cancel', 'Canceled')],
                               string='Status')
-    type = fields.Selection([('sample_customer', 'Receive sample from customer'),
-                             ('sample_vendor', 'Sent sample to vendor'),
-                             ('vendor_sample_customer', 'Sent First Sample'),
-                             ('sample_company', ' Sent Final Sample'),
+    type = fields.Selection([('sample_customer', 'Sample received from customer'),
+                             ('sample_vendor', 'Samples sent to supplier'),
+                             ('vendor_sample_customer', 'Supplier initial Sample'),
+                             ('sample_company', ' Supplier final samples to Customer'),
+                             ('sample_to_mastex','Supplier final samples to Mastex'),
+                             ('receive_document_suppler','Receive documents from supplier'),
+                             ('send_document_customer','Send documents to customer'),
                              ('others', ' Others')],
                             string='Type')
     attachment = fields.Binary(string="Files", attachment=True)

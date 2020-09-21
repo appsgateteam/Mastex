@@ -52,14 +52,18 @@ class SaleOrder(models.Model):
     attachment_ids = fields.One2many('ir.attachment', 'sale_id', string='Attachment')
     attachment_count = fields.Integer(compute='_compute_attachment_count')
     actual_grand_total = fields.Float(string="Actual Grand Total", compute='_compute_grand_total')
+    planned_total = fields.Float(string="Planned Total", compute='_compute_grand_total')
 
     @api.depends('order_line')
     def _compute_grand_total(self):
-        grand_total = 0
         for record in self:
-            for line in self.order_line:
+            grand_total = 0
+            planned_total = 0
+            for line in record.order_line:
                 grand_total = grand_total + line.actual_net_amount
+                planned_total = planned_total + line.price_subtotal
             record.actual_grand_total = grand_total
+            record.planned_total = planned_total
 
     @api.onchange('colour_instructions')
     def _onchange_colour_instructions(self):
