@@ -56,12 +56,13 @@
                                     <strong>Reference:</strong>
                                     <p class="m-0" t-field="o.ref"/>
                                 </div>
-                                <div class="col-auto mw-100 mb-2" t-if="o.purchase_order_id" name="packages">
-                                    <t t-if="o.purchase_order_id.landing_line_ids">
+                                <div class="col-auto mw-100 mb-2" t-if="o.sale_id" name="packages">
+                                    <t t-if="o.sale_id.purchase_order_id">
+                                    <t t-if="o.sale_id.purchase_order_id.landing_line_ids">
                                         <strong>No Of Packages:</strong>
-                                    <p class="m-0" t-esc="o.purchase_order_id.landing_line_ids[0].no_of_packages"/>
+                                    <p class="m-0" t-esc="o.sale_id.purchase_order_id.landing_line_ids[0].no_of_packages"/>
                                     </t>
-
+                                    </t>
                                 </div>
                             </div>
 
