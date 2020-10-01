@@ -39,12 +39,16 @@ class AccountAgedTrialBalance(models.TransientModel):
                                    required=True, default=30)
     date_from = fields.Date(default=lambda *a: time.strftime('%Y-%m-%d'))
 
+    currency_id = fields.Many2one('res.currency', string='Currency')
+
+
     def _print_report(self, data):
 
         res = {}
         data = self.pre_print_report(data)
         data['form'].update(self.read(['period_length'])[0])
         period_length = data['form']['period_length']
+        data['currency_id'] = self.currency_id.id if self.currency_id else False
         if period_length <= 0:
             raise UserError(_('You must set a period length greater than 0.'))
         if not data['form']['date_from']:

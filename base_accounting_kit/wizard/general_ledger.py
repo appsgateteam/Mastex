@@ -42,14 +42,21 @@ class AccountReportGeneralLedger(models.TransientModel):
                                    'account_report_general_ledger_journal_rel',
                                    'account_id', 'journal_id',
                                    string='Journals', required=True)
+    account_ids = fields.Many2many('account.account',
+                                   'account_report_general_ledger_account_rel',
+                                   'ledger_id', 'account_id',
+                                   string='Accounts', required=False)
+
 
     def _print_report(self, data):
         data = self.pre_print_report(data)
         data['form'].update(self.read(['initial_balance', 'sortby'])[0])
+        data['form'].update({'account_ids': self.account_ids.ids})
         if data['form'].get('initial_balance') and not data['form'].get(
                 'date_from'):
             raise UserError(_("You must define a Start Date"))
         records = self.env[data['model']].browse(data.get('ids', []))
+        print(data['form'])
         return self.env.ref(
             'base_accounting_kit.action_report_general_ledger').with_context(
             landscape=True).report_action(records, data=data)
