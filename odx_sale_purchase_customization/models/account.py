@@ -386,10 +386,17 @@ class AccountMove(models.Model):
             """
             self.ensure_one()
             get_param = self.env['ir.config_parameter'].sudo().get_param
-            discount_account = get_param('odx_sale_purchase_customization.discount_account_id')
-            if not discount_account:
-                raise UserError(_("Please configure a account for discount in settings."))
-            discount_account = ast.literal_eval(discount_account)
+            discount_account = False
+            if self.type in ('in_invoice', 'in_refund'):
+                discount_account = get_param('odx_sale_purchase_customization.purchase_discount_account_id')
+                if not discount_account:
+                    raise UserError(_("Please configure a account for purchase discount in settings."))
+            if self.type in ('out_invoice', 'out_refund'):
+                discount_account = get_param('odx_sale_purchase_customization.sale_discount_account_id')
+                if not discount_account:
+                    raise UserError(_("Please configure a account for Sale discount in settings."))
+            if discount_account:
+                discount_account = ast.literal_eval(discount_account)
             discount_account_id = self.env["account.account"].search([('id', '=', discount_account)], limit=1)
             amount_currency = 0.0
             if self.type == 'entry' or self.is_outbound():

@@ -24,9 +24,10 @@ from odoo import api, fields, models
 
 class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
-
+    # discount_account_id
     commission_account_id = fields.Many2one(comodel_name='account.account', string="Commission Account")
-    discount_account_id = fields.Many2one(comodel_name='account.account', string="Discount Account")
+    sale_discount_account_id = fields.Many2one(comodel_name='account.account', string="Sale Discount Account")
+    purchase_discount_account_id = fields.Many2one(comodel_name='account.account', string="Purchase Discount Account")
     bank_fee_account_id = fields.Many2one(comodel_name='account.account', string="Bank Fee Account")
     currency_diff_account_id = fields.Many2one(comodel_name='account.account', string="Currency Diff Account")
 
@@ -39,7 +40,11 @@ class ResConfigSettings(models.TransientModel):
 
         )
         res.update(
-            discount_account_id=int(params.get_param('odx_sale_purchase_customization.discount_account_id')),
+            sale_discount_account_id=int(params.get_param('odx_sale_purchase_customization.sale_discount_account_id')),
+
+        )
+        res.update(
+            purchase_discount_account_id=int(params.get_param('odx_sale_purchase_customization.purchase_discount_account_id')),
 
         )
         res.update(
@@ -57,8 +62,10 @@ class ResConfigSettings(models.TransientModel):
         super(ResConfigSettings, self).set_values()
         self.env['ir.config_parameter'].sudo().set_param("odx_sale_purchase_customization.commission_account_id",
                                                          self.commission_account_id.id)
-        self.env['ir.config_parameter'].sudo().set_param("odx_sale_purchase_customization.discount_account_id",
-                                                         self.discount_account_id.id)
+        self.env['ir.config_parameter'].sudo().set_param("odx_sale_purchase_customization.purchase_discount_account_id",
+                                                         self.purchase_discount_account_id.id)
+        self.env['ir.config_parameter'].sudo().set_param("odx_sale_purchase_customization.sale_discount_account_id",
+                                                         self.sale_discount_account_id.id)
         self.env['ir.config_parameter'].sudo().set_param("odx_sale_purchase_customization.bank_fee_account_id",
                                                          self.bank_fee_account_id.id)
         self.env['ir.config_parameter'].sudo().set_param("odx_sale_purchase_customization.currency_diff_account_id",
