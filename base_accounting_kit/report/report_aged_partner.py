@@ -292,6 +292,11 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                                                target_move,
                                                                data['form'][
                                                                    'period_length'])
+
+        if data['currency_id']:
+            currency_id = self.env['res.currency'].search([('id','=',int(data['currency_id']))])
+        else:
+            currency_id = False
         return {
             'doc_ids': self.ids,
             'doc_model': model,
@@ -300,4 +305,5 @@ class ReportAgedPartnerBalance(models.AbstractModel):
             'time': time,
             'get_partner_lines': movelines,
             'get_direction': total,
+            'currency_id':currency_id
         }

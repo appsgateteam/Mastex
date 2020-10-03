@@ -146,7 +146,6 @@ class ReportGeneralLedger(models.AbstractModel):
         self.model = self.env.context.get('active_model')
         docs = self.env[self.model].browse(
             self.env.context.get('active_ids', []))
-
         init_balance = data['form'].get('initial_balance', True)
         sortby = data['form'].get('sortby', 'sort_date')
         display_account = data['form']['display_account']
@@ -158,6 +157,9 @@ class ReportGeneralLedger(models.AbstractModel):
 
         accounts = docs if self.model == 'account.account' else self.env[
             'account.account'].search([])
+        if data['form'].get('account_ids'):
+            accounts = self.env['account.account'].browse(data['form'].get('account_ids'))
+
         accounts_res = self.with_context(
             data['form'].get('used_context', {}))._get_account_move_entry(
             accounts, init_balance, sortby, display_account)

@@ -123,14 +123,16 @@ class AccountMove(models.Model):
 
             if move.customer_currency_id and move.currency_id and move.company_id:
                 currency_amount = move.company_id.currency_id._convert(-total_untaxed,
-                                                                         move.currency_id, move.company_id,
-                                                                         move.date)
-                customer_currency_amount = move.company_id.currency_id._convert(-total_untaxed,
-                                                                                  move.customer_currency_id,
-                                                                                  move.company_id,
-                                                                                  move.date)
-                currency_charge = currency_amount - customer_currency_amount
-
+                                                                       move.currency_id, move.company_id,
+                                                                       move.date)
+                customer_currency_rate = self.env['res.currency']._get_conversion_rate(move.customer_currency_id,
+                                                                                       move.company_id.currency_id,
+                                                                                       move.company_id, move.date)
+                currency_rate = self.env['res.currency']._get_conversion_rate(move.currency_id,
+                                                                              move.company_id.currency_id,
+                                                                              move.company_id, move.date)
+                customer_currency_amount = ((currency_amount * customer_currency_rate) / currency_rate)
+                currency_charge = customer_currency_amount - currency_amount
 
             move.amount_total = sign * (
                 total_currency if len(currencies) == 1 else total) - total_commission - amount_discount
@@ -384,10 +386,17 @@ class AccountMove(models.Model):
             """
             self.ensure_one()
             get_param = self.env['ir.config_parameter'].sudo().get_param
-            discount_account = get_param('odx_sale_purchase_customization.discount_account_id')
-            if not discount_account:
-                raise UserError(_("Please configure a account for discount in settings."))
-            discount_account = ast.literal_eval(discount_account)
+            discount_account = False
+            if self.type in ('in_invoice', 'in_refund'):
+                discount_account = get_param('odx_sale_purchase_customization.purchase_discount_account_id')
+                if not discount_account:
+                    raise UserError(_("Please configure a account for purchase discount in settings."))
+            if self.type in ('out_invoice', 'out_refund'):
+                discount_account = get_param('odx_sale_purchase_customization.sale_discount_account_id')
+                if not discount_account:
+                    raise UserError(_("Please configure a account for Sale discount in settings."))
+            if discount_account:
+                discount_account = ast.literal_eval(discount_account)
             discount_account_id = self.env["account.account"].search([('id', '=', discount_account)], limit=1)
             amount_currency = 0.0
             if self.type == 'entry' or self.is_outbound():

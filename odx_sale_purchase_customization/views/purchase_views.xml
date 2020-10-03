@@ -29,7 +29,7 @@
                                    context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True,'default_customer_rank':1}"
                                    options="{&quot;always_reload&quot;: True}"
                                    attrs="{'readonly': [('state', 'in', ('purchase', 'done', 'cancel'))]}"
-                                   domain="[('customer_rank','=',1)]"
+                                   domain="[('customer_rank','>=',1)]"
                                    required="1"/>
                             <field name="sale_order_id" readonly="1"/>
                             <field name="marks" attrs="{'readonly':[('state', 'in', 'done')]}" invisible="1"/>
@@ -46,11 +46,14 @@
                             <field name="is_sample_vendor" readonly="1" force_save="True"/>
                             <field name="is_vendor_sample_customer" readonly="1" force_save="True"/>
                             <field name="is_sample_company" readonly="1" force_save="True"/>
+                            <field name="is_sample_to_mastex" readonly="1" force_save="True"/>
+                            <field name="is_receive_document_supplier" readonly="1" force_save="True"/>
+                            <field name="is_send_document_customer" readonly="1" force_save="True"/>
                         </group>
                     </group>
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="attributes">
-                    <attribute name="domain">[('supplier_rank','=',1)]</attribute>
+                    <attribute name="domain">[('supplier_rank','>=',1)]</attribute>
                 </xpath>
                 <xpath expr="//notebook" position="inside">
                     <page string="Bill Of Lading" name="bill_of_landings">
@@ -62,10 +65,10 @@
                                 <field name="landing_date_eta"/>
                                 <field name="shipping_company_id"/>
                                 <field name="name"/>
+                                <field name="container_no"/>
                                 <field name="no_of_packages"/>
                                 <field name="destination"/>
                                 <field name="marks"/>
-                                <field name="container_no"/>
                                 <field name="landing_attachment"/>
                                 <field name="landing_attachment_name" invisible="1"/>
                                 <field name="status"/>
@@ -91,8 +94,8 @@
                         <field name="purchase_shipment_ids" context="{'default_reference': name}">
                             <tree string="Courier Details" editable="bottom">
                                 <field name="type"/>
-                                <field name="shipment_to"/>
                                 <field name="shipment_from"/>
+                                <field name="shipment_to"/>
                                 <field name="reference"/>
                                 <field name="description"/>
                                 <field name="from_date"/>
@@ -218,6 +221,10 @@
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="customer_id"/>
                 </xpath>
+                <xpath expr="//field[@name='amount_total']" position="after">
+                    <field name="actual_total" sum="Actual Total" widget="monetary"/>
+                    <field name="planned_total" sum="Planned Total" widget="monetary"/>
+                </xpath>
             </field>
         </record>
         <record id="purchase_order_view_tree_inherit" model="ir.ui.view">
@@ -227,6 +234,10 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="customer_id"/>
+                </xpath>
+                <xpath expr="//field[@name='amount_total']" position="after">
+                    <field name="actual_total" sum="Actual Total" widget="monetary"/>
+                    <field name="planned_total" sum="Planned Total" widget="monetary"/>
                 </xpath>
             </field>
         </record>

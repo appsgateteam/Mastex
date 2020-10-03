@@ -99,7 +99,7 @@
 
                                     <td class="text-right" t-if="data['form']['amount_currency']">
                                         <t t-if="line['exchange_rate']">
-                                            <span t-esc="round(line['exchange_rate'], 2)"/>
+                                            <span t-esc="round(line['exchange_rate'], 3)"/>
                                         </t>
                                     </td>
                                     <td class="text-right" t-if="data['form']['amount_currency']">

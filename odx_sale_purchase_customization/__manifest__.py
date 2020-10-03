@@ -29,7 +29,7 @@
         'views/purchase_views.xml',
         'views/purchase_landing_cost_view.xml',
         'views/account_move_views.xml',
-        'report/invoice_report.xml',
+        # 'report/invoice_report.xml',
         'report/sale_report_template.xml',
         'report/purchase_report.xml',
         'report/rfq_print.xml',

@@ -25,7 +25,9 @@
                             <p>
                                 <span t-if="data['result_selection'] == 'customer'">Receivable Accounts</span>
                                 <span t-if="data['result_selection'] == 'supplier'">Payable Accounts</span>
-                                <span t-if="data['result_selection'] == 'customer_supplier'">Receivable and Payable Accounts</span>
+                                <span t-if="data['result_selection'] == 'customer_supplier'">Receivable and Payable
+                                    Accounts
+                                </span>
                             </p>
                         </div>
                         <div class="col-3">
@@ -41,25 +43,172 @@
                         <thead>
                             <tr>
                                 <th>Partners</th>
-                                <th class="text-right">
-                                    <span>Not due</span>
-                                </th>
-                                <th class="text-right"><span t-esc="data['4']['name']"/></th>
-                                <th class="text-right"><span t-esc="data['3']['name']"/></th>
-                                <th class="text-right"><span t-esc="data['2']['name']"/></th>
-                                <th class="text-right"><span t-esc="data['1']['name']"/></th>
-                                <th class="text-right"><span t-esc="data['0']['name']"/></th>
-                                <th class="text-right">Total</th>
+                                <t t-if="currency_id">
+                                    <th colspan="2" class="text-center">
+                                        <span>Not due</span>
+                                    </th>
+                                </t>
+                                <t t-else=" ">
+                                    <th class="text-right">
+                                        <span>Not due</span>
+                                    </th>
+                                </t>
+                                <t t-if="currency_id">
+                                    <th colspan="2" class="text-center">
+                                        <span t-esc="data['4']['name']"/>
+                                    </th>
+                                </t>
+
+                                <t t-else=" ">
+                                    <th class="text-right">
+                                        <span t-esc="data['4']['name']"/>
+                                    </th>
+                                </t>
+
+                                <t t-if="currency_id">
+                                    <th colspan="2" class="text-center">
+                                        <span t-esc="data['3']['name']"/>
+                                    </th>
+                                </t>
+                                <t t-else="">
+                                    <th class="text-right">
+                                        <span t-esc="data['3']['name']"/>
+                                    </th>
+                                </t>
+
+                                <t t-if="currency_id">
+                                    <th colspan="2" class="text-center">
+                                        <span t-esc="data['2']['name']"/>
+                                    </th>
+                                </t>
+                                <t t-else="">
+                                    <th class="text-right">
+                                        <span t-esc="data['2']['name']"/>
+                                    </th>
+                                </t>
+
+                                <t t-if="currency_id">
+                                    <th colspan="2" class="text-center">
+                                        <span t-esc="data['1']['name']"/>
+                                    </th>
+                                </t>
+
+                                <t t-else="">
+                                    <th class="text-right">
+                                        <span t-esc="data['1']['name']"/>
+                                    </th>
+                                </t>
+
+                                <t t-if="currency_id">
+                                    <th colspan="2" class="text-center">
+                                        <span t-esc="data['0']['name']"/>
+                                    </th>
+                                </t>
+                                <t t-else="">
+                                    <th class="text-right">
+                                        <span t-esc="data['0']['name']"/>
+                                    </th>
+                                </t>
+
+                                <t t-if="currency_id">
+                                    <th colspan="2" class="text-center">Total</th>
+                                </t>
+                                <t t-else="">
+                                    <th class="text-right">Total</th>
+
+                                </t>
+
                             </tr>
                             <tr t-if="get_partner_lines">
                                 <th>Account Total</th>
-                                <th class="text-right"><span t-esc="get_direction[6]" t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/></th>
-                                <th class="text-right"><span t-esc="get_direction[4]" t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/></th>
-                                <th class="text-right"><span t-esc="get_direction[3]" t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/></th>
-                                <th class="text-right"><span t-esc="get_direction[2]" t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/></th>
-                                <th class="text-right"><span t-esc="get_direction[1]" t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/></th>
-                                <th class="text-right"><span t-esc="get_direction[0]" t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/></th>
-                                <th class="text-right"><span t-esc="get_direction[5]" t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/></th>
+                                <th class="text-right">
+                                    <span t-esc="get_direction[6]"
+                                          t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                </th>
+                                <t t-if="currency_id">
+                                    <t t-set="get_6_eur"
+                                       t-value="env.company.currency_id._convert(get_direction[6], currency_id, env.company, datetime.date.today())"/>
+                                    <th class="text-right">
+                                        <span t-esc="get_6_eur"
+                                              t-options="{'widget': 'monetary', 'display_currency':currency_id}"/>
+                                    </th>
+                                </t>
+
+
+                                <th class="text-right">
+                                    <span t-esc="get_direction[4]"
+                                          t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                </th>
+                                <t t-if="currency_id">
+                                    <t t-set="get_4_eur"
+                                       t-value="env.company.currency_id._convert(get_direction[4], currency_id, env.company, datetime.date.today())"/>
+                                    <th class="text-right">
+                                        <span t-esc="get_4_eur"
+                                              t-options="{'widget': 'monetary', 'display_currency':currency_id}"/>
+                                    </th>
+                                </t>
+
+                                <th class="text-right">
+                                    <span t-esc="get_direction[3]"
+                                          t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                </th>
+                                <t t-if="currency_id">
+                                    <t t-set="get_3_eur"
+                                       t-value="env.company.currency_id._convert(get_direction[3], currency_id, env.company, datetime.date.today())"/>
+                                    <th class="text-right">
+                                        <span t-esc="get_3_eur"
+                                              t-options="{'widget': 'monetary', 'display_currency':currency_id}"/>
+                                    </th>
+                                </t>
+
+                                <th class="text-right">
+                                    <span t-esc="get_direction[2]"
+                                          t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                </th>
+                                <t t-if="currency_id">
+                                    <t t-set="get_2_eur"
+                                       t-value="env.company.currency_id._convert(get_direction[2], currency_id, env.company, datetime.date.today())"/>
+                                    <th class="text-right">
+                                        <span t-esc="get_2_eur"
+                                              t-options="{'widget': 'monetary', 'display_currency':currency_id}"/>
+                                    </th>
+                                </t>
+                                <th class="text-right">
+                                    <span t-esc="get_direction[1]"
+                                          t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                </th>
+                                <t t-if="currency_id">
+                                    <t t-set="get_1_eur"
+                                       t-value="env.company.currency_id._convert(get_direction[1], currency_id, env.company, datetime.date.today())"/>
+                                    <th class="text-right">
+                                        <span t-esc="get_1_eur"
+                                              t-options="{'widget': 'monetary', 'display_currency':currency_id}"/>
+                                    </th>
+                                </t>
+                                <th class="text-right">
+                                    <span t-esc="get_direction[0]"
+                                          t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                </th>
+                                <t t-if="currency_id">
+                                    <t t-set="get_0_eur"
+                                       t-value="env.company.currency_id._convert(get_direction[0], currency_id, env.company, datetime.date.today())"/>
+                                    <th class="text-right">
+                                        <span t-esc="get_0_eur"
+                                              t-options="{'widget': 'monetary', 'display_currency':currency_id}"/>
+                                    </th>
+                                </t>
+                                <th class="text-right">
+                                    <span t-esc="get_direction[5]"
+                                          t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                </th>
+                                <t t-if="currency_id">
+                                    <t t-set="get_5_eur"
+                                       t-value="env.company.currency_id._convert(get_direction[5], currency_id, env.company, datetime.date.today())"/>
+                                    <th class="text-right">
+                                        <span t-esc="get_5_eur"
+                                              t-options="{'widget': 'monetary', 'display_currency':currency_id}"/>
+                                    </th>
+                                </t>
                             </tr>
                         </thead>
                         <tbody>
@@ -68,26 +217,89 @@
                                     <span t-esc="partner['name']"/>
                                 </td>
                                 <td class="text-right">
-                                    <span t-esc="partner['direction']" t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                    <span t-esc="partner['direction']"
+                                          t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                 </td>
+                                <t t-if="currency_id">
+                                    <t t-set="partner_direction"
+                                       t-value="env.company.currency_id._convert(partner['direction'], currency_id, env.company, datetime.date.today())"/>
+                                    <th class="text-right">
+                                        <span t-esc="partner_direction"
+                                              t-options="{'widget': 'monetary', 'display_currency':currency_id}"/>
+                                    </th>
+                                </t>
                                 <td class="text-right">
-                                    <span t-esc="partner['4']" t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                    <span t-esc="partner['4']"
+                                          t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                 </td>
+                                <t t-if="currency_id">
+                                    <t t-set="partner_4"
+                                       t-value="env.company.currency_id._convert(partner['4'], currency_id, env.company, datetime.date.today())"/>
+                                    <th class="text-right">
+                                        <span t-esc="partner_4"
+                                              t-options="{'widget': 'monetary', 'display_currency':currency_id}"/>
+                                    </th>
+                                </t>
                                 <td class="text-right">
-                                    <span t-esc="partner['3']" t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                    <span t-esc="partner['3']"
+                                          t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                 </td>
+                                <t t-if="currency_id">
+                                    <t t-set="partner_3"
+                                       t-value="env.company.currency_id._convert(partner['3'], currency_id, env.company, datetime.date.today())"/>
+                                    <th class="text-right">
+                                        <span t-esc="partner_3"
+                                              t-options="{'widget': 'monetary', 'display_currency':currency_id}"/>
+                                    </th>
+                                </t>
                                 <td class="text-right">
-                                    <span t-esc="partner['2']" t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                    <span t-esc="partner['2']"
+                                          t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                 </td>
+                                <t t-if="currency_id">
+                                    <t t-set="partner_2"
+                                       t-value="env.company.currency_id._convert(partner['2'], currency_id, env.company, datetime.date.today())"/>
+                                    <th class="text-right">
+                                        <span t-esc="partner_2"
+                                              t-options="{'widget': 'monetary', 'display_currency':currency_id}"/>
+                                    </th>
+                                </t>
                                 <td class="text-right">
-                                    <span t-esc="partner['1']" t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                    <span t-esc="partner['1']"
+                                          t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                 </td>
+                                <t t-if="currency_id">
+                                    <t t-set="partner_1"
+                                       t-value="env.company.currency_id._convert(partner['1'], currency_id, env.company, datetime.date.today())"/>
+                                    <th class="text-right">
+                                        <span t-esc="partner_1"
+                                              t-options="{'widget': 'monetary', 'display_currency':currency_id}"/>
+                                    </th>
+                                </t>
                                 <td class="text-right">
-                                    <span t-esc="partner['0']" t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                    <span t-esc="partner['0']"
+                                          t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                 </td>
+                                <t t-if="currency_id">
+                                    <t t-set="partner_0"
+                                       t-value="env.company.currency_id._convert(partner['0'], currency_id, env.company, datetime.date.today())"/>
+                                    <th class="text-right">
+                                        <span t-esc="partner_0"
+                                              t-options="{'widget': 'monetary', 'display_currency':currency_id}"/>
+                                    </th>
+                                </t>
                                 <td class="text-right">
-                                    <span t-esc="partner['total']" t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                    <span t-esc="partner['total']"
+                                          t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                 </td>
+                                <t t-if="currency_id">
+                                    <t t-set="partner_total"
+                                       t-value="env.company.currency_id._convert(partner['total'], currency_id, env.company, datetime.date.today())"/>
+                                    <th class="text-right">
+                                        <span t-esc="partner_total"
+                                              t-options="{'widget': 'monetary', 'display_currency':currency_id}"/>
+                                    </th>
+                                </t>
                             </tr>
                         </tbody>
                     </table>
