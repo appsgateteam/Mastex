@@ -7,6 +7,9 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="delete">false</attribute>
+                </xpath>
                 <xpath expr="//form/header/button[@name='action_quotation_send']" position="replace">
                     <button name="action_quotation_send" string="Send by Email" type="object" states="draft"
                             class="btn"/>
@@ -292,8 +295,14 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_tree"/>
             <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="delete">false</attribute>
+                </xpath>
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="vendor_id"/>
+                </xpath>
+                <xpath expr="//field[@name='commitment_date']" position="replace">
+                    <field name="shipment_date"/>
                 </xpath>
                 <xpath expr="//field[@name='amount_total']" position="after">
                     <field name="actual_grand_total" string="Actual Total" sum="Actual Total" widget="monetary"/>
@@ -309,8 +318,14 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_quotation_tree"/>
             <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="delete">false</attribute>
+                </xpath>
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="vendor_id"/>
+                </xpath>
+                <xpath expr="//field[@name='commitment_date']" position="replace">
+                    <field name="shipment_date"/>
                 </xpath>
                 <xpath expr="//field[@name='amount_total']" position="after">
                     <field name="actual_grand_total" string="Actual Total" sum="Actual Total" widget="monetary"/>
@@ -326,7 +341,6 @@
             <field name="name">Quotations</field>
             <field name="res_model">sale.order</field>
             <field name="context"></field>
-
         </record>
     </data>
 </odoo>

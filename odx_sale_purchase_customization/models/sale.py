@@ -244,6 +244,8 @@ class SaleOrder(models.Model):
         return res
 
     def create_invoices(self):
+        if self.invoice_ids:
+            raise UserError(_('Invoice is already created '))
         self._create_invoices(self)
         return self.action_view_invoice()
 
