@@ -262,6 +262,13 @@ class SaleOrderLine(models.Model):
     purchase_order_line_id = fields.Many2one("purchase.order.line", string='Purchase Order Line')
     actual_net_amount = fields.Float(string='Actual NetAmount', compute='_compute_actual_net')
 
+
+    @api.onchange('product_uom')
+    def product_uom_change(self):
+        res = res = super(SaleOrderLine, self).product_uom_change()
+        return res
+
+
     def _prepare_invoice_line(self):
         res = super(SaleOrderLine, self)._prepare_invoice_line()
         res.update({'quantity': self.actual_qty})
