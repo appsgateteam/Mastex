@@ -41,6 +41,10 @@ class ResPartner(models.Model):
             else:
                 p.property_product_pricelist = 2
 
+    @api.depends('is_company', 'name','customer_code', 'parent_id.display_name', 'type', 'company_name')
+    def _compute_display_name(self):
+        res = super(,self)._compute_display_name()
+        return res
 
     def name_get(self):
         """adding sequence to the name"""
