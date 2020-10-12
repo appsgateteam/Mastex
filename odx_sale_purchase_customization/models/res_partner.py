@@ -43,7 +43,7 @@ class ResPartner(models.Model):
 
     @api.depends('is_company', 'name','customer_code', 'parent_id.display_name', 'type', 'company_name')
     def _compute_display_name(self):
-        res = super(,self)._compute_display_name()
+        res = super(ResPartner,self)._compute_display_name()
         return res
 
     def name_get(self):
