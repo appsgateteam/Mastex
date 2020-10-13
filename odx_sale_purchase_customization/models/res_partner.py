@@ -30,6 +30,22 @@ class ResPartner(models.Model):
         ('customer_code_uniq', 'unique (customer_code)', "Customer Code should be Unique !"),
     ]
 
+    @api.depends('country_id')
+    @api.depends_context('force_company')
+    def _compute_product_pricelist(self):
+        company = self.env.context.get('force_company', False)
+        res = self.env['product.pricelist']._get_partner_pricelist_multi(self.ids, company_id=company)
+        for p in self:
+            if res:
+                p.property_product_pricelist = res.get(p.id)
+            else:
+                p.property_product_pricelist = 2
+
+    @api.depends('is_company', 'name','customer_code', 'parent_id.display_name', 'type', 'company_name')
+    def _compute_display_name(self):
+        res = super(ResPartner,self)._compute_display_name()
+        return res
+
     def name_get(self):
         """adding sequence to the name"""
         result = []
