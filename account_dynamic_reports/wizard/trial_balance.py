@@ -193,9 +193,10 @@ class InsTrialBalance(models.TransientModel):
         return ret
 
     def validate_data(self):
-        if self.date_from > self.date_to:
-            raise ValidationError(_('"Date from" must be less than or equal to "Date to"'))
-        return True
+        if self.date_from and self.date_to:
+            if self.date_from > self.date_to:
+                raise ValidationError(_('"Date from" must be less than or equal to "Date to"'))
+            return True
 
     def process_filters(self, data):
         ''' To show on report headers'''
