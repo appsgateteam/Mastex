@@ -78,10 +78,10 @@ class PurchaseOrder(models.Model):
     # attachments
     attachment_ids = fields.One2many('ir.attachment', 'purchase_id', string='Attachment', copy=False)
     attachment_count = fields.Integer(compute='_compute_attachment_count')
-    actual_grand_total = fields.Float(string="Net Total", compute='_compute_grand_total')
-    actual_total = fields.Float(string="Actual Total", compute='_compute_grand_total')
-    actual_commission = fields.Float(string="Actual Commission", compute='_compute_grand_total')
-    planned_total = fields.Float(string="Planned Total", compute='_compute_grand_total')
+    actual_grand_total = fields.Float(string="Net Total", compute='_compute_grand_total',digits=(12,2))
+    actual_total = fields.Float(string="Actual Total", compute='_compute_grand_total',digits=(12,2))
+    actual_commission = fields.Float(string="Actual Commission", compute='_compute_grand_total',digits=(12,2))
+    planned_total = fields.Float(string="Planned Total", compute='_compute_grand_total',digits=(12,2))
 
     @api.depends('order_line')
     def _compute_grand_total(self):

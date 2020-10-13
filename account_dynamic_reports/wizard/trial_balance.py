@@ -136,7 +136,7 @@ class InsTrialBalance(models.TransientModel):
     )
     strict_range = fields.Boolean(
         string='Strict Range',
-        default=lambda self: self.env.company.strict_range
+        default=False
     )
     show_hierarchy = fields.Boolean(
         string='Show hierarchy'
