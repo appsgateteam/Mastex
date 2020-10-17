@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- QWeb Reports -->
+        <report
+            id="mastex_report_customis"
+            model="account.move"
+            string="Arabic Invoice"
+            report_type="qweb-pdf"
+            name="AG_mastex_reports.mastex_report"
+       
+            attachment="(object.state == 'posted') and ((object.name or 'INV').replace('/','_')+'.pdf')"
+            print_report_name="(object._get_report_base_filename())"
+            groups="account.group_account_invoice"
+        />
+
+
+    </data>
+</odoo>
