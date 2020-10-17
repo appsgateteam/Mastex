@@ -6,11 +6,7 @@ from odoo import api, fields, models, _
 class ResCompany(models.Model):
     _inherit = 'res.company'
 
-<<<<<<< HEAD
     strict_range = fields.Boolean(string='Use Strict Range', default=True,
-=======
-    strict_range = fields.Boolean(string='Use Strict Range', default=False,
->>>>>>> 7ee46f165c3e4e6dafd8cc2f9207f5d0f7b5dc41
                                   help='Use this if you want to show TB with retained earnings section')
     bucket_1 = fields.Integer(string='Bucket 1', required=True, default=30)
     bucket_2 = fields.Integer(string='Bucket 2', required=True, default=60)

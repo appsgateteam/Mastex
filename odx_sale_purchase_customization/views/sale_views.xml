@@ -110,8 +110,6 @@
                             <field name="shipping_mark" attrs="{'readonly':[('state', 'in', 'done')]}"/>
                             <field name="shipping_sample_book" attrs="{'readonly':[('state', 'in', 'done')]}"/>
                             <field name="notes" attrs="{'readonly':[('state', 'in', 'done')]}"/>
-                            <field name="has_due" invisible="1"/>
-                            <field name="is_warning" invisible="1"/>
                         </group>
                     </page>
                 </xpath>
