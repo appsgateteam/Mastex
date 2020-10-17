@@ -27,7 +27,11 @@
                                 domain="[('company_id','=',company_id)]"
                                 options="{'no_create_edit': True,'no_create': True, 'no_quick_create': True}"/>
                         <field name="strict_range" help="If checked the accounts will act strict to the date range
+<<<<<<< HEAD
                                     else it will consider initial balance to account"/>
+=======
+                                    else it will consider initial balance to account" />
+>>>>>>> 7ee46f165c3e4e6dafd8cc2f9207f5d0f7b5dc41
                     </group>
                     <footer>
                         <button name="action_pdf" type="object" string="PDF" class="oe_highlight"/>

@@ -136,7 +136,11 @@ class InsTrialBalance(models.TransientModel):
     )
     strict_range = fields.Boolean(
         string='Strict Range',
+<<<<<<< HEAD
         default=lambda self: self.env.company.strict_range
+=======
+        default=False
+>>>>>>> 7ee46f165c3e4e6dafd8cc2f9207f5d0f7b5dc41
     )
     show_hierarchy = fields.Boolean(
         string='Show hierarchy'
@@ -193,7 +197,11 @@ class InsTrialBalance(models.TransientModel):
         return ret
 
     def validate_data(self):
+<<<<<<< HEAD
         if self.date_from > self.date_to:
+=======
+        if (self.date_from and self.date_to) and (self.date_from > self.date_to):
+>>>>>>> 7ee46f165c3e4e6dafd8cc2f9207f5d0f7b5dc41
             raise ValidationError(_('"Date from" must be less than or equal to "Date to"'))
         return True
 
