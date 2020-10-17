@@ -99,7 +99,7 @@
                                 <field name="type"/>
                                 <field name="shipment_from"/>
                                 <field name="shipment_to"/>
-                                <field name="reference"/>
+                                <field name="reference" string="Airway Bill Number"/>
                                 <field name="description"/>
                                 <field name="from_date"/>
                                 <field name="to_date"/>
