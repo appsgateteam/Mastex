@@ -263,7 +263,7 @@ class SaleOrderLine(models.Model):
     actual_net_amount = fields.Float(string='Actual NetAmount', compute='_compute_actual_net')
 
 
-    @api.onchange('product_uom')
+    @api.onchange('')
     def product_uom_change(self):
         res = res = super(SaleOrderLine, self).product_uom_change()
         return res
