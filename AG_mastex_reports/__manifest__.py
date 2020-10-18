@@ -7,9 +7,9 @@
     'depends': ['sale'],
     'data': [
         
-        'report/invoice_inhert.xml',
-        # 'report/cridet_note_inheirt.xml',
-        # 'report/purchase_quotation.xml',
+        'report/invoice_arabic.xml',
+        'report/account_report_ar.xml',
+        'report/report_templates.xml',
        
     ],
     'installable': True,
