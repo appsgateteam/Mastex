@@ -1,95 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
+ <data>
+
+        <!-- <template id="external_layout_header" inherit_id="web.external_layout">
+         fddfdfdfd
+        </template> -->
+
+        <!-- <template id="custom_external_layout">
+            
+            <t t-if="o and 'company_id' in o">
+                <t t-set="company" t-value="o.company_id"></t>
+            </t>
+            <t t-if="not o or not 'company_id' in o">
+                <t t-set="company" t-value="res_company"></t>
+            </t>
+
+            
+        </template>
+     -->
+        
+        
         <template id="mastex_invoice_report">
-            <t t-call="web.external_layout">
+            <t t-call="web.external_layout_boxed">
+
+            
+           
+      
+
+            <!-- <t t-call="custom_external_layout"> -->
+
+                
+           
                 <t t-set="o" t-value="o.with_context(lang=lang)" />
                 <div style="float: right;" >
-
-                    <span t-field="o.partner_id.name"/><br></br>
-                    <span t-field="o.partner_id.street"/><br></br>
-                    <span t-field="o.partner_id.city"/><br></br>
-                    <span t-field="o.partner_id.country_id"/><br></br>
-                    <span t-field="o.partner_id.phone"/><br></br>      
-                    <span t-field="o.partner_id.email"/><br></br>
-                    <span>VAT:<span t-field="o.partner_id.vat"/></span><br></br>
-                    <span t-field="o.partner_id.website"/><br></br>
-                    <div t-if="o.partner_id.vat" class="mt16">
-                                <t t-if="o.company_id.country_id.vat_label" t-esc="o.company_id.country_id.vat_label" id="inv_tax_id_label"/>
-                                <t t-else="">Tax ID</t>: <span t-field="o.partner_id.vat"/></div>
+                <br></br>
+                <br></br>
+                    <div class="text-right">
+                        <span t-field="o.partner_id.name"/><br></br>
+                        <span t-field="o.partner_id.street"/><br></br>
+                        <span t-field="o.partner_id.city"/><br></br>
+                        <span t-field="o.partner_id.country_id"/><br></br>
+                        <span t-field="o.partner_id.phone"/><br></br>      
+                        <span t-field="o.partner_id.email"/><br></br>
+                        <span t-field="o.partner_id.website"/><br></br>
+                        <div t-if="o.partner_id.vat" class="mt16">
+                                    <t t-if="o.company_id.country_id.vat_label" t-esc="o.company_id.country_id.vat_label" id="inv_tax_id_label"/>
+                                    <t t-else="">Tax ID</t>: <span t-field="o.partner_id.vat"/></div>
+                    </div>
                     <h5>
                         <br></br>
+                        <br></br>
                         
-                        <span t-if="o.type == 'out_invoice' and o.state == 'posted'"><span style="float: right;">: Invoice/رقم الفاتورة</span></span>
+                        <span t-if="o.type == 'out_invoice' and o.state == 'posted'"><span style="font-size:18px; float: right;">: Invoice /رقم الفاتورة</span></span>
                         <span t-if="o.type == 'out_invoice' and o.state == 'draft'"><span style="float: right;">: Draft Invoice/رقم الفاتورة</span></span>
                         <span t-if="o.type == 'out_invoice' and o.state == 'cancel'"><span style="float: right;">: Cancelled Invoice/رقم الفاتورة</span></span>
                         <span t-if="o.type == 'out_refund'"><span style="float: right;">: Credit Note/رقم الفاتورة</span></span>
                         <span t-if="o.type == 'in_refund'"><span style="float: right;">: Vendor Credit Note/رقم الفاتورة</span></span>
                         <span t-if="o.type == 'in_invoice'"><span style="float: right;">: Vendor Bill/رقم الفاتورة</span></span>
                         <span t-if="o.name != '/'" t-field="o.name"/><br></br>
-                        <span t-field="o.invoice_date"/><span style="float: right;" >     : Carton/عدد الطرود</span><br></br>
-                        <span class="text-nowrap" t-field="o.amount_total"/><span style="float: right;">  : Amount Due/المبلغ المطلوب</span><br></br>
-                        <span class="text-nowrap" t-field="o.invoice_date"/><span style="float: right;">: Amount Due/ تاريخ الفاتورة</span><br></br>
+                        <br></br>
+                        <span  /><span style="font-size:18px; float: right; margin-left:5px;" >     : Carton / عدد الطرود</span><br></br>
+                        <br></br>
+                        <span class="text-nowrap"  t-field="o.amount_total"/><span style="font-size:18px; float: right; margin-left:5px;">  : Amount Due / المبلغ المطلوب</span><br></br>
+                        <br></br>
+                        <span class="text-nowrap"  t-field="o.invoice_date"/><span style="font-size:18px; float: right; margin-left:5px;">: Invoice / تاريخ الفاتورة</span><br></br>
                         <br></br>
                         <br></br>
                     </h5>
                     
                 </div>
-                <!-- <div style="float: right">
-                <t t-set="address">
-                    <address t-field="o.partner_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}' />
-                    <div t-if="o.partner_id.vat" class="mt16">
-                        <t t-if="o.company_id.country_id.vat_label" t-esc="o.company_id.country_id.vat_label" id="inv_tax_id_label"/>
-                        <t t-else="">Tax ID</t>: <span t-field="o.partner_id.vat"/></div>
-                </t>
-                </div> -->
-                 <div class="page_mastex">
-                <!-- <div  style="float: right;">
                 
-                    <h5>
-                        <br></br>
-                        
-                        <span t-if="o.type == 'out_invoice' and o.state == 'posted'"><span style="float: right;">: Invoice/رقم الفاتورة</span></span>
-                        <span t-if="o.type == 'out_invoice' and o.state == 'draft'"><span style="float: right;">: Draft Invoice/رقم الفاتورة</span></span>
-                        <span t-if="o.type == 'out_invoice' and o.state == 'cancel'"><span style="float: right;">: Cancelled Invoice/رقم الفاتورة</span></span>
-                        <span t-if="o.type == 'out_refund'"><span style="float: right;">: Credit Note/رقم الفاتورة</span></span>
-                        <span t-if="o.type == 'in_refund'"><span style="float: right;">: Vendor Credit Note/رقم الفاتورة</span></span>
-                        <span t-if="o.type == 'in_invoice'"><span style="float: right;">: Vendor Bill/رقم الفاتورة</span></span>
-                        <span t-if="o.name != '/'" t-field="o.name"/><br></br>
-                        <span t-field="o.invoice_date"/><span style="float: right;" >     : Carton/عدد الطرود</span><br></br>
-                        <span class="text-nowrap" t-field="o.amount_total"/><span style="float: right;">  : Amount Due/المبلغ المطلوب</span><br></br>
-                        <span class="text-nowrap" t-field="o.invoice_date"/><span style="float: right;">: Amount Due/ تاريخ الفاتورة</span><br></br>
-                        <br></br>
-                        <br></br>
-                    </h5>
-                </div> -->
-                <!-- <div>
-                        
-                </div> -->
+            <div class="page_mastex">
+                
 
                   
                     <t t-set="display_discount" t-value="any([l.discount for l in o.invoice_line_ids])"/>
 
-                    <table class="table table-sm o_main_table" name="invoice_line_table">
+                    <table style="border-bottom: 1px solid black;width: 100%;" name="invoice_line_table">
                         <thead>
                             <tr>
                                 <!-- TODO: remove in master -->
                                 <t t-set="colspan" t-value="6"/>
-                                <th name="th_description" class="text-left"><span>Product/الخامة</span></th>
+                                <th name="th_description" class="text-left"><span style="font-size:14px;">Product/الخامة</span></th>
                                 <!-- TODO: remove in master -->
-                                <th name="th_source" class="d-none text-left" t-if="0"><span>Source Document</span></th>
-                                <th name="th_quantity" class="text-right"><span>Quantity/الكمية</span></th>
-                                <th name="th_quantity" class="text-right"><span>Uint/الوحدة</span></th>
-                                <th name="th_priceunit" t-attf-class="text-right {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}"><span>Unit Price/سعر الوحدة</span></th>
+                                <th name="th_source" class="d-none text-left" t-if="0"><span style="font-size:14px;">Source Document</span></th>
+                                <th name="th_quantity" class="text-right"><span style="font-size:14px;">Quantity/الكمية</span></th>
+                                <th name="th_quantity" class="text-right"><span style="font-size:14px;">Uint/الوحدة</span></th>
+                                <th name="th_priceunit" t-attf-class="text-right {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}"><span style="font-size:14px;">Unit Price/سعر الوحدة</span></th>
                                 <th name="th_price_unit" t-if="display_discount" t-attf-class="text-right {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
-                                    <span>Disc.%/الحسم</span>
+                                    <span style="font-size:14px;">Disc.%/الحسم</span>
                                     <!-- TODO: remove in master -->
                                     <t t-set="colspan" t-value="colspan+1"/>
                                 </th>
-                                <th name="th_taxes" t-attf-class="text-left {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}"><span>Taxes/الخصم</span></th>
+                                <th name="th_taxes" t-attf-class="text-left {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}"><span style="font-size:14px;">Taxes/الخصم</span></th>
                                 <th name="th_subtotal" class="text-right">
-                                    <span groups="account.group_show_line_subtotals_tax_excluded">Amount/القيمة</span>
-                                    <span groups="account.group_show_line_subtotals_tax_included">Total Price/السعر الكلي</span>
+                                    <span groups="account.group_show_line_subtotals_tax_excluded" style="font-size:14px;">Amount/القيمة</span>
+                                    <span groups="account.group_show_line_subtotals_tax_included" style="font-size:14px;">Total Price/السعر الكلي</span>
                                 </th>
                             </tr>
                         </thead>
@@ -106,20 +112,19 @@
                                         <td name="account_invoice_line_name"><span t-field="line.name" t-options="{'widget': 'text'}"/></td>
                                         <td class="text-center">
                                             <span t-field="line.quantity"/>
-                                            <span t-field="line.product_uom_id"  groups="uom.group_uom"/>
                                         </td>
                                         <td class="text-center">
                                             <!-- add unit -->
-                                                <span t-field="line.product_uom_id" groups="product.group_uom"/>
+                                                <span t-field="line.product_uom_id"  groups="uom.group_uom"/>
                                            
                                         </td>
-                                        <td t-attf-class="text-right {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                        <td t-attf-class="text-center {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
                                             <span class="text-nowrap" t-field="line.price_unit"/>
                                         </td>
                                         <td t-if="display_discount" t-attf-class="text-right {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
                                             <span class="text-nowrap" t-field="line.discount"/>
                                         </td>
-                                        <td t-attf-class="text-left {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                        <td t-attf-class="text-center {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
                                             <span t-esc="', '.join(map(lambda x: (x.description or x.name), line.tax_ids))" id="line_tax_ids"/>
                                         </td>
                                         <td class="text-right o_price_total">
@@ -142,9 +147,9 @@
                                 </tr>
 
                                 <t t-if="current_section and (line_last or lines[line_index+1].display_type == 'line_section')">
-                                    <tr class="is-subtotal text-right">
+                                    <tr class="is-subtotal text-center">
                                         <td colspan="99">
-                                            <strong class="mr16">Subtotal/قيمة الفاتورة</strong>
+                                            <strong class="mr16" style="font-size:14px;">Subtotal/قيمة الفاتورة</strong>
                                             <span
                                                 t-esc="current_subtotal"
                                                 t-options='{"widget": "monetary", "display_currency": o.currency_id}'
@@ -156,32 +161,34 @@
                         </tbody>
                     </table>
 
+                    </div>
+
                     <div class="clearfix">
                         <div id="total" class="row">
                             <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ml-auto">
                                 <table class="table table-sm" style="page-break-inside: avoid;">
-                                    <tr class="border-black o_subtotal" style="">
-                                        <td><strong>TOTAL/قيمة الفاتورة:</strong></td>
+                                    <tr class=" o_subtotal" style="">
+                                        <td><strong style="font-size:14px;">TOTAL/قيمة الفاتورة:</strong></td>
                                         <td class="text-right">
                                             <span t-field="o.amount_untaxed"/>
                                         </td>
                                     </tr>
-                                    <tr class="border-black o_subtotal" style="">
+                                    <tr class=" o_subtotal" style="">
                                         <td><strong>Currency Charge	/فرق العملة:</strong></td>
                                         <td class="text-right">
-                                            <span t-field="o.currency_charge"/>
+                                            <!-- <span t-field="o.currency_charge"/> -->
                                         </td>
                                     </tr>
-                                    <tr class="border-black o_subtotal" style="">
-                                        <td><strong>Bank Charge	/ مصاريف الحوالة - 100 درهم:</strong></td>
+                                    <tr class=" o_subtotal" style="">
+                                        <td><strong style="font-size:14px;">Bank Charge	/ مصاريف الحوالة - 100 درهم:</strong></td>
                                         <td class="text-right">
-                                            <span t-field="o.bank_charge_currency"/>
+                                            <!-- <span t-field="o.bank_charge_currency"/> -->
                                         </td>
                                     </tr>
                                     
 
-                                    <tr class="border-black o_subtotal" style="">
-                                        <td><strong>Total Due/ الاجمالي المطلوب:</strong></td>
+                                    <tr class=" o_subtotal" style="">
+                                        <td><strong style="font-size:14px;">Total Due/ الاجمالي المطلوب:</strong></td>
                                         <td class="text-right">
                                             <span t-field="o.amount_residual"/>
                                         </td>
@@ -193,33 +200,11 @@
                     <br></br>
                     <br></br>
                     
-                    <p t-if="o.type in ('out_invoice', 'in_refund')">
-                        Please use the following communication for your payment : <b><span t-field="o.invoice_payment_ref"/></b>
-                    </p>
-                    <p t-if="o.narration" name="comment">
-                        <span t-field="o.narration"/>
-                    </p>
-                    <p t-if="o.invoice_payment_term_id" name="payment_term">
-                        <span t-field="o.invoice_payment_term_id.note"/>
-                    </p>
-                    <p t-if="o.fiscal_position_id.note" name="note">
-                        <span t-field="o.fiscal_position_id.note"/>
-                    </p>
-                    <div id="qrcode" t-if="(o.company_id.qr_code) and (o.currency_id.name == 'EUR') and (o.invoice_partner_bank_id.acc_number != False)">
-                        <p t-if="(o.invoice_partner_bank_id.qr_code_valid)">
-                            <strong class="text-center">Scan me with your banking app.</strong><br /><br />
-                            <img class="border border-dark rounded" t-att-src="o.invoice_partner_bank_id.build_qr_code_url(o.amount_residual, o.invoice_payment_ref or o.ref or o.name)"/>
-                        </p>
-                        <p t-if="(o.invoice_partner_bank_id.qr_code_valid == False)">
-                            <strong class="text-center">The SEPA QR Code informations are not set correctly.</strong><br />
-                        </p>
-                    </div>
-                </div>
-
-            </t>
+                   
+           </t>
         </template>
 
-        <template id="mastex_with_payments" inherit_id="AG_mastex_reports.mastex_invoice_report" primary="True">
+        <!-- <template id="mastex_with_payments" inherit_id="AG_mastex_reports.mastex_invoice_report" primary="True">
             <xpath expr="//div[@id='total']/div/table" position="inside">
                 <t t-set="payments_vals" t-value="o.sudo()._get_reconciled_info_JSON_values()"/>
                 <t t-foreach="payments_vals" t-as="payment_vals">
@@ -241,7 +226,7 @@
                     </tr>
                 </t>
             </xpath>
-        </template>
+        </template> -->
 
         <template id="mastex_report">
             <t t-call="web.html_container">

@@ -9,6 +9,7 @@
         
         'report/invoice_arabic.xml',
         'report/account_report_ar.xml',
+        'report/report_templates.xml',
        
     ],
     'installable': True,
