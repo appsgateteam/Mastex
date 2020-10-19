@@ -256,7 +256,7 @@
             
                 
                 <!-- en -->
-                <div class="col-4 text-left mb4" style="font-size:17px;">
+                <div class="col-5 text-left mb4" style="font-size:17px;">
                     <h4 class="mt0" t-field="res_company.report_header"/>
                     <div name="company_address" class="mb4">
                         <span class="company_address" style="color:black;" t-field="res_company.partner_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: true}"/>
@@ -265,11 +265,11 @@
                     </div>
                 </div>
                 <!-- img -->
-                <div class="col-4" >
-                    <img t-if="res_company.logo" t-att-src="image_data_uri(res_company.logo)" alt="Logo" style="width:275px; height:200px;"/>
+                <div class="col-2" >
+                    <img t-if="res_company.logo" t-att-src="image_data_uri(res_company.logo)" alt="Logo" style="width:150px; height:150px;"/>
                 </div>
                 <!-- ar -->
-                <div class="col-4  mb4" style="font-size:17px; float: right;">
+                <div class="col-5  mb4" style="font-size:17px; float: right;">
                         <div style="color:black;"  class="text-right ">شركة المصري والسعودي للتجارة</div>
                         <div style="color:black;" class="text-right ">الامارات العربية المتحدة - دبي  </div>
                 </div>
