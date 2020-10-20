@@ -365,11 +365,11 @@ class SaleOrderLine(models.Model):
             elif line.state == 'sale' and line.product_id.invoice_policy == 'order' and \
                     float_compare(line.qty_delivered, line.actual_qty, precision_digits=precision) == 1:
                 line.invoice_status = 'upselling'
-            elif float_compare(line.qty_invoiced, line.actual_qty, precision_digits=precision) >= 0:
-                if line.actual_qty == 0:
-                    line.invoice_status = 'pendinvoiced'
-                else:
-                    line.invoice_status = 'invoiced'
+            elif float_compare(line.qty_invoiced, line.actual_qty, precision_digits=precision) > 0:
+                
+                line.invoice_status = 'invoiced'
+            elif float_compare(line.qty_invoiced, line.actual_qty, precision_digits=precision) = 0:
+                line.invoice_status = 'pendinvoiced'
             else:
                 line.invoice_status = 'no'
 
