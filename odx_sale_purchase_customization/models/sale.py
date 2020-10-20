@@ -51,8 +51,55 @@ class SaleOrder(models.Model):
 
     attachment_ids = fields.One2many('ir.attachment', 'sale_id', string='Attachment')
     attachment_count = fields.Integer(compute='_compute_attachment_count')
-    actual_grand_total = fields.Float(string="Actual Grand Total", compute='_compute_grand_total',digits=(12,2))
-    planned_total = fields.Float(string="Planned Total", compute='_compute_grand_total',digits=(12,2))
+    actual_grand_total = fields.Float(string="Actual Grand Total", compute='_compute_grand_total')
+    planned_total = fields.Float(string="Planned Total", compute='_compute_grand_total')
+    invoice_status = fields.Selection([
+        ('upselling', 'Upselling Opportunity'),
+        ('invoiced', 'Fully Invoiced'),
+        ('pendinvoiced', 'Pending Invoice'),
+        ('to invoice', 'To Invoice'),
+        ('no', 'Nothing to Invoice')
+        ], string='Invoice Status', compute='_get_invoice_status', store=True, readonly=True)
+
+
+    @api.depends('state', 'order_line.invoice_status')
+    def _get_invoice_status(self):
+        """
+        Compute the invoice status of a SO. Possible statuses:
+        - no: if the SO is not in status 'sale' or 'done', we consider that there is nothing to
+          invoice. This is also the default value if the conditions of no other status is met.
+        - to invoice: if any SO line is 'to invoice', the whole SO is 'to invoice'
+        - invoiced: if all SO lines are invoiced, the SO is invoiced.
+        - upselling: if all SO lines are invoiced or upselling, the status is upselling.
+        """
+        unconfirmed_orders = self.filtered(lambda so: so.state not in ['sale', 'done'])
+        unconfirmed_orders.invoice_status = 'no'
+        confirmed_orders = self - unconfirmed_orders
+        if not confirmed_orders:
+            return
+        line_invoice_status_all = [
+            (d['order_id'][0], d['invoice_status'])
+            for d in self.env['sale.order.line'].read_group([
+                    ('order_id', 'in', confirmed_orders.ids),
+                    ('is_downpayment', '=', False),
+                    ('display_type', '=', False),
+                ],
+                ['order_id', 'invoice_status'],
+                ['order_id', 'invoice_status'], lazy=False)]
+        for order in confirmed_orders:
+            line_invoice_status = [d[1] for d in line_invoice_status_all if d[0] == order.id]
+            if order.state not in ('sale', 'done'):
+                order.invoice_status = 'no'
+            elif any(invoice_status == 'to invoice' for invoice_status in line_invoice_status):
+                order.invoice_status = 'to invoice'
+            elif line_invoice_status and all(invoice_status == 'invoiced' for invoice_status in line_invoice_status):
+                order.invoice_status = 'invoiced'
+            elif line_invoice_status and all(invoice_status == 'pendinvoiced' for invoice_status in line_invoice_status):
+                order.invoice_status = 'pendinvoiced'
+            elif line_invoice_status and all(invoice_status in ('invoiced', 'upselling') for invoice_status in line_invoice_status):
+                order.invoice_status = 'upselling'
+            else:
+                order.invoice_status = 'no'
 
     @api.depends('order_line')
     def _compute_grand_total(self):
@@ -261,6 +308,13 @@ class SaleOrderLine(models.Model):
                               , default=0.0, copy=False)
     purchase_order_line_id = fields.Many2one("purchase.order.line", string='Purchase Order Line')
     actual_net_amount = fields.Float(string='Actual NetAmount', compute='_compute_actual_net')
+    invoice_status = fields.Selection([
+        ('upselling', 'Upselling Opportunity'),
+        ('invoiced', 'Fully Invoiced'),
+        ('pendinvoiced', 'Pending Invoice'),
+        ('to invoice', 'To Invoice'),
+        ('no', 'Nothing to Invoice')
+        ], string='Invoice Status', compute='_compute_invoice_status', store=True, readonly=True, default='no')
 
 
     @api.onchange('')
@@ -311,8 +365,11 @@ class SaleOrderLine(models.Model):
             elif line.state == 'sale' and line.product_id.invoice_policy == 'order' and \
                     float_compare(line.qty_delivered, line.actual_qty, precision_digits=precision) == 1:
                 line.invoice_status = 'upselling'
-            elif float_compare(line.qty_invoiced, line.actual_qty, precision_digits=precision) >= 0:
+            elif float_compare(line.qty_invoiced, line.actual_qty, precision_digits=precision) > 0:
+                
                 line.invoice_status = 'invoiced'
+            elif line.actual_qty == 0:
+                line.invoice_status = 'pendinvoiced'
             else:
                 line.invoice_status = 'no'
 
