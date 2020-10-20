@@ -368,7 +368,7 @@ class SaleOrderLine(models.Model):
             elif float_compare(line.qty_invoiced, line.actual_qty, precision_digits=precision) > 0:
                 
                 line.invoice_status = 'invoiced'
-            elif float_compare(line.qty_invoiced, line.actual_qty, precision_digits=precision) == 0:
+            elif line.actual_qty == 0:
                 line.invoice_status = 'pendinvoiced'
             else:
                 line.invoice_status = 'no'
