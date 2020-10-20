@@ -252,42 +252,30 @@
     <template id="web.external_layout_boxed">
         <div class="header">
             <div class="">
-            <div class="row">
-            
+                <div class="row">
                 
-                <!-- en -->
-                <div class="col-5 text-left mb4" style="font-size:17px;">
-                    <h4 class="mt0" t-field="res_company.report_header"/>
-                    <div name="company_address" class="mb4">
-                        <span class="company_address" style="color:black;" t-field="res_company.partner_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: true}"/>
-                        <div t-if="res_company.vat" style="color:black;" class="mt16">TRN No: <span t-field="res_company.vat" style="color:black;"/></div>
                     
+                    <!-- en -->
+                    <div class="col-5 text-left mb4" style="font-size:17px;">
+                        <h4 class="mt0" t-field="res_company.report_header"/>
+                        <div name="company_address" class="mb4">
+                            <span class="company_address" style="color:black;" t-field="res_company.partner_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: true}"/>
+                            <div t-if="res_company.vat" style="color:black;" class="mt16">TRN No: <span t-field="res_company.vat" style="color:black;"/></div>
+                        
+                        </div>
                     </div>
-                </div>
-                <!-- img -->
-                <div class="col-2" >
-                    <img t-if="res_company.logo" t-att-src="image_data_uri(res_company.logo)" alt="Logo" style="width:150px; height:150px;"/>
-                </div>
-                <!-- ar -->
-                <div class="col-5  mb4" style="font-size:17px; float: right;">
-                        <div style="color:black;"  class="text-right ">شركة المصري والسعودي للتجارة</div>
-                        <div style="color:black;" class="text-right ">الامارات العربية المتحدة - دبي  </div>
-                </div>
+                    <!-- img -->
+                    <div class="col-2" >
+                        <img t-if="res_company.logo" t-att-src="image_data_uri(res_company.logo)" alt="Logo" style="width:100px; height:100px;"/>
+                    </div>
+                    <!-- ar -->
+                    <div class="col-5  mb4" style="font-size:17px; float: right;">
+                            <div style="color:black;"  class="text-right ">شركة المصري والسعودي للتجارة</div>
+                            <div style="color:black;" class="text-right ">الامارات العربية المتحدة - دبي  </div>
+                    </div>
 
-            </div>
-            <!-- <div class="row">
-                <div class="col-8">
-                    <img t-if="res_company.logo" t-att-src="image_data_uri(res_company.logo)" alt="Logo" style="width:350px; height:200px;"/>
                 </div>
-                <div class="col-6 text-left mb4" style="font-size:17px;">
-                    <h4 class="mt0" t-field="res_company.report_header"/>
-                    <div name="company_address" class="mb4">
-                        <span class="company_address" style="color:black;" t-field="res_company.partner_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;, &quot;phone&quot;], &quot;no_marker&quot;: true}"/>
-                        <div t-if="res_company.vat" style="color:black;" class="mt16">TRN No: <span t-field="res_company.vat" style="color:black;"/></div>
-                  
-                    </div>
-                </div>
-            </div> -->
+            
             </div>
         </div>
 

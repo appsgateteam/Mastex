@@ -2,22 +2,7 @@
 <odoo>
  <data>
 
-        <!-- <template id="external_layout_header" inherit_id="web.external_layout">
-         fddfdfdfd
-        </template> -->
-
-        <!-- <template id="custom_external_layout">
-            
-            <t t-if="o and 'company_id' in o">
-                <t t-set="company" t-value="o.company_id"></t>
-            </t>
-            <t t-if="not o or not 'company_id' in o">
-                <t t-set="company" t-value="res_company"></t>
-            </t>
-
-            
-        </template>
-     -->
+        
         
         
         <template id="mastex_invoice_report">
@@ -47,26 +32,32 @@
                                     <t t-if="o.company_id.country_id.vat_label" t-esc="o.company_id.country_id.vat_label" id="inv_tax_id_label"/>
                                     <t t-else="">Tax ID</t>: <span t-field="o.partner_id.vat"/></div> -->
                     </div>
+
+                    
+
+
                     <h5>
                         <br></br>
                         <br></br>
+
+                        <span class="text-nowrap" t-if="o.type == 'out_invoice' and o.state == 'posted'"><span style="font-size:18px; float: right;">: Invoice /رقم الفاتورة</span></span>
+                        <span class="text-nowrap" t-if="o.type == 'out_invoice' and o.state == 'draft'"><span style="float: right;">: Draft Invoice/رقم الفاتورة</span></span>
+                        <span class="text-nowrap" t-if="o.type == 'out_invoice' and o.state == 'cancel'"><span style="float: right;">: Cancelled Invoice/رقم الفاتورة</span></span>
+                        <span class="text-nowrap" t-if="o.type == 'out_refund'"><span style="float: right;">: Credit Note/رقم الفاتورة</span></span>
+                        <span class="text-nowrap" t-if="o.type == 'in_refund'"><span style="float: right;">: Vendor Credit Note/رقم الفاتورة</span></span>
+                        <span class="text-nowrap" t-if="o.type == 'in_invoice'"><span style="float: right;">: Vendor Bill/رقم الفاتورة</span></span>
+                        <span class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/>
+                        <br/>
+                        <br/>
+                        <span class="text-nowrap" style="font-size:18px; float: right;">   : Carton / عدد الطرود</span><br/>
+                        <br/>
+                        <span class="text-nowrap" t-field="o.amount_total"/><span style="font-size:18px; float: right;">  : Amount Due / المبلغ المطلوب</span><br/>
+                        <br/>
+                        <span class="text-nowrap" t-field="o.invoice_date"/><span style="font-size:18px; float: right; " class="text-nowrap">: Invoice / تاريخ الفاتورة</span><br/>
+                        <br/>
+                        <br/>
                         
-                        <span t-if="o.type == 'out_invoice' and o.state == 'posted'"><span style="font-size:18px; float: right;">: Invoice /رقم الفاتورة</span></span>
-                        <span t-if="o.type == 'out_invoice' and o.state == 'draft'"><span style="float: right;">: Draft Invoice/رقم الفاتورة</span></span>
-                        <span t-if="o.type == 'out_invoice' and o.state == 'cancel'"><span style="float: right;">: Cancelled Invoice/رقم الفاتورة</span></span>
-                        <span t-if="o.type == 'out_refund'"><span style="float: right;">: Credit Note/رقم الفاتورة</span></span>
-                        <span t-if="o.type == 'in_refund'"><span style="float: right;">: Vendor Credit Note/رقم الفاتورة</span></span>
-                        <span t-if="o.type == 'in_invoice'"><span style="float: right;">: Vendor Bill/رقم الفاتورة</span></span>
-                        <span t-if="o.name != '/'" t-field="o.name"/>
-                        <br></br>
-                        <br></br>
-                        <span style="font-size:18px; float: right;" >   : Carton / عدد الطرود</span><br></br>
-                        <br></br>
-                        <span class="text-nowrap"  t-field="o.amount_total"/><span style="font-size:18px; float: right;">  : Amount Due / المبلغ المطلوب</span><br></br>
-                        <br></br>
-                        <span class="text-nowrap"  t-field="o.invoice_date"/><span style="font-size:18px; float: right;">: Invoice / تاريخ الفاتورة</span><br></br>
-                        <br></br>
-                        <br></br>
+                        
                     </h5>
                     
                 </div>
