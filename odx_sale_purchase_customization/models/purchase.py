@@ -22,6 +22,8 @@ from odoo import fields, models, api, _
 from odoo.exceptions import UserError
 import base64
 from datetime import date, timedelta, datetime
+from odoo.tools import float_is_zero, float_compare
+
 
 
 class PurchaseOrder(models.Model):
@@ -78,10 +80,16 @@ class PurchaseOrder(models.Model):
     # attachments
     attachment_ids = fields.One2many('ir.attachment', 'purchase_id', string='Attachment', copy=False)
     attachment_count = fields.Integer(compute='_compute_attachment_count')
-    actual_grand_total = fields.Float(string="Net Total", compute='_compute_grand_total')
-    actual_total = fields.Float(string="Actual Total", compute='_compute_grand_total')
-    actual_commission = fields.Float(string="Actual Commission", compute='_compute_grand_total')
-    planned_total = fields.Float(string="Planned Total", compute='_compute_grand_total')
+    actual_grand_total = fields.Float(string="Net Total", compute='_compute_grand_total',digits=(12,2))
+    actual_total = fields.Float(string="Actual Total", compute='_compute_grand_total',digits=(12,2))
+    actual_commission = fields.Float(string="Actual Commission", compute='_compute_grand_total',digits=(12,2))
+    planned_total = fields.Float(string="Planned Total", compute='_compute_grand_total',digits=(12,2))
+    invoice_status = fields.Selection([
+        ('no', 'Nothing to Bill'),
+        ('to invoice', 'Waiting Bills'),
+        ('pendinvoiced', 'Pending Bills'),
+        ('invoiced', 'Fully Billed'),
+    ], string='Billing Status', compute='_get_invoiced', store=True, readonly=True, copy=False, default='no')
 
     @api.depends('order_line')
     def _compute_grand_total(self):
@@ -159,6 +167,58 @@ class PurchaseOrder(models.Model):
 
         }
 
+        # for purchase states
+    @api.depends('state', 'order_line.qty_invoiced', 'order_line.actual_qty','order_line.qty_received', 'order_line.product_qty')
+    def _get_invoiced(self):
+
+        precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+        for order in self:
+            if order.state not in ('purchase', 'done'):
+                order.invoice_status = 'no'
+                continue
+
+            if any(
+
+                    float_compare(
+                        line.qty_invoiced,
+                        line.product_qty if line.product_id.purchase_method == 'purchase' else line.qty_received,
+                        precision_digits=precision,
+                    )
+                    == 0
+
+                    for line in order.order_line.filtered(lambda l: not l.display_type)
+            ):
+                order.invoice_status = 'pendinvoiced'
+            elif (
+                    all(
+                        float_compare(
+                            line.qty_invoiced,
+                            line.product_qty if line.product_id.purchase_method == "purchase" else line.qty_received,
+                            precision_digits=precision,
+                        )
+                        >= 0
+                        for line in order.order_line.filtered(lambda l: not l.display_type)
+                    )
+                    and order.invoice_ids
+            ):
+                order.invoice_status = 'invoiced'
+            elif (
+                    all(
+                        float_compare(
+                            line.qty_invoiced,
+                            line.product_qty if line.product_id.purchase_method == "purchase" and line.actual_qty >=0  else line.qty_received,
+                            precision_digits=precision,
+                        )
+                        >= 1
+                        for line in order.order_line.filtered(lambda l: not l.display_type)
+                    )
+                    and order.invoice_ids
+            ):
+                order.invoice_status = 'to invoice'
+            else:
+                order.invoice_status = 'no'
+    # end of purchase states.
+
     @api.depends('attachment_ids')
     def _compute_attachment_count(self):
         for order in self:
@@ -180,6 +240,8 @@ class PurchaseOrder(models.Model):
         attachment_id = self.env['ir.attachment'].create(data_attach)
         res['context']['default_extra_attachment_ids'] = [(6, 0, [attachment_id.id])]
         return res
+
+
 
     @api.onchange('purchase_shipment_ids')
     def _onchange_type(self):
