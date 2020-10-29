@@ -58,7 +58,7 @@
 
                     <h5>
                         <br></br>
-                        <span style="margin-right:1%;">
+                        <span style="margin-right:15px;">
                             <span class="text-nowrap" t-if="o.type == 'out_invoice' and o.state == 'posted'"><span style="font-size:12px; font-family: Calibri Regular;color:black; float: right;"><span style="font-size:12px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Invoice /رقم الفاتورة</span></span>
                             <span class="text-nowrap" t-if="o.type == 'out_invoice' and o.state == 'draft'"><span style="font-size:12px; font-family: Calibri Regular;color:black; float: right;"><span style="font-size:12px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Draft Invoice/رقم الفاتورة</span></span>
                             <span class="text-nowrap" t-if="o.type == 'out_invoice' and o.state == 'cancel'"><span style="font-size:12px; font-family: Calibri Regular;color:black; float: right;"><span style="font-size:12px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Cancelled Invoice/رقم الفاتورة</span></span>
@@ -69,19 +69,21 @@
                         </span>
                         <br/>
                         <br/>
-                     
-                        <span class="text-nowrap" style="font-size:12px; font-family: Calibri Regular;color:black; float: right;"><span style="font-size:10px; font-family: Calibri Bold;color:black;" class="text-nowrap" t-field="o.invoice_line_ids.quantity"/>   : Carton / عدد الطرود</span> <br/>
-                        <br/>
-                        <span style="font-size:12px; font-family: Calibri Bold;color:black; float: right;"><span style="font-size:10px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-field="o.amount_total"/>  : Amount Due / المبلغ المطلوب</span><br/>
-                        <br/>
-                        <br/>
-                        <span style="font-size:12px; font-family: Calibri Bold;color:black; float: right; " class="text-nowrap"><span style="font-size:10px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-field="o.invoice_date"/> : Invoice / تاريخ الفاتورة</span><br/>
-                        <br/>
-                        <br/>
-                        <br/>
-                        <br/>
+
+                        <span style="margin-right:15px;">
+
+                            <span class="text-nowrap" style="font-size:12px; font-family: Calibri Regular;color:black; float: right;"><span style="font-size:10px; font-family: Calibri Bold;color:black;" class="text-nowrap" t-field="o.invoice_line_ids.quantity"/>   : Carton / عدد الطرود</span> <br/>
+                            <br/>
+                            <span style="font-size:12px; font-family: Calibri Bold;color:black; float: right;"><span style="font-size:10px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-field="o.amount_total"/>  : Amount Due / المبلغ المطلوب</span><br/>
+                            <br/>
+                            <br/>
+                            <span style="font-size:12px; font-family: Calibri Bold;color:black; float: right; " class="text-nowrap"><span style="font-size:10px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-field="o.invoice_date"/> : Invoice / تاريخ الفاتورة</span><br/>
+                        </span>
                         
-                        
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
                     </h5>
                     
                 </div>
