@@ -7,6 +7,25 @@
         
         <template id="mastex_invoice_report">
             <t t-call="web.external_layout_boxed">
+           <style type="text/css">
+            
+              /* United */
+              @font-face {
+                font-family: 'Calibri Regular';
+                font-style: heavy;
+                font-weight: 400;
+                src: url(/home/ubuntu/.fonts/Calibri Regular.ttf) format('truetype');
+              }
+
+              
+              @font-face {
+                font-family: 'Calibri Bold';
+                font-style: heavy;
+                font-weight: 400;
+                src: url(/home/ubuntu/.fonts/Calibri Bold.TTF) format('truetype');
+              }
+              
+            </style>
 
             
            
