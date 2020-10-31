@@ -504,7 +504,7 @@ class PurchaseShipment(models.Model):
     shipment_from = fields.Many2one(comodel_name='shipment.destination', string="Shipment From")
     from_date = fields.Date(string='Dispatch Date', copy=False, default=fields.Date.today(), store=True)
     to_date = fields.Date(string='Expected Delivery Date', copy=False, store=True)
-    reference = fields.Char(string="Order Number")
+    reference = fields.Char(string="Airway Bill Number")
     description = fields.Char(string="Description")
     status = fields.Selection([('sent', 'Sent'), ('received', 'Received'), ('delivered', 'Delivered'),
                                ('cancel', 'Canceled')],
