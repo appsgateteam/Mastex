@@ -74,7 +74,7 @@
                             <span class="text-nowrap" style="margin-right:30px; font-size:12px; font-family: Calibri Regular;color:black; float: right;"><strong><span style="font-size:12px; font-family: Calibri Bold;color:black;" class="text-nowrap" /></strong>   : Carton / عدد الطرود</span> 
                             <br/>
                             <br/>
-                            <span style="margin-right:30px; font-size:12px; font-family: Calibri Bold;color:black; float: right;"><span style="font-size:12px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-field="o.amount_total"/>  : Amount Due / المبلغ المطلوب</span><br/>
+                            <span style="margin-right:30px; font-size:12px; font-family: Calibri Bold;color:black; float: right;"><strong><span style="font-size:12px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-field="o.amount_total"/></strong>  : Amount Due / المبلغ المطلوب</span><br/>
                             <br/>
                            
                             <span style="margin-right:30px; font-size:12px; font-family: Calibri Bold;color:black; float: right; " class="text-nowrap"><span style="font-size:12px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-field="o.invoice_date"/> : Invoice / تاريخ الفاتورة</span><br/>
