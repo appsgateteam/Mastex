@@ -42,6 +42,7 @@
         'wizard/mail_compose_message_view.xml',
         'views/product_view.xml',
         'report/external_layout_standard.xml',
+        'views/assets.xml',
         'report/invoice_new_report.xml'
 
     ],

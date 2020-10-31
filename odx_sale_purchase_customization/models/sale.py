@@ -34,6 +34,9 @@ class SaleOrder(models.Model):
     purchase_order_id = fields.Many2one(comodel_name="purchase.order", string="PO#", copy=False)
     vendor_id = fields.Many2one(comodel_name='res.partner', string="Vendor")
 
+    landing_line_ids = fields.One2many(comodel_name='sale.landing.cost', inverse_name='sale_id',
+                                       string="Bill Of Ladings")
+    sales_shipment_ids = fields.One2many('sale.shipment', 'sale_id', string="Shipment Details")
     # Instructions
     colour_instructions = fields.Text(string="Colour Instructions")
     packing = fields.Text(string="Packing")
@@ -300,6 +303,49 @@ class SaleOrder(models.Model):
         res = super(SaleOrder, self)._create_invoices()
         return res
 
+class LandingCost(models.Model):
+    _name = 'sale.landing.cost'
+    _description = 'Sale Landing Cost'
+
+    sale_id = fields.Many2one(comodel_name='sale.order', string="sale Order", ondelete='cascade')
+    name = fields.Char(string="B/L No", required=True)
+    landing_date_etd = fields.Date(string='ETD', required=True)
+    landing_date_eta = fields.Date(string='ETA', required=True)
+    shipping_company_id = fields.Many2one('shipment.company', string='Shipping Line', required=True,
+                                          )
+    landing_attachment = fields.Binary(string='Document', attachment=True)
+    landing_attachment_name = fields.Char(string='Document Name')
+    no_of_packages = fields.Char(string='No Of Packages')
+    destination = fields.Many2one(comodel_name='res.destination', string='Destination')
+    marks = fields.Char(string="Marks")
+    container_no = fields.Char(string="Container No")
+    reference = fields.Char(string="Order Number")
+    status = fields.Selection([('in_transit', 'In Transit'), ('discharged', 'Discharged')], string='Status')
+
+class SalesShipment(models.Model):
+    _name = 'sale.shipment'
+
+    shipment_to = fields.Many2one(comodel_name='shipment.destination', string="Shipment To")
+    shipment_from = fields.Many2one(comodel_name='shipment.destination', string="Shipment From")
+    from_date = fields.Date(string='Dispatch Date', copy=False, default=fields.Date.today(), store=True)
+    to_date = fields.Date(string='Expected Delivery Date', copy=False, store=True)
+    reference = fields.Char(string="Airway Bill Number")
+    description = fields.Char(string="Description")
+    status = fields.Selection([('sent', 'Sent'), ('received', 'Received'), ('delivered', 'Delivered'),
+                               ('cancel', 'Canceled')],
+                              string='Status')
+    type = fields.Selection([('sample_customer', 'Sample received from customer'),
+                             ('sample_vendor', 'Samples sent to supplier'),
+                             ('vendor_sample_customer', 'Supplier initial Sample'),
+                             ('sample_company', ' Supplier final samples to Customer'),
+                             ('sample_to_mastex','Supplier final samples to Mastex'),
+                             ('receive_document_suppler','Receive documents from supplier'),
+                             ('send_document_customer','Send documents to customer'),
+                             ('others', ' Others')],
+                            string='Type')
+    attachment = fields.Binary(string="Files", attachment=True)
+    attachment_name = fields.Char(string="File Name")
+    sale_id = fields.Many2one('sale.order', string="Sale Order", ondelete='cascade')
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'

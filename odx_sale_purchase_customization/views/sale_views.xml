@@ -34,6 +34,8 @@
                     <button name="photos" type="object" class="oe_stat_button" icon="fa-picture-o">
                         <field name="attachment_ids" invisible="1"/>
                         <field name="attachment_count" widget="statinfo" string="Photos"/>
+                         <!--<field name="has_due" invisible="1"/>
+                         <field name="is_warning" invisible="1"/>-->
                     </button>
                 </xpath>
                 <xpath expr="//group[@name='sale_shipping']" position="replace">
@@ -113,6 +115,45 @@
                             <field name="has_due" invisible="1"/>
                             <field name="is_warning" invisible="1"/>
                         </group>
+                    </page>
+                </xpath>
+
+                <xpath expr="//form/sheet/notebook/page[@name='instructions_tab']" position="after">
+                    <page string="Bill Of Lading" name="bill_of_landings">
+                        <field name="landing_line_ids"
+                               context="{'default_reference': name,'default_destination': destination_id,'default_marks':marks}">
+                            <tree editable="bottom">
+                                <field name="reference"/>
+                                <field name="landing_date_etd"/>
+                                <field name="landing_date_eta"/>
+                                <field name="shipping_company_id"/>
+                                <field name="name"/>
+                                <field name="container_no"/>
+                                <field name="no_of_packages"/>
+                                <field name="destination"/>
+                                <field name="marks"/>
+                                <field name="landing_attachment"/>
+                                <field name="landing_attachment_name" invisible="1"/>
+                                <field name="status"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Courier" name="shipment_tab">
+                        <field name="sales_shipment_ids" context="{'default_reference': name}">
+                            <tree string="Courier Details" editable="bottom">
+                                <field name="type"/>
+                                <field name="shipment_from"/>
+                                <field name="shipment_to"/>
+                                <field name="reference" string="Airway Bill Number"/>
+                                <field name="description"/>
+                                <field name="from_date"/>
+                                <field name="to_date"/>
+                                <!--                                <field name="dispatch_date"/>-->
+                                <field name="attachment"/>
+                                <field name="attachment_name" invisible="1" force_save="1"/>
+                                <field name="status"/>
+                            </tree>
+                        </field>
                     </page>
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree" position="replace">

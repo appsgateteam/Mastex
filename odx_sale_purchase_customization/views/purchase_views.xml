@@ -122,6 +122,7 @@
                         </control>
                         <field name="display_type" invisible="1"/>
                         <field name="currency_id" invisible="1"/>
+
                         <field name="state" invisible="1"/>
                         <field name="product_type" invisible="1"/>
                         <field name="product_uom_category_id" invisible="1"/>
@@ -227,6 +228,12 @@
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="customer_id"/>
                 </xpath>
+                <xpath expr="//field[@name='customer_id']" position="after">
+                    <field name="shipment_date"/>
+                </xpath>
+                <xpath expr="//field[@name='origin']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
                 <xpath expr="//field[@name='amount_total']" position="after">
                     <field name="actual_total" sum="Actual Total" widget="monetary"/>
                     <field name="planned_total" sum="Planned Total" widget="monetary"/>
@@ -243,6 +250,12 @@
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="customer_id"/>
+                </xpath>
+                <xpath expr="//field[@name='customer_id']" position="after">
+                    <field name="shipment_date"/>
+                </xpath>
+                <xpath expr="//field[@name='origin']" position="attributes">
+                    <attribute name="invisible">True</attribute>
                 </xpath>
                 <xpath expr="//field[@name='amount_total']" position="after">
                     <field name="actual_total" sum="Actual Total" widget="monetary"/>
