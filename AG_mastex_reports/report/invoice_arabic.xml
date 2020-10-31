@@ -71,8 +71,16 @@
                         <br/>
 
                         <span style="margin-right:15px;">
+                            
+                            <!-- <t t-set="lines" t-value="o.invoice_line_ids"/>
 
-                            <span class="text-nowrap" style="font-size:12px; font-family: Calibri Regular;color:black; float: right;"><span style="font-size:10px; font-family: Calibri Bold;color:black;" class="text-nowrap" t-field="o.invoice_line_ids.quantity"/>   : Carton / عدد الطرود</span> <br/>
+                                <t t-foreach="lines" t-as="line">
+                                    <t t-set="j" t-value="line.quantity" />
+                                    <t t-set="j" t-value="j + line.quantity"/>
+                                
+                            </t> -->
+                            <span class="text-nowrap" style="font-size:12px; font-family: Calibri Regular;color:black; float: right;"><span style="font-size:10px; font-family: Calibri Bold;color:black;" class="text-nowrap" />   : Carton / عدد الطرود</span> <br/>
+                           
                             <br/>
                             <span style="font-size:12px; font-family: Calibri Bold;color:black; float: right;"><span style="font-size:10px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-field="o.amount_total"/>  : Amount Due / المبلغ المطلوب</span><br/>
                             <br/>
