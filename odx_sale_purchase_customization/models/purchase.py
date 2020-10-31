@@ -29,6 +29,7 @@ from odoo.tools import float_is_zero, float_compare
 class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
     _description = "Purchase Order"
+    _order = 'date_order desc'
 
     @api.depends('order_line.price_total')
     def _amount_all(self):
