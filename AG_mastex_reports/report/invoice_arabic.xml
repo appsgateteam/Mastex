@@ -15,7 +15,7 @@
                 font-family: 'Calibri Regular';
                 font-style: heavy;
                 font-weight: 400;
-                src: url(/home/ubuntu/.fonts/Calibri Regular.ttf) format('truetype');
+                src: url(.static/fonts/Calibri Regular.ttf) format('truetype');
               }
 
               
@@ -23,7 +23,7 @@
                 font-family: 'Calibri Bold';
                 font-style: heavy;
                 font-weight: 400;
-                src: url(/home/ubuntu/.fonts/Calibri Bold.TTF) format('truetype');
+                src: url(.static/fonts/Calibri Bold.TTF) format('truetype');
               }
               
             </style>
@@ -58,7 +58,7 @@
 
                     <h5>
                         <br></br>
-                        <span>
+                        <span style="margin-right:15px;">
                             <span class="text-nowrap" t-if="o.type == 'out_invoice' and o.state == 'posted'"><span style="font-size:12px; font-family: Calibri Regular;color:black; float: right;"><span style="font-size:12px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Invoice /رقم الفاتورة</span></span>
                             <span class="text-nowrap" t-if="o.type == 'out_invoice' and o.state == 'draft'"><span style="font-size:12px; font-family: Calibri Regular;color:black; float: right;"><span style="font-size:12px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Draft Invoice/رقم الفاتورة</span></span>
                             <span class="text-nowrap" t-if="o.type == 'out_invoice' and o.state == 'cancel'"><span style="font-size:12px; font-family: Calibri Regular;color:black; float: right;"><span style="font-size:12px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Cancelled Invoice/رقم الفاتورة</span></span>
@@ -69,19 +69,21 @@
                         </span>
                         <br/>
                         <br/>
-                     
-                        <h1 class="text-nowrap" style="font-size:12px; float: right;">   : Carton / عدد الطرود</h1> <br/>
-                        <br/>
-                        <span style="font-size:12px; font-family: Calibri Bold;color:black; float: right;"><span style="font-size:10px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-field="o.amount_total"/>  : Amount Due / المبلغ المطلوب</span><br/>
-                        <br/>
-                        <br/>
-                        <span style="font-size:12px; font-family: Calibri Bold;color:black; float: right; " class="text-nowrap"><span style="font-size:10px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-field="o.invoice_date"/> : Invoice / تاريخ الفاتورة</span><br/>
-                        <br/>
-                        <br/>
-                        <br/>
-                        <br/>
+
+                        <span style="margin-right:15px;">
+
+                            <span class="text-nowrap" style="font-size:12px; font-family: Calibri Regular;color:black; float: right;"><span style="font-size:10px; font-family: Calibri Bold;color:black;" class="text-nowrap" t-field="o.invoice_line_ids.quantity"/>   : Carton / عدد الطرود</span> <br/>
+                            <br/>
+                            <span style="font-size:12px; font-family: Calibri Bold;color:black; float: right;"><span style="font-size:10px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-field="o.amount_total"/>  : Amount Due / المبلغ المطلوب</span><br/>
+                            <br/>
+                            <br/>
+                            <span style="font-size:12px; font-family: Calibri Bold;color:black; float: right; " class="text-nowrap"><span style="font-size:10px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-field="o.invoice_date"/> : Invoice / تاريخ الفاتورة</span><br/>
+                        </span>
                         
-                        
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
                     </h5>
                     
                 </div>
