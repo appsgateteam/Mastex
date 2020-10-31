@@ -311,7 +311,7 @@
 
 
             <div style="border-top : 1px solid black; width: 100%;"/>
-            <div style="margin-left:27%; margin-top : 2px">
+            <div style="margin-left:29%; margin-top : 2px">
                 <span  class="list-inline-item">Email :  <span t-field="res_company.partner_id.email"/></span>
                 <span  class="list-inline-item">Tel :  <span t-field="res_company.partner_id.phone"/></span>
              </div>

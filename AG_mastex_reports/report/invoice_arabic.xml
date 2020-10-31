@@ -203,9 +203,9 @@
                                     
 
                                     <tr class=" o_subtotal" style="">
-                                        <td style="font-size:12px; font-family: Calibri Bold;color:black;">Total Due/ الاجمالي المطلوب:</td>
+                                        <td style="font-size:12px; font-family: Calibri Bold;">Total Due/ الاجمالي المطلوب:</td>
                                         <td class="text-right">
-                                            <strong> <span t-field="o.amount_residual"/> </strong>
+                                             <span t-field="o.amount_residual"/> 
                                         </td>
                                     </tr>
                                 </table>
