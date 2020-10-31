@@ -30,6 +30,7 @@ from odoo.exceptions import UserError
 class SaleOrder(models.Model):
     _inherit = "sale.order"
     _description = "Sales Order"
+    _order = 'create_date desc'
 
     purchase_order_id = fields.Many2one(comodel_name="purchase.order", string="PO#", copy=False)
     vendor_id = fields.Many2one(comodel_name='res.partner', string="Vendor")
