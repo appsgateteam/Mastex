@@ -272,7 +272,7 @@ class PurchaseOrder(models.Model):
                         elif shipment.type == 'send_document_customer':
                             record.is_send_document_customer = True
 
-    def button_confirm(self):
+       def button_confirm(self):
         """ inherited to create sale order,
          first check for an existing sale order for the corresponding PO
          if does not exist, create a new sale order"""
@@ -281,6 +281,8 @@ class PurchaseOrder(models.Model):
             if not record.sale_order_id and record.customer_id:
                 sale_order_line_obj = self.env['sale.order.line']
                 attachment_ids = []
+                landing_line_ids = []
+                purchase_shipment_ids = []
                 sale_order_obj = self.env['sale.order']
                 for attchment in record.attachment_ids:
                     attachment_ids.append((0, 0, {
@@ -290,6 +292,40 @@ class PurchaseOrder(models.Model):
                         "mimetype": attchment.mimetype,
                         'index_content': attchment.index_content,
                         "create_uid": attchment.create_uid.id,
+                    }))
+
+
+
+                for landing in record.landing_line_ids:
+                    landing_line_ids.append((0, 0, {
+                        "name": landing.name,
+                        "landing_date_etd": landing.landing_date_etd,
+                        "landing_date_eta": landing.landing_date_eta,
+                        "shipping_company_id": landing.shipping_company_id.id,
+                        "landing_attachment": landing.landing_attachment,
+                        "landing_attachment_name": landing.landing_attachment_name,
+                        "no_of_packages": landing.no_of_packages,
+                        "destination": landing.destination.id,
+                        "marks": landing.marks,
+                        "container_no": landing.container_no,
+                        "reference": landing.reference,
+                        "status": landing.status
+                    }))
+
+                for shipment in record.purchase_shipment_ids:
+                    purchase_shipment_ids.append((0, 0, {
+                        "shipment_to": shipment.shipment_to.id,
+                        "shipment_from": shipment.shipment_from.id,
+                        "courier_company": shipment.courier_company.id,
+                        "from_date": shipment.from_date,
+                        "to_date": shipment.to_date,
+                        "reference": shipment.reference,
+                        "airway_bill_number": shipment.airway_bill_number,
+                        "description": shipment.description,
+                        "status": shipment.status,
+                        "type": shipment.type,
+                        "attachment": shipment.attachment,
+                        "attachment_name": shipment.attachment_name
                     }))
 
                 vals = {
@@ -308,6 +344,9 @@ class PurchaseOrder(models.Model):
                     "shipment_date": record.shipment_date,
                     "destination_id": record.destination_id.id,
                     "currency_id": record.currency_id.id,
+                    "landing_line_ids": landing_line_ids,
+                    "purchase_shipment_ids": purchase_shipment_ids
+
                 }
                 sale_order = sale_order_obj.create(vals)
                 record.sale_order_id = sale_order.id
@@ -331,6 +370,7 @@ class PurchaseOrder(models.Model):
                     line.sale_order_line_id = sale_order_line.id
 
             return res
+
 
     def action_view_invoice(self):
         res = super(PurchaseOrder, self).action_view_invoice()
