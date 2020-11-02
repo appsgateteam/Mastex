@@ -37,7 +37,7 @@ class SaleOrder(models.Model):
 
     landing_line_ids = fields.One2many(comodel_name='sale.landing.cost', inverse_name='sale_id',
                                        string="Bill Of Ladings")
-    sales_shipment_ids = fields.One2many('sale.shipment', 'sale_id', string="Shipment Details")
+    purchase_shipment_ids = fields.One2many('sale.shipment', 'sale_id', string="Shipment Details")
     # Instructions
     colour_instructions = fields.Text(string="Colour Instructions")
     packing = fields.Text(string="Packing")
