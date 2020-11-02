@@ -9,3 +9,4 @@ access_purchase_shipment,access_purchase_shipment,model_purchase_shipment,base.g
 access_sales_shipment,access_sales_shipment,model_sale_shipment,base.group_user,1,1,1,1
 access_tocb_report,access_tocb_report,model_tocb_report,base.group_user,1,1,1,1
 access_shipment_company,access_shipment_company,model_shipment_company,base.group_user,1,1,1,1
+access_courier_company,access_courier_company,model_courier_company,base.group_user,1,1,1,1
