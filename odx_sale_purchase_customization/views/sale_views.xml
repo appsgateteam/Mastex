@@ -138,14 +138,16 @@
                             </tree>
                         </field>
                     </page>
-                    <page string="Courier" name="shipment_tab">
+                   <page string="Courier" name="shipment_tab">
                         <field name="sales_shipment_ids" context="{'default_reference': name}">
                             <tree string="Courier Details" editable="bottom">
                                 <field name="type"/>
                                 <field name="shipment_from"/>
                                 <field name="shipment_to"/>
                                 <field name="reference" string="Airway Bill Number"/>
+                                <field name="airway_bill_number"/>
                                 <field name="description"/>
+                                <field name="courier_company"/>
                                 <field name="from_date"/>
                                 <field name="to_date"/>
                                 <!--                                <field name="dispatch_date"/>-->
