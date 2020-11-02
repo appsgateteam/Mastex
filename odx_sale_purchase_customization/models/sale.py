@@ -329,6 +329,8 @@ class SalesShipment(models.Model):
     shipment_to = fields.Many2one(comodel_name='shipment.destination', string="Shipment To")
     shipment_from = fields.Many2one(comodel_name='shipment.destination', string="Shipment From")
     from_date = fields.Date(string='Dispatch Date', copy=False, default=fields.Date.today(), store=True)
+    courier_company = fields.Many2one(comodel_name='courier.company', string="Courier Company")
+    airway_bill_number = fields.Char(string='Airway Bill No')
     to_date = fields.Date(string='Expected Delivery Date', copy=False, store=True)
     reference = fields.Char(string="Airway Bill Number")
     description = fields.Char(string="Description")
