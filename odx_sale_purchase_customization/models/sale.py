@@ -191,7 +191,7 @@ class SaleOrder(models.Model):
         for order in self:
             order.attachment_count = len(order.attachment_ids)
 
-       def action_confirm(self):
+    def action_confirm(self):
         """ inherited to create sale order,
          first check for an existing sale order for the corresponding SO
          if does not exist, create a new purchase order"""
@@ -256,7 +256,7 @@ class SaleOrder(models.Model):
                                                                            'taxes_id': [(6, 0, taxes_id.ids)],
                                                                            })
                     line.purchase_order_line_id = purchase_order_line.id
-            return res
+            return res   
 
             
 
