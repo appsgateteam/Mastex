@@ -272,7 +272,7 @@ class PurchaseOrder(models.Model):
                         elif shipment.type == 'send_document_customer':
                             record.is_send_document_customer = True
 
-       def button_confirm(self):
+    def button_confirm(self):
         """ inherited to create sale order,
          first check for an existing sale order for the corresponding PO
          if does not exist, create a new sale order"""
@@ -369,7 +369,7 @@ class PurchaseOrder(models.Model):
                                                                   })
                     line.sale_order_line_id = sale_order_line.id
 
-            return res
+            return res   
 
 
     def action_view_invoice(self):
