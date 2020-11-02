@@ -191,18 +191,18 @@ class SaleOrder(models.Model):
         for order in self:
             order.attachment_count = len(order.attachment_ids)
 
-      def button_confirm(self):
+       def action_confirm(self):
         """ inherited to create sale order,
-         first check for an existing sale order for the corresponding PO
-         if does not exist, create a new sale order"""
+         first check for an existing sale order for the corresponding SO
+         if does not exist, create a new purchase order"""
         for record in self:
-            res = super(PurchaseOrder, self).button_confirm()
-            if not record.sale_order_id and record.customer_id:
-                sale_order_line_obj = self.env['sale.order.line']
+            res = super(SaleOrder, self).action_confirm()
+            if not record.purchase_order_id and record.vendor_id:
+                purchase_order_lines_obj = self.env['purchase.order.line']
                 attachment_ids = []
-                landing_line_ids = []
-                purchase_shipment_ids = []
-                sale_order_obj = self.env['sale.order']
+                #landing_line_ids = []
+                #purchase_shipment_ids = []
+                purchase_order_obj = self.env['purchase.order']
                 for attchment in record.attachment_ids:
                     attachment_ids.append((0, 0, {
                         'name': attchment.name,
@@ -214,81 +214,50 @@ class SaleOrder(models.Model):
                     }))
 
 
-
-                for landing in record.landing_line_ids:
-                    landing_line_ids.append((0, 0, {
-                        "name": landing.name,
-                        "landing_date_etd": landing.landing_date_etd,
-                        "landing_date_eta": landing.landing_date_eta,
-                        "shipping_company_id": landing.shipping_company_id.id,
-                        "landing_attachment": landing.landing_attachment,
-                        "landing_attachment_name": landing.landing_attachment_name,
-                        "no_of_packages": landing.no_of_packages,
-                        "destination": landing.destination.id,
-                        "marks": landing.marks,
-                        "container_no": landing.container_no,
-                        "reference": landing.reference,
-                        "status": landing.status
-                    }))
-
-                for shipment in record.purchase_shipment_ids:
-                    purchase_shipment_ids.append((0, 0, {
-                        "shipment_to": shipment.shipment_to.id,
-                        "shipment_from": shipment.shipment_from.id,
-                        "courier_company": shipment.courier_company.id,
-                        "from_date": shipment.from_date,
-                        "to_date": shipment.to_date,
-                        "reference": shipment.reference,
-                        "airway_bill_number": shipment.airway_bill_number,
-                        "description": shipment.description,
-                        "status": shipment.status,
-                        "type": shipment.type,
-                        "attachment": shipment.attachment,
-                        "attachment_name": shipment.attachment_name
-                    }))
-
                 vals = {
-                    "partner_id": record.customer_id.id,
-                    "vendor_id": record.partner_id.id,
-                    "purchase_order_id": record.id,
+                    "partner_id": record.vendor_id.id,
+                    "sale_order_id": record.id,
+                    "customer_id": record.partner_id.id,
                     "attachment_ids": attachment_ids,
                     "colour_instructions": record.colour_instructions,
                     "packing": record.packing,
-                    "name": record.name,
                     "face_stamp": record.face_stamp,
+                    "name": record.name,
                     "selvedge": record.selvedge,
                     "shipping_mark": record.shipping_mark,
                     "shipping_sample_book": record.shipping_sample_book,
                     "notes": record.notes,
+                    "marks": record.marks,
                     "shipment_date": record.shipment_date,
                     "destination_id": record.destination_id.id,
                     "currency_id": record.currency_id.id,
-                    "landing_line_ids": landing_line_ids,
-                    "purchase_shipment_ids": purchase_shipment_ids
+
 
                 }
-                sale_order = sale_order_obj.create(vals)
-                record.sale_order_id = sale_order.id
+                purchase = purchase_order_obj.create(vals)
+                record.purchase_order_id = purchase.id
                 for line in record.order_line:
-                    taxes = line.product_id.taxes_id
+                    taxes = line.product_id.supplier_taxes_id
                     fpos = record.fiscal_position_id
-                    taxes_id = fpos.map_tax(taxes, line.product_id, record.partner_id) if fpos else taxes
+                    taxes_id = fpos.map_tax(taxes, line.product_id, record.vendor_id) if fpos else taxes
                     if taxes_id:
                         taxes_id = taxes_id.filtered(lambda x: x.company_id.id == record.company_id.id)
-                    sale_order_line = sale_order_line_obj.create({'product_id': line.product_id.id,
-                                                                  'name': line.name,
-                                                                  'tax_id': [(6, 0, taxes_id.ids)],
-                                                                  'product_uom_qty': line.product_qty,
-                                                                  "product_uom": line.product_uom.id,
-                                                                  'price_unit': line.price_unit,
-                                                                  "order_id": sale_order.id,
-                                                                  # "discount": line.discount,
-                                                                  "purchase_order_line_id": line.id,
-                                                                  "actual_qty": line.actual_qty
-                                                                  })
-                    line.sale_order_line_id = sale_order_line.id
 
+                    purchase_order_line = purchase_order_lines_obj.create({'product_id': line.product_id.id,
+                                                                           'name': line.name,
+                                                                           'product_qty': line.product_uom_qty,
+                                                                           "date_planned": datetime.today(),
+                                                                           "product_uom": line.product_uom.id,
+                                                                           'price_unit': line.price_unit,
+                                                                           "order_id": purchase.id,
+                                                                           "actual_qty": line.actual_qty,
+                                                                           "sale_order_line_id": line.id,
+                                                                           # "discount": line.discount,
+                                                                           'taxes_id': [(6, 0, taxes_id.ids)],
+                                                                           })
+                    line.purchase_order_line_id = purchase_order_line.id
             return res
+
             
 
     @api.model
