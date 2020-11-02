@@ -503,9 +503,11 @@ class PurchaseShipment(models.Model):
 
     shipment_to = fields.Many2one(comodel_name='shipment.destination', string="Shipment To")
     shipment_from = fields.Many2one(comodel_name='shipment.destination', string="Shipment From")
+    courier_company = fields.Many2one(comodel_name='courier.company', string="Courier Company")
     from_date = fields.Date(string='Dispatch Date', copy=False, default=fields.Date.today(), store=True)
     to_date = fields.Date(string='Expected Delivery Date', copy=False, store=True)
     reference = fields.Char(string="Airway Bill Number")
+    airway_bill_number = fields.Char(string='Airway Bill No')
     description = fields.Char(string="Description")
     status = fields.Selection([('sent', 'Sent'), ('received', 'Received'), ('delivered', 'Delivered'),
                                ('cancel', 'Canceled')],
@@ -523,12 +525,18 @@ class PurchaseShipment(models.Model):
     attachment_name = fields.Char(string="File Name")
     purchase_id = fields.Many2one('purchase.order', string="purchase Order", ondelete='cascade')
 
-
 class ShippingDestination(models.Model):
     _name = 'shipment.destination'
     _description = 'Shipping Destination'
 
     name = fields.Char("Name", required=True)
+    
+class CourierCompany(models.Model):
+    _name = 'courier.company'
+    _description = 'Courier Company'
+
+    name = fields.Char("Name", required=True)
+    
 
 
 class ShippingCompany(models.Model):
