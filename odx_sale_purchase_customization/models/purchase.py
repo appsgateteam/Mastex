@@ -22,11 +22,14 @@ from odoo import fields, models, api, _
 from odoo.exceptions import UserError
 import base64
 from datetime import date, timedelta, datetime
+from odoo.tools import float_is_zero, float_compare
+
 
 
 class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
     _description = "Purchase Order"
+    _order = 'date_order desc'
 
     @api.depends('order_line.price_total')
     def _amount_all(self):
@@ -73,7 +76,9 @@ class PurchaseOrder(models.Model):
     is_sample_to_mastex = fields.Boolean(string='Supplier final samples to Mastex')
     is_receive_document_supplier = fields.Boolean(string='Receive documents from supplier')
     is_send_document_customer= fields.Boolean(string='Send documents to customer')
-    purchase_shipment_ids = fields.One2many('purchase.shipment', 'purchase_id', string="Shipment Details")
+    purchase_shipment_ids = fields.One2many('purchase.shipment', inverse_name='purchase_id', string="Shipment Details")
+    purcahse_landing_eta = fields.Date(string='ETA',compute='_compute_eta')# change to be done in demo
+    purcahse_landing_etd = fields.Date(string='ETD',compute='_compute_eta')# change to be done in demo
 
     # attachments
     attachment_ids = fields.One2many('ir.attachment', 'purchase_id', string='Attachment', copy=False)
@@ -82,6 +87,12 @@ class PurchaseOrder(models.Model):
     actual_total = fields.Float(string="Actual Total", compute='_compute_grand_total',digits=(12,2))
     actual_commission = fields.Float(string="Actual Commission", compute='_compute_grand_total',digits=(12,2))
     planned_total = fields.Float(string="Planned Total", compute='_compute_grand_total',digits=(12,2))
+    invoice_status = fields.Selection([
+        ('no', 'Nothing to Bill'),
+        ('to invoice', 'Waiting Bills'),
+        ('pendinvoiced', 'Pending Bills'),
+        ('invoiced', 'Fully Billed'),
+    ], string='Billing Status', compute='_get_invoiced', store=True, readonly=True, copy=False, default='no')
 
     @api.depends('order_line')
     def _compute_grand_total(self):
@@ -99,6 +110,15 @@ class PurchaseOrder(models.Model):
             record.actual_total = actual_total
             record.planned_total = planned_total
             record.actual_commission = actual_commission
+
+    @api.depends('landing_line_ids')# change to be done in demo
+    def _compute_eta(self):
+        for record in self:
+            landing_ids = self.env['purchase.landing.cost'].search([('purchase_id','=', record.id)])
+            record.purcahse_landing_etd = landing_ids.landing_date_etd
+            record.purcahse_landing_eta = landing_ids.landing_date_eta
+
+        return False
 
     @api.onchange('colour_instructions')
     def _onchange_colour_instructions(self):
@@ -159,6 +179,58 @@ class PurchaseOrder(models.Model):
 
         }
 
+        # for purchase states
+    @api.depends('state', 'order_line.qty_invoiced', 'order_line.actual_qty','order_line.qty_received', 'order_line.product_qty')
+    def _get_invoiced(self):
+
+        precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+        for order in self:
+            if order.state not in ('purchase', 'done'):
+                order.invoice_status = 'no'
+                continue
+
+            if any(
+
+                    float_compare(
+                        line.qty_invoiced,
+                        line.product_qty if line.product_id.purchase_method == 'purchase' else line.qty_received,
+                        precision_digits=precision,
+                    )
+                    == 0
+
+                    for line in order.order_line.filtered(lambda l: not l.display_type)
+            ):
+                order.invoice_status = 'pendinvoiced'
+            elif (
+                    all(
+                        float_compare(
+                            line.qty_invoiced,
+                            line.product_qty if line.product_id.purchase_method == "purchase" else line.qty_received,
+                            precision_digits=precision,
+                        )
+                        >= 0
+                        for line in order.order_line.filtered(lambda l: not l.display_type)
+                    )
+                    and order.invoice_ids
+            ):
+                order.invoice_status = 'invoiced'
+            elif (
+                    all(
+                        float_compare(
+                            line.qty_invoiced,
+                            line.product_qty if line.product_id.purchase_method == "purchase" and line.actual_qty >=0  else line.qty_received,
+                            precision_digits=precision,
+                        )
+                        >= 1
+                        for line in order.order_line.filtered(lambda l: not l.display_type)
+                    )
+                    and order.invoice_ids
+            ):
+                order.invoice_status = 'to invoice'
+            else:
+                order.invoice_status = 'no'
+    # end of purchase states.
+
     @api.depends('attachment_ids')
     def _compute_attachment_count(self):
         for order in self:
@@ -180,6 +252,8 @@ class PurchaseOrder(models.Model):
         attachment_id = self.env['ir.attachment'].create(data_attach)
         res['context']['default_extra_attachment_ids'] = [(6, 0, [attachment_id.id])]
         return res
+
+
 
     @api.onchange('purchase_shipment_ids')
     def _onchange_type(self):
@@ -209,7 +283,54 @@ class PurchaseOrder(models.Model):
                         elif shipment.type == 'send_document_customer':
                             record.is_send_document_customer = True
 
-    def button_confirm(self):
+    def write(self,vals): #to be chnage in demo
+        for record in self:
+            res = super(PurchaseOrder, self).write(vals)
+
+            if record.sale_order_id:
+                landing_line_ids = []
+                purchase_shipment_ids = []
+
+                sale_order_obj = self.env['sale.order']
+                for landing in record.landing_line_ids:
+                    landing_line_ids.append((0, 0, {
+                        "name": landing.name,
+                        "landing_date_etd": landing.landing_date_etd,
+                        "landing_date_eta": landing.landing_date_eta,
+                        "shipping_company_id": landing.shipping_company_id.id,
+                        "landing_attachment": landing.landing_attachment,
+                        "landing_attachment_name": landing.landing_attachment_name,
+                        "no_of_packages": landing.no_of_packages,
+                        "destination": landing.destination.id,
+                        "marks": landing.marks,
+                        "container_no": landing.container_no,
+                        "reference": landing.reference,
+                        "status": landing.status
+                    }))
+
+                for shipment in record.purchase_shipment_ids:
+                    purchase_shipment_ids.append((0, 0, {
+                        "shipment_to": shipment.shipment_to.id,
+                        "shipment_from": shipment.shipment_from.id,
+                        "courier_company": shipment.courier_company.id,
+                        "from_date": shipment.from_date,
+                        "to_date": shipment.to_date,
+                        "reference": shipment.reference,
+                        "airway_bill_number": shipment.airway_bill_number,
+                        "description": shipment.description,
+                        "status": shipment.status,
+                        "type": shipment.type,
+                        "attachment": shipment.attachment,
+                        "attachment_name": shipment.attachment_name
+                    }))
+                vals = {
+                    "landing_line_ids": landing_line_ids,
+                    "purchase_shipment_ids": purchase_shipment_ids
+                    }
+                sale_order = record.sale_order_id.write(vals)
+            return res
+
+    def button_confirm(self): #change in demo
         """ inherited to create sale order,
          first check for an existing sale order for the corresponding PO
          if does not exist, create a new sale order"""
@@ -218,6 +339,7 @@ class PurchaseOrder(models.Model):
             if not record.sale_order_id and record.customer_id:
                 sale_order_line_obj = self.env['sale.order.line']
                 attachment_ids = []
+
                 sale_order_obj = self.env['sale.order']
                 for attchment in record.attachment_ids:
                     attachment_ids.append((0, 0, {
@@ -228,6 +350,10 @@ class PurchaseOrder(models.Model):
                         'index_content': attchment.index_content,
                         "create_uid": attchment.create_uid.id,
                     }))
+
+
+
+
 
                 vals = {
                     "partner_id": record.customer_id.id,
@@ -245,6 +371,7 @@ class PurchaseOrder(models.Model):
                     "shipment_date": record.shipment_date,
                     "destination_id": record.destination_id.id,
                     "currency_id": record.currency_id.id,
+
                 }
                 sale_order = sale_order_obj.create(vals)
                 record.sale_order_id = sale_order.id
@@ -411,6 +538,8 @@ class LandingCost(models.Model):
     container_no = fields.Char(string="Container No")
     reference = fields.Char(string="Order Number")
     status = fields.Selection([('in_transit', 'In Transit'), ('discharged', 'Discharged')], string='Status')
+    #sale_order_id = fields.Many2one(comodel_name="sale.order", string="SO#", copy=False)
+
 
     @api.onchange('landing_date_etd','landing_date_eta')
     def _onchange_landing_date_etd(self):
@@ -426,6 +555,10 @@ class LandingCost(models.Model):
         if self.landing_date_eta:
             if date.today() > self.landing_date_eta:
                 self.status = 'discharged'
+        # if self.sale_order_id:
+        #     self.sale_order_id.landing_date_etd = self.landing_date_etd
+        #     self.sale_order_id.landing_date_eta = self.landing_date_eta
+
 
     def update_status(self):
         laddings = self.search([('status', '!=', 'discharged')])
@@ -434,15 +567,72 @@ class LandingCost(models.Model):
                 if date.today() >= ladding.landing_date_eta:
                     ladding.status = 'discharged'
 
+    # @api.onchange('reference')
+    # def _onchange_reference(self):
+    #     if self.sale_order_id:
+    #         self.sale_order_id.reference = self.reference
+    #
+    # @api.onchange('shipping_company_id')
+    # def _onchange_shipping_company_id(self):
+    #     if self.sale_order_id:
+    #         self.sale_order_id.shipping_company_id = self.shipping_company_id
+    #
+    # @api.onchange('landing_attachment')
+    # def _onchange_landing_attachment(self):
+    #     if self.sale_order_id:
+    #         self.sale_order_id.landing_attachment = self.landing_attachment
+    #
+    # @api.onchange('landing_attachment_name')
+    # def _onchange_landing_attachment_name(self):
+    #     if self.sale_order_id:
+    #         self.sale_order_id.landing_attachment_name = self.landing_attachment_name
+    #
+    # @api.onchange('no_of_packages')
+    # def _onchange_no_of_packages(self):
+    #     if self.sale_order_id:
+    #         self.sale_order_id.no_of_packages = self.no_of_packages
+    #
+    # @api.onchange('destination')
+    # def _onchange_destination(self):
+    #     if self.sale_order_id:
+    #         self.sale_order_id.destination = self.destination
+    #
+    #
+    # @api.onchange('no_of_packages')
+    # def _onchange_no_of_packages(self):
+    #     if self.sale_order_id:
+    #         self.sale_order_id.no_of_packages = self.no_of_packages
+    #
+    # @api.onchange('marks')
+    # def _onchange_marks(self):
+    #     if self.sale_order_id:
+    #         self.sale_order_id.marks = self.marks
+    #
+    # @api.onchange('container_no')
+    # def _onchange_container_no(self):
+    #     if self.sale_order_id:
+    #         self.sale_order_id.container_no = self.container_no
+    #
+    # @api.onchange('name')
+    # def _onchange_name(self):
+    #     if self.sale_order_id:
+    #         self.sale_order_id.name = self.name
+    #
+    # @api.onchange('status')
+    # def _onchange_container_no(self):
+    #     if self.sale_order_id:
+    #         self.sale_order_id.status = self.status
 
 class PurchaseShipment(models.Model):
     _name = 'purchase.shipment'
 
     shipment_to = fields.Many2one(comodel_name='shipment.destination', string="Shipment To")
     shipment_from = fields.Many2one(comodel_name='shipment.destination', string="Shipment From")
+    courier_company = fields.Many2one(comodel_name='courier.company', string="Courier Company")
     from_date = fields.Date(string='Dispatch Date', copy=False, default=fields.Date.today(), store=True)
     to_date = fields.Date(string='Expected Delivery Date', copy=False, store=True)
-    reference = fields.Char(string="Order Number")
+    reference = fields.Char(string="Airway Bill Number")
+    airway_bill_number = fields.Char(string='Airway Bill No')
     description = fields.Char(string="Description")
     status = fields.Selection([('sent', 'Sent'), ('received', 'Received'), ('delivered', 'Delivered'),
                                ('cancel', 'Canceled')],
@@ -466,6 +656,12 @@ class ShippingDestination(models.Model):
     _description = 'Shipping Destination'
 
     name = fields.Char("Name", required=True)
+
+    class CourierCompany(models.Model):
+        _name = 'courier.company'
+        _description = 'Courier Company'
+
+        name = fields.Char("Name", required=True)
 
 
 class ShippingCompany(models.Model):
