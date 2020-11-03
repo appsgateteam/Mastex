@@ -5,6 +5,7 @@
             <field name="model">purchase.shipment</field>
             <field name="arch" type="xml">
                 <tree editable="bottom" edit="false">
+                    <field name="purchase_id"/>
                     <field name="type"/>
                     <field name="shipment_to"/>
                     <field name="shipment_from"/>
@@ -31,10 +32,13 @@
                                 <field name="from_date"/>
                                 <field name="to_date"/>
                                 <field name="type"/>
+                                <field name="purchase_id"/>
                             </group>
                             <group>
                                 <field name="reference"/>
+                                <field name="airway_bill_number"/>
                                 <field name="description"/>
+                                <field name="courier_company"/>
                                 <field name="status"/>
                                 <field name="attachment" filename="attachment_name"/>
                                 <field name="attachment_name" invisible="1"/>
