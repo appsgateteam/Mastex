@@ -60,8 +60,8 @@ class SaleOrder(models.Model):
     insurance_id = fields.Many2one(comodel_name='res.insurance', string="Insurance")
     destination_id = fields.Many2one(comodel_name='res.destination', string='Destination')
     marks = fields.Char(string="Marks")
-    sale_landing_eta = fields.Date(string='ETA', compute='_compute_sale_eta')
-    sale_landing_etd = fields.Date(string='ETD', compute='_compute_sale_eta')
+    sale_landing_eta = fields.Date(string='ETA')
+    sale_landing_etd = fields.Date(string='ETD')
 
     attachment_ids = fields.One2many('ir.attachment', 'sale_id', string='Attachment')
     attachment_count = fields.Integer(compute='_compute_attachment_count')
@@ -126,14 +126,7 @@ class SaleOrder(models.Model):
             record.actual_grand_total = grand_total
             record.planned_total = planned_total
             
-    @api.depends('landing_line_ids')
-    def _compute_sale_eta(self):
-        for record in self:
-            landing_ids = self.env['sale.landing.cost'].search([('sale_id', '=', record.id)])
-            record.sale_landing_etd = landing_ids.landing_date_etd
-            record.sale_landing_eta = landing_ids.landing_date_eta
-
-        return False
+    
     
     @api.depends('billing_status')
     def _compute_bill_status(self):
