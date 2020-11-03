@@ -67,6 +67,9 @@ class PurchaseOrder(models.Model):
     shipment_date = fields.Date(string="Shipment Date")
     destination_id = fields.Many2one(comodel_name='res.destination', string='Destination')
     marks = fields.Char(string="Marks")
+    purcahse_landing_eta = fields.Date(string='ETA',compute='_compute_eta')
+    purcahse_landing_etd = fields.Date(string='ETD',compute='_compute_eta')
+
 
     # Shipment details
     is_sample_customer = fields.Boolean(string='Sample received from customer')
@@ -76,9 +79,7 @@ class PurchaseOrder(models.Model):
     is_sample_to_mastex = fields.Boolean(string='Supplier final samples to Mastex')
     is_receive_document_supplier = fields.Boolean(string='Receive documents from supplier')
     is_send_document_customer= fields.Boolean(string='Send documents to customer')
-    purchase_shipment_ids = fields.One2many('purchase.shipment', inverse_name='purchase_id', string="Shipment Details")
-    purcahse_landing_eta = fields.Date(string='ETA',compute='_compute_eta')# change to be done in demo
-    purcahse_landing_etd = fields.Date(string='ETD',compute='_compute_eta')# change to be done in demo
+    purchase_shipment_ids = fields.One2many('purchase.shipment', 'purchase_id', string="Shipment Details")
 
     # attachments
     attachment_ids = fields.One2many('ir.attachment', 'purchase_id', string='Attachment', copy=False)
@@ -119,7 +120,7 @@ class PurchaseOrder(models.Model):
             record.purcahse_landing_eta = landing_ids.landing_date_eta
 
         return False
-
+    
     @api.onchange('colour_instructions')
     def _onchange_colour_instructions(self):
         if self.sale_order_id:
@@ -282,8 +283,8 @@ class PurchaseOrder(models.Model):
                             record.is_receive_document_supplier = True
                         elif shipment.type == 'send_document_customer':
                             record.is_send_document_customer = True
-
-    def write(self,vals): #to be chnage in demo
+    
+    def write(self,vals): 
         for record in self:
             res = super(PurchaseOrder, self).write(vals)
 
@@ -330,7 +331,8 @@ class PurchaseOrder(models.Model):
                 sale_order = record.sale_order_id.write(vals)
             return res
 
-    def button_confirm(self): #change in demo
+
+    def button_confirm(self):
         """ inherited to create sale order,
          first check for an existing sale order for the corresponding PO
          if does not exist, create a new sale order"""
@@ -339,7 +341,7 @@ class PurchaseOrder(models.Model):
             if not record.sale_order_id and record.customer_id:
                 sale_order_line_obj = self.env['sale.order.line']
                 attachment_ids = []
-
+               
                 sale_order_obj = self.env['sale.order']
                 for attchment in record.attachment_ids:
                     attachment_ids.append((0, 0, {
@@ -353,7 +355,9 @@ class PurchaseOrder(models.Model):
 
 
 
+                
 
+         
 
                 vals = {
                     "partner_id": record.customer_id.id,
@@ -371,7 +375,7 @@ class PurchaseOrder(models.Model):
                     "shipment_date": record.shipment_date,
                     "destination_id": record.destination_id.id,
                     "currency_id": record.currency_id.id,
-
+                   
                 }
                 sale_order = sale_order_obj.create(vals)
                 record.sale_order_id = sale_order.id
@@ -394,7 +398,8 @@ class PurchaseOrder(models.Model):
                                                                   })
                     line.sale_order_line_id = sale_order_line.id
 
-            return res
+            return res   
+
 
     def action_view_invoice(self):
         res = super(PurchaseOrder, self).action_view_invoice()
@@ -538,8 +543,6 @@ class LandingCost(models.Model):
     container_no = fields.Char(string="Container No")
     reference = fields.Char(string="Order Number")
     status = fields.Selection([('in_transit', 'In Transit'), ('discharged', 'Discharged')], string='Status')
-    #sale_order_id = fields.Many2one(comodel_name="sale.order", string="SO#", copy=False)
-
 
     @api.onchange('landing_date_etd','landing_date_eta')
     def _onchange_landing_date_etd(self):
@@ -555,10 +558,6 @@ class LandingCost(models.Model):
         if self.landing_date_eta:
             if date.today() > self.landing_date_eta:
                 self.status = 'discharged'
-        # if self.sale_order_id:
-        #     self.sale_order_id.landing_date_etd = self.landing_date_etd
-        #     self.sale_order_id.landing_date_eta = self.landing_date_eta
-
 
     def update_status(self):
         laddings = self.search([('status', '!=', 'discharged')])
@@ -567,61 +566,6 @@ class LandingCost(models.Model):
                 if date.today() >= ladding.landing_date_eta:
                     ladding.status = 'discharged'
 
-    # @api.onchange('reference')
-    # def _onchange_reference(self):
-    #     if self.sale_order_id:
-    #         self.sale_order_id.reference = self.reference
-    #
-    # @api.onchange('shipping_company_id')
-    # def _onchange_shipping_company_id(self):
-    #     if self.sale_order_id:
-    #         self.sale_order_id.shipping_company_id = self.shipping_company_id
-    #
-    # @api.onchange('landing_attachment')
-    # def _onchange_landing_attachment(self):
-    #     if self.sale_order_id:
-    #         self.sale_order_id.landing_attachment = self.landing_attachment
-    #
-    # @api.onchange('landing_attachment_name')
-    # def _onchange_landing_attachment_name(self):
-    #     if self.sale_order_id:
-    #         self.sale_order_id.landing_attachment_name = self.landing_attachment_name
-    #
-    # @api.onchange('no_of_packages')
-    # def _onchange_no_of_packages(self):
-    #     if self.sale_order_id:
-    #         self.sale_order_id.no_of_packages = self.no_of_packages
-    #
-    # @api.onchange('destination')
-    # def _onchange_destination(self):
-    #     if self.sale_order_id:
-    #         self.sale_order_id.destination = self.destination
-    #
-    #
-    # @api.onchange('no_of_packages')
-    # def _onchange_no_of_packages(self):
-    #     if self.sale_order_id:
-    #         self.sale_order_id.no_of_packages = self.no_of_packages
-    #
-    # @api.onchange('marks')
-    # def _onchange_marks(self):
-    #     if self.sale_order_id:
-    #         self.sale_order_id.marks = self.marks
-    #
-    # @api.onchange('container_no')
-    # def _onchange_container_no(self):
-    #     if self.sale_order_id:
-    #         self.sale_order_id.container_no = self.container_no
-    #
-    # @api.onchange('name')
-    # def _onchange_name(self):
-    #     if self.sale_order_id:
-    #         self.sale_order_id.name = self.name
-    #
-    # @api.onchange('status')
-    # def _onchange_container_no(self):
-    #     if self.sale_order_id:
-    #         self.sale_order_id.status = self.status
 
 class PurchaseShipment(models.Model):
     _name = 'purchase.shipment'
@@ -650,18 +594,18 @@ class PurchaseShipment(models.Model):
     attachment_name = fields.Char(string="File Name")
     purchase_id = fields.Many2one('purchase.order', string="purchase Order", ondelete='cascade')
 
-
 class ShippingDestination(models.Model):
     _name = 'shipment.destination'
     _description = 'Shipping Destination'
 
     name = fields.Char("Name", required=True)
+    
+class CourierCompany(models.Model):
+    _name = 'courier.company'
+    _description = 'Courier Company'
 
-    class CourierCompany(models.Model):
-        _name = 'courier.company'
-        _description = 'Courier Company'
-
-        name = fields.Char("Name", required=True)
+    name = fields.Char("Name", required=True)
+    
 
 
 class ShippingCompany(models.Model):
