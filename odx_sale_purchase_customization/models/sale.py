@@ -126,14 +126,7 @@ class SaleOrder(models.Model):
             record.actual_grand_total = grand_total
             record.planned_total = planned_total
             
-    #@api.depends('landing_line_ids')
-    #def _compute_sale_eta(self):
-        #for record in self:
-      #      landing_ids = self.env['sale.landing.cost'].search([('sale_id', '=', record.id)])
-      #      record.sale_landing_etd = landing_ids.landing_date_etd
-       #     record.sale_landing_eta = landing_ids.landing_date_eta
-
-        #return False
+  
     
     @api.depends('billing_status')
     def _compute_bill_status(self):
