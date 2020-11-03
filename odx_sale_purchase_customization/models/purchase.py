@@ -285,51 +285,51 @@ class PurchaseOrder(models.Model):
                             record.is_send_document_customer = True
     
     def write(self,vals): 
-    for record in self:
-        res = super(PurchaseOrder, self).write(vals)
+        for record in self:
+            res = super(PurchaseOrder, self).write(vals)
 
-        if record.sale_order_id:
-            landing_line_ids = []
-            purchase_shipment_ids = []
+            if record.sale_order_id:
+                landing_line_ids = []
+                purchase_shipment_ids = []
 
-            sale_order_obj = self.env['sale.order']
-            for landing in record.landing_line_ids:
-                landing_line_ids.append((0, 0, {
-                    "name": landing.name,
-                    "landing_date_etd": landing.landing_date_etd,
-                    "landing_date_eta": landing.landing_date_eta,
-                    "shipping_company_id": landing.shipping_company_id.id,
-                    "landing_attachment": landing.landing_attachment,
-                    "landing_attachment_name": landing.landing_attachment_name,
-                    "no_of_packages": landing.no_of_packages,
-                    "destination": landing.destination.id,
-                    "marks": landing.marks,
-                    "container_no": landing.container_no,
-                    "reference": landing.reference,
-                    "status": landing.status
-                }))
+                sale_order_obj = self.env['sale.order']
+                for landing in record.landing_line_ids:
+                    landing_line_ids.append((0, 0, {
+                        "name": landing.name,
+                        "landing_date_etd": landing.landing_date_etd,
+                        "landing_date_eta": landing.landing_date_eta,
+                        "shipping_company_id": landing.shipping_company_id.id,
+                        "landing_attachment": landing.landing_attachment,
+                        "landing_attachment_name": landing.landing_attachment_name,
+                        "no_of_packages": landing.no_of_packages,
+                        "destination": landing.destination.id,
+                        "marks": landing.marks,
+                        "container_no": landing.container_no,
+                        "reference": landing.reference,
+                        "status": landing.status
+                    }))
 
-            for shipment in record.purchase_shipment_ids:
-                purchase_shipment_ids.append((0, 0, {
-                    "shipment_to": shipment.shipment_to.id,
-                    "shipment_from": shipment.shipment_from.id,
-                    "courier_company": shipment.courier_company.id,
-                    "from_date": shipment.from_date,
-                    "to_date": shipment.to_date,
-                    "reference": shipment.reference,
-                    "airway_bill_number": shipment.airway_bill_number,
-                    "description": shipment.description,
-                    "status": shipment.status,
-                    "type": shipment.type,
-                    "attachment": shipment.attachment,
-                    "attachment_name": shipment.attachment_name
-                }))
-            vals = {
-                "landing_line_ids": landing_line_ids,
-                "purchase_shipment_ids": purchase_shipment_ids
-                }
-            sale_order = record.sale_order_id.write(vals)
-        return res
+                for shipment in record.purchase_shipment_ids:
+                    purchase_shipment_ids.append((0, 0, {
+                        "shipment_to": shipment.shipment_to.id,
+                        "shipment_from": shipment.shipment_from.id,
+                        "courier_company": shipment.courier_company.id,
+                        "from_date": shipment.from_date,
+                        "to_date": shipment.to_date,
+                        "reference": shipment.reference,
+                        "airway_bill_number": shipment.airway_bill_number,
+                        "description": shipment.description,
+                        "status": shipment.status,
+                        "type": shipment.type,
+                        "attachment": shipment.attachment,
+                        "attachment_name": shipment.attachment_name
+                    }))
+                vals = {
+                    "landing_line_ids": landing_line_ids,
+                    "purchase_shipment_ids": purchase_shipment_ids
+                    }
+                sale_order = record.sale_order_id.write(vals)
+            return res
 
 
     def button_confirm(self):
