@@ -291,9 +291,9 @@
                         <img t-if="res_company.logo" t-att-src="image_data_uri(res_company.logo)" alt="Logo" style="width:100px; height:100px;"/>
                     </div>
                     <!-- ar -->
-                    <div class="col-5  mb4" style="font-size:12px; font-family: Calibri Regular;color:black; float: right;">
+                    <div class="col-5  mb4" style="font-size:18px; font-family: Calibri Regular;color:black; font-weight: bold; color:black; float: right;">
                             <div style="color:black;"  class="text-right ">شركة المصري والسعودي للتجارة</div>
-                            <br/>
+                         
                             <div style="color:black;" class="text-right ">الامارات العربية المتحدة - دبي  </div>
                     </div>
 
@@ -311,7 +311,7 @@
 
 
             <div style="border-top : 1px solid black; width: 100%;"/>
-            <div style="margin-left:27%; margin-top : 2px">
+            <div style="margin-left:29%; margin-top : 2px; font-size:18px; font-family: Calibri Regular;color:black; font-weight: bold;">
                 <span  class="list-inline-item">Email :  <span t-field="res_company.partner_id.email"/></span>
                 <span  class="list-inline-item">Tel :  <span t-field="res_company.partner_id.phone"/></span>
              </div>
