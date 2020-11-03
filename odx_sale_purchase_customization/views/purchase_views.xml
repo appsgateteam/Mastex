@@ -93,13 +93,15 @@
                             <field name="notes" attrs="{'readonly':[('state', 'in', 'done')]}"/>
                         </group>
                     </page>
-                    <page string="Courier" name="shipment_tab">
+                   <page string="Courier" name="shipment_tab">
                         <field name="purchase_shipment_ids" context="{'default_reference': name}">
                             <tree string="Courier Details" editable="bottom">
                                 <field name="type"/>
                                 <field name="shipment_from"/>
                                 <field name="shipment_to"/>
-                                <field name="reference" string="Airway Bill Number"/>
+                                <field name="reference" string="Order Number"/>
+                                <field name="airway_bill_number"/>
+                                <field name="courier_company"/>
                                 <field name="description"/>
                                 <field name="from_date"/>
                                 <field name="to_date"/>
@@ -122,6 +124,7 @@
                         </control>
                         <field name="display_type" invisible="1"/>
                         <field name="currency_id" invisible="1"/>
+
                         <field name="state" invisible="1"/>
                         <field name="product_type" invisible="1"/>
                         <field name="product_uom_category_id" invisible="1"/>
@@ -227,6 +230,18 @@
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="customer_id"/>
                 </xpath>
+                <xpath expr="//field[@name='customer_id']" position="after">
+                    <field name="shipment_date"/>
+                </xpath>
+                 <xpath expr="//field[@name='shipment_date']" position="after">
+                    <field name="purcahse_landing_eta"/>
+                </xpath>
+                 <xpath expr="//field[@name='purcahse_landing_eta']" position="after">
+                    <field name="purcahse_landing_etd"/>
+                </xpath>
+                <xpath expr="//field[@name='origin']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
                 <xpath expr="//field[@name='amount_total']" position="after">
                     <field name="actual_total" sum="Actual Total" widget="monetary"/>
                     <field name="planned_total" sum="Planned Total" widget="monetary"/>
@@ -243,6 +258,12 @@
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="customer_id"/>
+                </xpath>
+                <xpath expr="//field[@name='customer_id']" position="after">
+                    <field name="shipment_date"/>
+                </xpath>
+                <xpath expr="//field[@name='origin']" position="attributes">
+                    <attribute name="invisible">True</attribute>
                 </xpath>
                 <xpath expr="//field[@name='amount_total']" position="after">
                     <field name="actual_total" sum="Actual Total" widget="monetary"/>
