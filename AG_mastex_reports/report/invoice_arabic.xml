@@ -74,10 +74,10 @@
                             <span class="text-nowrap" style="margin-right:40px; font-size:18px; font-family: Calibri Regular; color:black; font-weight: bold; float: right;"><strong><span style="font-size:18px; font-family: Calibri Regular; color:black;" class="text-nowrap" /></strong>   : Carton / عدد الطرود</span> 
                             <br/>
                             <br/>
-                            <span style="margin-right:40px; font-size:18px; font-family: Calibri Bold;color:black; font-weight: bold; float: right;"><strong><span style="font-size:18px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-field="o.amount_total"/></strong>  : Amount Due / المبلغ المطلوب</span><br/>
+                            <span class="text-nowrap" style="margin-right:40px; font-size:18px; font-family: Calibri Bold;color:black; font-weight: bold; float: right;"><strong><span style="font-size:18px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-field="o.amount_total"/></strong>  : Amount Due / المبلغ المطلوب</span><br/>
                             <br/>
                            
-                            <span style="margin-right:40px; font-size:18px; font-size:18px; font-family: Calibri Regular; color:black; float: right; " class="text-nowrap"><span style="font-size:18px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-field="o.invoice_date"/> : Invoice / تاريخ الفاتورة</span><br/>
+                            <span  style="margin-right:40px; font-size:18px; font-size:18px; font-family: Calibri Regular; color:black; float: right; " class="text-nowrap"><span style="font-size:18px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-field="o.invoice_date"/> : Invoice / تاريخ الفاتورة</span><br/>
                         
                         <br/>
                         <br/>
@@ -165,7 +165,7 @@
                                 <t t-if="current_section and (line_last or lines[line_index+1].display_type == 'line_section')">
                                     <tr class="is-subtotal text-center">
                                         <td colspan="99">
-                                            <strong class="mr16" style="font-size:18px; font-family: Calibri Regular; color:black;">Subtotal/قيمة الفاتورة</strong>
+                                            <strong class="mr16 text-nowrap" style="font-size:16px; font-family: Calibri Regular; color:black;">Subtotal/قيمة الفاتورة</strong>
                                             <span style="font-size:18px; font-family: Calibri Regular; color:black;" 
                                                 t-esc="current_subtotal"
                                                 t-options='{"widget": "monetary", "display_currency": o.currency_id}'
@@ -184,28 +184,28 @@
                             <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ml-auto">
                                 <table class="table table-sm" style="page-break-inside: avoid;">
                                     <tr class=" o_subtotal" style="">
-                                        <td><strong style="font-size:18px; font-family: Calibri Bold; color:black;">TOTAL/قيمة الفاتورة:</strong></td>
+                                        <td><strong  class="text-nowrap"  style="font-size:16px; font-family: Calibri Bold; color:black;">TOTAL/قيمة الفاتورة:</strong></td>
                                         <td class="text-right">
-                                            <span style="font-size:18px; font-family: Calibri Bold; color:black;" t-field="o.amount_untaxed"/>
+                                            <span style="font-size:16px; font-family: Calibri Bold; color:black;" t-field="o.amount_untaxed"/>
                                         </td>
                                     </tr>
                                     <tr class=" o_subtotal" style="">
-                                        <td><strong style="font-size:18px; font-family: Calibri Bold; color:black;">Currency Charge	/فرق العملة:</strong></td>
+                                        <td><strong class="text-nowrap" style="font-size:16px; font-family: Calibri Bold; color:black;">Currency Charge	/فرق العملة:</strong></td>
                                         <td class="text-right">
-                                            <span style="font-size:18px; font-family: Calibri Bold;color:black;" t-field="o.currency_charge"/>
+                                            <span style="font-size:16px; font-family: Calibri Bold;color:black;" t-field="o.currency_charge"/>
                                         </td>
                                     </tr>
                                     <tr class=" o_subtotal" style="">
-                                        <td><strong style="font-size:18px; font-family: Calibri Bold; color:black;">Bank Charge	/ مصاريف الحوالة - 100 درهم:</strong></td>
+                                        <td><strong class="text-nowrap" style="font-size:16px; font-family: Calibri Bold; color:black;">Bank Charge	/ مصاريف الحوالة - 100 درهم:</strong></td>
                                         <td class="text-right">
-                                            <span style="font-size:18px; font-family: Calibri Bold;color:black;" t-field="o.bank_charge_currency"/>
+                                            <span style="font-size:16px; font-family: Calibri Bold;color:black;" t-field="o.bank_charge_currency"/>
                                         </td>
                                     </tr>
 
                                     <tr class=" o_subtotal" style="">
-                                        <td style="font-size:18px; font-family: Calibri Bold; color:black;font-weight: bold;">Total Due/ الاجمالي المطلوب:</td>
+                                        <td class="text-nowrap" style="font-size:16px; font-family: Calibri Bold; color:black;font-weight: bold;">Total Due/ الاجمالي المطلوب:</td>
                                         <td class="text-right">
-                                             <span  style="font-size:18px; font-family: Calibri Bold;color:black;" t-field="o.amount_residual"/> 
+                                             <span  style="font-size:16px; font-family: Calibri Bold;color:black;" t-field="o.amount_residual"/> 
                                         </td>
                                     </tr>
                                     
