@@ -192,20 +192,20 @@
                                     <tr class=" o_subtotal" style="">
                                         <td><strong style="font-size:18px; font-family: Calibri Bold; color:black;">Currency Charge	/فرق العملة:</strong></td>
                                         <td class="text-right">
-                                            <!-- <span style="font-size:18px; font-family: Calibri Bold;color:black;" t-field="o.currency_charge"/> -->
+                                            <span style="font-size:18px; font-family: Calibri Bold;color:black;" t-field="o.currency_charge"/>
                                         </td>
                                     </tr>
                                     <tr class=" o_subtotal" style="">
                                         <td><strong style="font-size:18px; font-family: Calibri Bold; color:black;">Bank Charge	/ مصاريف الحوالة - 100 درهم:</strong></td>
                                         <td class="text-right">
-                                            <!-- <span style="font-size:18px; font-family: Calibri Bold;color:black;" t-field="o.bank_charge_currency"/> -->
+                                            <span style="font-size:18px; font-family: Calibri Bold;color:black;" t-field="o.bank_charge_currency"/>
                                         </td>
                                     </tr>
 
                                     <tr class=" o_subtotal" style="">
                                         <td style="font-size:18px; font-family: Calibri Bold; color:black;font-weight: bold;">Total Due/ الاجمالي المطلوب:</td>
                                         <td class="text-right">
-                                             <!-- <span  style="font-size:18px; font-family: Calibri Bold;color:black;" t-field="o.amount_residual"/>  -->
+                                             <span  style="font-size:18px; font-family: Calibri Bold;color:black;" t-field="o.amount_residual"/> 
                                         </td>
                                     </tr>
                                     
