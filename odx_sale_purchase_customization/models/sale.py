@@ -30,10 +30,22 @@ from odoo.exceptions import UserError
 class SaleOrder(models.Model):
     _inherit = "sale.order"
     _description = "Sales Order"
+    _order = 'create_date desc'
 
     purchase_order_id = fields.Many2one(comodel_name="purchase.order", string="PO#", copy=False)
+    
+    billing_status = fields.Selection([         
+        ('no', 'Nothing to Bill'),
+        ('to invoice', 'Waiting Bills'),
+        ('pendinvoiced', 'Pending Bills'),
+        ('invoiced', 'Fully Billed'),
+    ], string='Billing Status', compute='_compute_bill_status', store=True, readonly=True, copy=False, default='no')
+    
     vendor_id = fields.Many2one(comodel_name='res.partner', string="Vendor")
 
+    landing_line_ids = fields.One2many(comodel_name='sale.landing.cost', inverse_name='sale_id',
+                                       string="Bill Of Ladings")
+    purchase_shipment_ids = fields.One2many('sale.shipment', 'sale_id', string="Shipment Details")
     # Instructions
     colour_instructions = fields.Text(string="Colour Instructions")
     packing = fields.Text(string="Packing")
@@ -48,6 +60,8 @@ class SaleOrder(models.Model):
     insurance_id = fields.Many2one(comodel_name='res.insurance', string="Insurance")
     destination_id = fields.Many2one(comodel_name='res.destination', string='Destination')
     marks = fields.Char(string="Marks")
+    sale_landing_eta = fields.Date(string='ETA', compute='_compute_sale_eta')
+    sale_landing_etd = fields.Date(string='ETD', compute='_compute_sale_eta')
 
     attachment_ids = fields.One2many('ir.attachment', 'sale_id', string='Attachment')
     attachment_count = fields.Integer(compute='_compute_attachment_count')
@@ -111,6 +125,22 @@ class SaleOrder(models.Model):
                 planned_total = planned_total + line.price_subtotal
             record.actual_grand_total = grand_total
             record.planned_total = planned_total
+            
+    @api.depends('landing_line_ids')
+    def _compute_sale_eta(self):
+        for record in self:
+            landing_ids = self.env['sale.landing.cost'].search([('sale_id', '=', record.id)])
+            record.sale_landing_etd = landing_ids.landing_date_etd
+            record.sale_landing_eta = landing_ids.landing_date_eta
+
+        return False
+    
+    @api.depends('billing_status')
+    def _compute_bill_status(self):
+        for record in self:
+            bill_status_id = self.env['purchase.order'].search([('sale_order_id', '=', record.id)])
+            record.billing_status = bill_status_id.invoice_status
+        
 
     @api.onchange('colour_instructions')
     def _onchange_colour_instructions(self):
@@ -196,6 +226,8 @@ class SaleOrder(models.Model):
             if not record.purchase_order_id and record.vendor_id:
                 purchase_order_lines_obj = self.env['purchase.order.line']
                 attachment_ids = []
+                #landing_line_ids = []
+                #purchase_shipment_ids = []
                 purchase_order_obj = self.env['purchase.order']
                 for attchment in record.attachment_ids:
                     attachment_ids.append((0, 0, {
@@ -206,6 +238,8 @@ class SaleOrder(models.Model):
                         'index_content': attchment.index_content,
                         "create_uid": attchment.create_uid.id,
                     }))
+
+
                 vals = {
                     "partner_id": record.vendor_id.id,
                     "sale_order_id": record.id,
@@ -223,6 +257,7 @@ class SaleOrder(models.Model):
                     "shipment_date": record.shipment_date,
                     "destination_id": record.destination_id.id,
                     "currency_id": record.currency_id.id,
+
 
                 }
                 purchase = purchase_order_obj.create(vals)
@@ -247,7 +282,9 @@ class SaleOrder(models.Model):
                                                                            'taxes_id': [(6, 0, taxes_id.ids)],
                                                                            })
                     line.purchase_order_line_id = purchase_order_line.id
-            return res
+            return res   
+
+            
 
     @api.model
     def create(self, values):
@@ -300,6 +337,51 @@ class SaleOrder(models.Model):
         res = super(SaleOrder, self)._create_invoices()
         return res
 
+class LandingCost(models.Model):
+    _name = 'sale.landing.cost'
+    _description = 'Sale Landing Cost'
+
+    sale_id = fields.Many2one(comodel_name='sale.order', string="sale Order", ondelete='cascade')
+    name = fields.Char(string="B/L No", required=True)
+    landing_date_etd = fields.Date(string='ETD', required=True)
+    landing_date_eta = fields.Date(string='ETA', required=True)
+    shipping_company_id = fields.Many2one('shipment.company', string='Shipping Line', required=True,
+                                          )
+    landing_attachment = fields.Binary(string='Document', attachment=True)
+    landing_attachment_name = fields.Char(string='Document Name')
+    no_of_packages = fields.Char(string='No Of Packages')
+    destination = fields.Many2one(comodel_name='res.destination', string='Destination')
+    marks = fields.Char(string="Marks")
+    container_no = fields.Char(string="Container No")
+    reference = fields.Char(string="Order Number")
+    status = fields.Selection([('in_transit', 'In Transit'), ('discharged', 'Discharged')], string='Status')
+
+class SalesShipment(models.Model):
+    _name = 'sale.shipment'
+
+    shipment_to = fields.Many2one(comodel_name='shipment.destination', string="Shipment To")
+    shipment_from = fields.Many2one(comodel_name='shipment.destination', string="Shipment From")
+    from_date = fields.Date(string='Dispatch Date', copy=False, default=fields.Date.today(), store=True)
+    courier_company = fields.Many2one(comodel_name='courier.company', string="Courier Company")
+    airway_bill_number = fields.Char(string='Airway Bill No')
+    to_date = fields.Date(string='Expected Delivery Date', copy=False, store=True)
+    reference = fields.Char(string="Airway Bill Number")
+    description = fields.Char(string="Description")
+    status = fields.Selection([('sent', 'Sent'), ('received', 'Received'), ('delivered', 'Delivered'),
+                               ('cancel', 'Canceled')],
+                              string='Status')
+    type = fields.Selection([('sample_customer', 'Sample received from customer'),
+                             ('sample_vendor', 'Samples sent to supplier'),
+                             ('vendor_sample_customer', 'Supplier initial Sample'),
+                             ('sample_company', ' Supplier final samples to Customer'),
+                             ('sample_to_mastex','Supplier final samples to Mastex'),
+                             ('receive_document_suppler','Receive documents from supplier'),
+                             ('send_document_customer','Send documents to customer'),
+                             ('others', ' Others')],
+                            string='Type')
+    attachment = fields.Binary(string="Files", attachment=True)
+    attachment_name = fields.Char(string="File Name")
+    sale_id = fields.Many2one('sale.order', string="Sale Order", ondelete='cascade')
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
