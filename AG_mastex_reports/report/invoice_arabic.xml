@@ -179,33 +179,33 @@
 
                     </div>
 
-                    <div class="clearfix" style="font-size:18px; font-family: Calibri Bold; color:black;" >
+                    <div class="clearfix" style="font-size:14px; font-family: Calibri Bold; color:black;" >
                         <div id="total" class="row">
                             <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ml-auto">
                                 <table class="table table-sm" style="page-break-inside: avoid;">
                                     <tr class=" o_subtotal" style="">
-                                        <td><strong  class="text-nowrap"  style="font-size:16px; font-family: Calibri Bold; color:black;">TOTAL/قيمة الفاتورة:</strong></td>
+                                        <td><strong  class="text-nowrap"  style="font-size:14px; font-family: Calibri Bold; color:black;">TOTAL/قيمة الفاتورة:</strong></td>
                                         <td class="text-right">
-                                            <span style="font-size:16px; font-family: Calibri Bold; color:black;" t-field="o.amount_untaxed"/>
+                                            <span style="font-size:14px; font-family: Calibri Bold; color:black;" t-field="o.amount_untaxed"/>
                                         </td>
                                     </tr>
                                     <tr class=" o_subtotal" style="">
-                                        <td><strong class="text-nowrap" style="font-size:16px; font-family: Calibri Bold; color:black;">Currency Charge	/فرق العملة:</strong></td>
+                                        <td><strong class="text-nowrap" style="font-size:14px; font-family: Calibri Bold; color:black;">Currency Charge	/فرق العملة:</strong></td>
                                         <td class="text-right">
-                                            <span style="font-size:16px; font-family: Calibri Bold;color:black;" t-field="o.currency_charge"/>
+                                            <span style="font-size:14px; font-family: Calibri Bold;color:black;" t-field="o.currency_charge"/>
                                         </td>
                                     </tr>
                                     <tr class=" o_subtotal" style="">
-                                        <td><strong class="text-nowrap" style="font-size:16px; font-family: Calibri Bold; color:black;">Bank Charge	/ مصاريف الحوالة - 100 درهم:</strong></td>
+                                        <td><strong class="text-nowrap" style="font-size:14px; font-family: Calibri Bold; color:black;">Bank Charge	/ مصاريف الحوالة - 100 درهم:</strong></td>
                                         <td class="text-right">
-                                            <span style="font-size:16px; font-family: Calibri Bold;color:black;" t-field="o.bank_charge_currency"/>
+                                            <span style="font-size:14px; font-family: Calibri Bold;color:black;" t-field="o.bank_charge_currency"/>
                                         </td>
                                     </tr>
 
                                     <tr class=" o_subtotal" style="">
-                                        <td class="text-nowrap" style="font-size:16px; font-family: Calibri Bold; color:black;font-weight: bold;">Total Due/ الاجمالي المطلوب:</td>
+                                        <td class="text-nowrap" style="font-size:14px; font-family: Calibri Bold; color:black;font-weight: bold;">Total Due/ الاجمالي المطلوب:</td>
                                         <td class="text-right">
-                                             <span  style="font-size:16px; font-family: Calibri Bold;color:black;" t-field="o.amount_residual"/> 
+                                             <span  style="font-size:14px; font-family: Calibri Bold;color:black;" t-field="o.amount_residual"/> 
                                         </td>
                                     </tr>
                                     
