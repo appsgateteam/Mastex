@@ -67,6 +67,9 @@ class PurchaseOrder(models.Model):
     shipment_date = fields.Date(string="Shipment Date")
     destination_id = fields.Many2one(comodel_name='res.destination', string='Destination')
     marks = fields.Char(string="Marks")
+    purcahse_landing_eta = fields.Date(string='ETA',compute='_compute_eta')
+    purcahse_landing_etd = fields.Date(string='ETD',compute='_compute_eta')
+
 
     # Shipment details
     is_sample_customer = fields.Boolean(string='Sample received from customer')
@@ -109,6 +112,15 @@ class PurchaseOrder(models.Model):
             record.planned_total = planned_total
             record.actual_commission = actual_commission
 
+    @api.depends('landing_line_ids')# change to be done in demo
+    def _compute_eta(self):
+        for record in self:
+            landing_ids = self.env['purchase.landing.cost'].search([('purchase_id','=', record.id)])
+            record.purcahse_landing_etd = landing_ids.landing_date_etd
+            record.purcahse_landing_eta = landing_ids.landing_date_eta
+
+        return False
+    
     @api.onchange('colour_instructions')
     def _onchange_colour_instructions(self):
         if self.sale_order_id:
@@ -271,6 +283,54 @@ class PurchaseOrder(models.Model):
                             record.is_receive_document_supplier = True
                         elif shipment.type == 'send_document_customer':
                             record.is_send_document_customer = True
+    
+    def write(self,vals): 
+    for record in self:
+        res = super(PurchaseOrder, self).write(vals)
+
+        if record.sale_order_id:
+            landing_line_ids = []
+            purchase_shipment_ids = []
+
+            sale_order_obj = self.env['sale.order']
+            for landing in record.landing_line_ids:
+                landing_line_ids.append((0, 0, {
+                    "name": landing.name,
+                    "landing_date_etd": landing.landing_date_etd,
+                    "landing_date_eta": landing.landing_date_eta,
+                    "shipping_company_id": landing.shipping_company_id.id,
+                    "landing_attachment": landing.landing_attachment,
+                    "landing_attachment_name": landing.landing_attachment_name,
+                    "no_of_packages": landing.no_of_packages,
+                    "destination": landing.destination.id,
+                    "marks": landing.marks,
+                    "container_no": landing.container_no,
+                    "reference": landing.reference,
+                    "status": landing.status
+                }))
+
+            for shipment in record.purchase_shipment_ids:
+                purchase_shipment_ids.append((0, 0, {
+                    "shipment_to": shipment.shipment_to.id,
+                    "shipment_from": shipment.shipment_from.id,
+                    "courier_company": shipment.courier_company.id,
+                    "from_date": shipment.from_date,
+                    "to_date": shipment.to_date,
+                    "reference": shipment.reference,
+                    "airway_bill_number": shipment.airway_bill_number,
+                    "description": shipment.description,
+                    "status": shipment.status,
+                    "type": shipment.type,
+                    "attachment": shipment.attachment,
+                    "attachment_name": shipment.attachment_name
+                }))
+            vals = {
+                "landing_line_ids": landing_line_ids,
+                "purchase_shipment_ids": purchase_shipment_ids
+                }
+            sale_order = record.sale_order_id.write(vals)
+        return res
+
 
     def button_confirm(self):
         """ inherited to create sale order,
@@ -281,8 +341,7 @@ class PurchaseOrder(models.Model):
             if not record.sale_order_id and record.customer_id:
                 sale_order_line_obj = self.env['sale.order.line']
                 attachment_ids = []
-                landing_line_ids = []
-                purchase_shipment_ids = []
+               
                 sale_order_obj = self.env['sale.order']
                 for attchment in record.attachment_ids:
                     attachment_ids.append((0, 0, {
@@ -296,37 +355,9 @@ class PurchaseOrder(models.Model):
 
 
 
-                for landing in record.landing_line_ids:
-                    landing_line_ids.append((0, 0, {
-                        "name": landing.name,
-                        "landing_date_etd": landing.landing_date_etd,
-                        "landing_date_eta": landing.landing_date_eta,
-                        "shipping_company_id": landing.shipping_company_id.id,
-                        "landing_attachment": landing.landing_attachment,
-                        "landing_attachment_name": landing.landing_attachment_name,
-                        "no_of_packages": landing.no_of_packages,
-                        "destination": landing.destination.id,
-                        "marks": landing.marks,
-                        "container_no": landing.container_no,
-                        "reference": landing.reference,
-                        "status": landing.status
-                    }))
+                
 
-                for shipment in record.purchase_shipment_ids:
-                    purchase_shipment_ids.append((0, 0, {
-                        "shipment_to": shipment.shipment_to.id,
-                        "shipment_from": shipment.shipment_from.id,
-                        "courier_company": shipment.courier_company.id,
-                        "from_date": shipment.from_date,
-                        "to_date": shipment.to_date,
-                        "reference": shipment.reference,
-                        "airway_bill_number": shipment.airway_bill_number,
-                        "description": shipment.description,
-                        "status": shipment.status,
-                        "type": shipment.type,
-                        "attachment": shipment.attachment,
-                        "attachment_name": shipment.attachment_name
-                    }))
+         
 
                 vals = {
                     "partner_id": record.customer_id.id,
@@ -344,9 +375,7 @@ class PurchaseOrder(models.Model):
                     "shipment_date": record.shipment_date,
                     "destination_id": record.destination_id.id,
                     "currency_id": record.currency_id.id,
-                    "landing_line_ids": landing_line_ids,
-                    "purchase_shipment_ids": purchase_shipment_ids
-
+                   
                 }
                 sale_order = sale_order_obj.create(vals)
                 record.sale_order_id = sale_order.id
