@@ -33,6 +33,12 @@ class SaleOrder(models.Model):
     _order = 'create_date desc'
 
     purchase_order_id = fields.Many2one(comodel_name="purchase.order", string="PO#", copy=False)
+    billing_status = fields.Selection([         
+        ('no', 'Nothing to Bill'),
+        ('to invoice', 'Waiting Bills'),
+        ('pendinvoiced', 'Pending Bills'),
+        ('invoiced', 'Fully Billed'),
+    ], string='Billing Status', compute='_compute_bill_status', store=True, readonly=True, copy=False, default='no')
     vendor_id = fields.Many2one(comodel_name='res.partner', string="Vendor")
 
     landing_line_ids = fields.One2many(comodel_name='sale.landing.cost', inverse_name='sale_id',
@@ -52,6 +58,8 @@ class SaleOrder(models.Model):
     insurance_id = fields.Many2one(comodel_name='res.insurance', string="Insurance")
     destination_id = fields.Many2one(comodel_name='res.destination', string='Destination')
     marks = fields.Char(string="Marks")
+    sale_landing_eta = fields.Date(string='ETA', compute='_compute_sale_eta')
+    sale_landing_etd = fields.Date(string='ETD', compute='_compute_sale_eta')
 
     attachment_ids = fields.One2many('ir.attachment', 'sale_id', string='Attachment')
     attachment_count = fields.Integer(compute='_compute_attachment_count')
@@ -115,6 +123,22 @@ class SaleOrder(models.Model):
                 planned_total = planned_total + line.price_subtotal
             record.actual_grand_total = grand_total
             record.planned_total = planned_total
+            
+    @api.depends('landing_line_ids')
+    def _compute_sale_eta(self):
+        for record in self:
+            landing_ids = self.env['sale.landing.cost'].search([('sale_id', '=', record.id)])
+            record.sale_landing_etd = landing_ids.landing_date_etd
+            record.sale_landing_eta = landing_ids.landing_date_eta
+
+        return False
+    
+    @api.depends('billing_status')
+    def _compute_bill_status(self):
+        for record in self:
+            bill_status_id = self.env['purchase.order'].search([('sale_order_id', '=', record.id)])
+            record.billing_status = bill_status_id.invoice_status
+        
 
     @api.onchange('colour_instructions')
     def _onchange_colour_instructions(self):
