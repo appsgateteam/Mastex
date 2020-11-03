@@ -33,12 +33,14 @@ class SaleOrder(models.Model):
     _order = 'create_date desc'
 
     purchase_order_id = fields.Many2one(comodel_name="purchase.order", string="PO#", copy=False)
+    
     billing_status = fields.Selection([         
         ('no', 'Nothing to Bill'),
         ('to invoice', 'Waiting Bills'),
         ('pendinvoiced', 'Pending Bills'),
         ('invoiced', 'Fully Billed'),
     ], string='Billing Status', compute='_compute_bill_status', store=True, readonly=True, copy=False, default='no')
+    
     vendor_id = fields.Many2one(comodel_name='res.partner', string="Vendor")
 
     landing_line_ids = fields.One2many(comodel_name='sale.landing.cost', inverse_name='sale_id',
