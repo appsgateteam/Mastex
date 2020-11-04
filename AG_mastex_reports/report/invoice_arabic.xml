@@ -41,7 +41,7 @@
                 <br></br>
                 <br></br>
                     <div class="text-right">
-                        <span style="margin-right:30px; font-size:22px; font-family: Calibri Regular;color:black; font-weight: bold;" t-field="o.partner_id.name"/><br></br>
+                        <span style="margin-right:30px; font-size:18px; font-family: Calibri Regular;color:black; font-weight: bold;" t-field="o.partner_id.name"/><br></br>
                         <!-- <span t-field="o.partner_id.street"/><br></br>
                         <span t-field="o.partner_id.city"/><br></br>
                         <span t-field="o.partner_id.country_id"/><br></br>
@@ -58,7 +58,7 @@
 
                     <h5>
                         <br></br>
-                            <span class="text-nowrap" t-if="o.type == 'out_invoice' and o.state == 'posted'"><span style="margin-right:40px; font-size:18px; font-family: Calibri Regular;color:black; float: right;"><span style="font-size:16px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Invoice /رقم الفاتورة</span></span>
+                            <span class="text-nowrap" t-if="o.type == 'out_invoice' and o.state == 'posted'"><span style="margin-right:40px; font-size:18px; font-family: Calibri Regular;color:black; float: right;"><span style="font-size:18px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Invoice /رقم الفاتورة</span></span>
                             <span class="text-nowrap" t-if="o.type == 'out_invoice' and o.state == 'draft'"><span style="margin-right:40px; font-size:18px; font-family: Calibri Regular;color:black; float: right;"><span style="font-size:18px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Draft Invoice/رقم الفاتورة</span></span>
                             <span class="text-nowrap" t-if="o.type == 'out_invoice' and o.state == 'cancel'"><span style="margin-right:40px; font-size:18px; font-family: Calibri Regular;color:black; float: right;"><span style="font-size:18px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Cancelled Invoice/رقم الفاتورة</span></span>
                             <span class="text-nowrap" t-if="o.type == 'out_refund'"><span style="margin-right:40px; font-size:18px; font-family: Calibri Regular;color:black; float: right;"><span style="font-size:18px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Credit Note/رقم الفاتورة</span></span>
@@ -71,10 +71,10 @@
                        
                             
                             
-                            <span class="text-nowrap" style="margin-right:40px; font-size:18px; font-family: Calibri Regular; color:black; font-weight: bold; float: right;"><strong><span style="font-size:18px; font-family: Calibri Regular; color:black;" class="text-nowrap" /></strong>   : Carton / عدد الطرود</span> 
+                            <span class="text-nowrap" style="margin-right:40px; font-size:18px; font-family: Calibri Regular; color:black;  float: right;"><strong><span style="font-size:18px; font-family: Calibri Regular; color:black;" class="text-nowrap" /></strong>   : Carton / عدد الطرود</span> 
                             <br/>
                             <br/>
-                            <span class="text-nowrap" style="margin-right:40px; font-size:18px; font-family: Calibri Bold;color:black; font-weight: bold; float: right;"><strong><span style="font-size:18px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-field="o.amount_total"/></strong>  : Amount Due / المبلغ المطلوب</span><br/>
+                            <span class="text-nowrap" style="margin-right:40px; font-size:18px; font-family: Calibri Bold;color:black;  float: right;"><strong><span style="font-size:18px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-field="o.amount_total"/></strong>  : Amount Due / المبلغ المطلوب</span><br/>
                             <br/>
                            
                             <span  style="margin-right:40px; font-size:18px; font-size:18px; font-family: Calibri Regular; color:black; float: right; " class="text-nowrap"><span style="font-size:18px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-field="o.invoice_date"/> : Invoice / تاريخ الفاتورة</span><br/>
@@ -192,20 +192,20 @@
                                     <tr class=" o_subtotal" style="">
                                         <td><strong class="text-nowrap" style="font-size:14px; font-family: Calibri Bold; color:black;">Currency Charge	/فرق العملة:</strong></td>
                                         <td class="text-right">
-                                            <span style="font-size:14px; font-family: Calibri Bold;color:black;" t-field="o.currency_charge"/>
+                                            <!-- <span style="font-size:14px; font-family: Calibri Bold;color:black;" t-field="o.currency_charge"/> -->
                                         </td>
                                     </tr>
                                     <tr class=" o_subtotal" style="">
                                         <td><strong class="text-nowrap" style="font-size:14px; font-family: Calibri Bold; color:black;">Bank Charge	/ مصاريف الحوالة - 100 درهم:</strong></td>
                                         <td class="text-right">
-                                            <span style="font-size:14px; font-family: Calibri Bold;color:black;" t-field="o.bank_charge_currency"/>
+                                            <!-- <span style="font-size:14px; font-family: Calibri Bold;color:black;" t-field="o.bank_charge_currency"/> -->
                                         </td>
                                     </tr>
 
                                     <tr class=" o_subtotal" style="">
-                                        <td class="text-nowrap" style="font-size:14px; font-family: Calibri Bold; color:black;font-weight: bold;">Total Due/ الاجمالي المطلوب:</td>
+                                        <td class="text-nowrap" style="font-size:14px; font-family: Calibri Bold; color:black;">Total Due/ الاجمالي المطلوب:</td>
                                         <td class="text-right">
-                                             <span  style="font-size:14px; font-family: Calibri Bold;color:black;" t-field="o.amount_residual"/> 
+                                             <!-- <span  style="font-size:14px; font-family: Calibri Bold;color:black;font-weight: bold;" t-field="o.amount_residual"/>  -->
                                         </td>
                                     </tr>
                                     
