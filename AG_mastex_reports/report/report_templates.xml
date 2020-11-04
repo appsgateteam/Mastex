@@ -253,7 +253,7 @@
         <div class="header">
             <div class="">
 
-                <div class="row">
+                <div class="row" style="margin-top: 4%">
 
                     <style type="text/css">
             
@@ -288,13 +288,15 @@
                     </div>
                     <!-- img -->
                     <div class="col-2" style="font-size:18px; font-family: Calibri Regular; color:black;">
-                        <img t-if="res_company.logo" t-att-src="image_data_uri(res_company.logo)" alt="Logo" style="width:100px; height:100px;"/>
+                        <img t-if="res_company.logo" t-att-src="image_data_uri(res_company.logo)" alt="Logo" style="width:130px; height:130px;"/>
                     </div>
                     <!-- ar -->
                     <div class="col-5  mb4" style="font-size:18px; font-family: Calibri Regular;color:black; font-weight: bold; color:black; float: right;">
                             <div style="color:black;"  class="text-right ">شركة المصري والسعودي للتجارة</div>
                          
                             <div style="color:black;" class="text-right ">الامارات العربية المتحدة - دبي  </div>
+                            <div style="color:black;" class="text-right "><span style="font-size:18px; font-family: Calibri Regular; color:black;" t-field="res_company.partner_id.email"/> :  البريد الالكتروني   </div>
+                            <div style="color:black;" class="text-right ">    تليفون : <span style="font-size:18px; font-family: Calibri Regular; color:black;" t-field="res_company.partner_id.phone"/> </div>
                     </div>
 
                 </div>
