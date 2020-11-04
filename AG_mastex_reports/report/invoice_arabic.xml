@@ -42,6 +42,9 @@
                 <br></br>
                     <div class="text-right">
                         <span style="margin-right:30px; font-size:18px; font-family: Calibri Regular;color:black; font-weight: bold;" t-field="o.partner_id.name"/><br></br>
+                        <span style="margin-right:30px; font-size:18px; font-family: Calibri Regular;color:black; font-weight: bold;" t-field="o.partner_id.city"/><br></br>
+                        <span style="margin-right:30px; font-size:18px; font-family: Calibri Regular;color:black; font-weight: bold;" t-field="o.partner_id.email"/><br></br>
+                        <span style="margin-right:30px; font-size:18px; font-family: Calibri Regular;color:black; font-weight: bold;" t-field="o.partner_id.phone"/><br></br>  
                         <!-- <span t-field="o.partner_id.street"/><br></br>
                         <span t-field="o.partner_id.city"/><br></br>
                         <span t-field="o.partner_id.country_id"/><br></br>
@@ -190,22 +193,22 @@
                                         </td>
                                     </tr>
                                     <tr class=" o_subtotal" style="">
-                                        <td><strong class="text-nowrap" style="font-size:14px; font-family: Calibri Bold; color:black;">Currency Charge	/فرق العملة:</strong></td>
+                                        <td><strong class="text-nowrap" style="font-size:14px; font-family: Calibri Bold; color:black;">Currency Charge/فرق العملة:</strong></td>
                                         <td class="text-right">
-                                            <!-- <span style="font-size:14px; font-family: Calibri Bold;color:black;" t-field="o.currency_charge"/> -->
+                                            <span style="font-size:14px; font-family: Calibri Bold;color:black;" t-field="o.currency_charge"/>
                                         </td>
                                     </tr>
                                     <tr class=" o_subtotal" style="">
-                                        <td><strong class="text-nowrap" style="font-size:14px; font-family: Calibri Bold; color:black;">Bank Charge	/ مصاريف الحوالة - 100 درهم:</strong></td>
+                                        <td><strong class="text-nowrap" style="font-size:14px; font-family: Calibri Bold; color:black;">Bank Charge/مصاريف الحوالة- 100 درهم:</strong></td>
                                         <td class="text-right">
-                                            <!-- <span style="font-size:14px; font-family: Calibri Bold;color:black;" t-field="o.bank_charge_currency"/> -->
+                                            <span style="font-size:14px; font-family: Calibri Bold;color:black;" t-field="o.bank_charge_currency"/>
                                         </td>
                                     </tr>
 
                                     <tr class=" o_subtotal" style="">
-                                        <td class="text-nowrap" style="font-size:14px; font-family: Calibri Bold; color:black;">Total Due/ الاجمالي المطلوب:</td>
+                                        <td class="text-nowrap" style="font-size:14px; font-family: Calibri Bold; color:black;">Total Due/الاجمالي المطلوب:</td>
                                         <td class="text-right">
-                                             <!-- <span  style="font-size:14px; font-family: Calibri Bold;color:black;font-weight: bold;" t-field="o.amount_residual"/>  -->
+                                             <span  style="font-size:14px; font-family: Calibri Bold;color:black;font-weight: bold;" t-field="o.amount_residual"/> 
                                         </td>
                                     </tr>
                                     
