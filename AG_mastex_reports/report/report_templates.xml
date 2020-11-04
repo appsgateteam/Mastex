@@ -277,21 +277,23 @@
                 
                     
                     <!-- en -->
-                    <div class="col-5 text-left mb4" style="font-size:12px; font-family: Calibri Regular;color:black; margin-top: 4%;">
+                    <div class="col-5 text-left mb4" style="font-size:12px; font-family: Calibri Regular;color:black; margin-top: 6%;">
                         <h4 class="mt0" t-field="res_company.report_header"/>
                         <div name="company_address" class="mb4">
                             <span class="company_address" style="color:black;" t-field="res_company.partner_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: true}"/>
                             <br/>
-                            <div t-if="res_company.vat" style="color:black;" class="mt16">TRN No: <span t-field="res_company.vat" style="color:black;"/></div>
+                            <div t-if="res_company.country_id" style="color:black;" class="mt16"><span t-field="res_company.country_id" style="color:black;"/></div>
+                            <div t-if="res_company.email" style="color:black;" class="mt16"><span t-field="res_company.email" style="color:black;"/></div>
+                            <div t-if="res_company.phone" style="color:black;" class="mt16"><span t-field="res_company.phone" style="color:black;"/></div>
                         
                         </div>
                     </div>
                     <!-- img -->
-                    <div class="col-2" style="font-size:18px; font-family: Calibri Regular; color:black; margin-top: 4%;">
+                    <div class="col-2" style="font-size:18px; font-family: Calibri Regular; color:black; margin-top: 6%;">
                         <img t-if="res_company.logo" t-att-src="image_data_uri(res_company.logo)" alt="Logo" style="width:130px; height:130px;"/>
                     </div>
                     <!-- ar -->
-                    <div class="col-5  mb4" style="font-size:18px; font-family: Calibri Regular;color:black;  color:black; float: right; margin-top: 4%;">
+                    <div class="col-5  mb4" style="font-size:18px; font-family: Calibri Regular;color:black;  color:black; float: right; margin-top: 6%;">
                             <div style="color:black;"  class="text-right text-nowrap ">شركة المصري والسعودي للتجارة</div>
                          
                             <div style="color:black;" class="text-right text-nowrap ">الامارات العربية المتحدة - دبي  </div>
