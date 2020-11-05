@@ -85,9 +85,9 @@ class PurchaseOrder(models.Model):
     attachment_ids = fields.One2many('ir.attachment', 'purchase_id', string='Attachment', copy=False)
     attachment_count = fields.Integer(compute='_compute_attachment_count')
     actual_grand_total = fields.Float(string="Net Total", compute='_compute_grand_total',digits=(12,2))
-    actual_total = fields.Float(string="Actual Total", compute='_compute_grand_total',digits=(12,2))
+    actual_total = fields.Float(string="Actual Total", store=True, compute='_compute_grand_total',digits=(12,2))
     actual_commission = fields.Float(string="Actual Commission", compute='_compute_grand_total',digits=(12,2))
-    planned_total = fields.Float(string="Planned Total", compute='_compute_grand_total',digits=(12,2))
+    planned_total = fields.Float(string="Planned Total", store=True, compute='_compute_grand_total',digits=(12,2))
     invoice_status = fields.Selection([
         ('no', 'Nothing to Bill'),
         ('to invoice', 'Waiting Bills'),
