@@ -13,6 +13,7 @@
                         <field name="display_accounts" widget="radio"/>
                         <field name="date_from"/>
                         <field name="date_to"/>
+                        <field name="is_using_dates"/>
                         <field name="show_hierarchy" invisible="1"/>
                         <field name="financial_year" invisible="1"/>
                     </group>

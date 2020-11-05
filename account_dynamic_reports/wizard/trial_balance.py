@@ -15,7 +15,7 @@ class InsTrialBalance(models.TransientModel):
 
     @api.onchange('date_range', 'financial_year')
     def onchange_date_range(self):
-        if self.date_range:
+        if self.date_range and not self.is_using_dates:
             date = datetime.today()
             if self.date_range == 'today':
                 self.date_from = date.strftime("%Y-%m-%d")
@@ -171,6 +171,12 @@ class InsTrialBalance(models.TransientModel):
         'res.company', string='Company',
         default=lambda self: self.env.company
     )
+    is_using_dates = fields.Boolean(
+        string='Using Dates',default=False
+    )
+
+
+
 
     def write(self, vals):
 
@@ -527,6 +533,8 @@ class InsTrialBalance(models.TransientModel):
 
     def action_pdf(self):
         filters, account_lines, retained, subtotal = self.get_report_datas()
+        print(retained)
+        print(filters)
         return self.env.ref(
             'account_dynamic_reports'
             '.action_print_trial_balance').with_context(landscape=True).report_action(
@@ -535,6 +543,7 @@ class InsTrialBalance(models.TransientModel):
                         'Subtotal':subtotal,
                         'Filters':filters
                         })
+
 
     def action_xlsx(self):
         raise UserError(_('Please install a free module "dynamic_xlsx".'
