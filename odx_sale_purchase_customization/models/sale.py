@@ -66,8 +66,8 @@ class SaleOrder(models.Model):
 
     attachment_ids = fields.One2many('ir.attachment', 'sale_id', string='Attachment')
     attachment_count = fields.Integer(compute='_compute_attachment_count')
-    actual_grand_total = fields.Float(string="Actual Grand Total", compute='_compute_grand_total')
-    planned_total = fields.Float(string="Planned Total", compute='_compute_grand_total')
+    actual_grand_total = fields.Float(string="Actual Grand Total", store=True, compute='_compute_grand_total')
+    planned_total = fields.Float(string="Planned Total",store=True, compute='_compute_grand_total')
     invoice_status = fields.Selection([
         ('upselling', 'Upselling Opportunity'),
         ('invoiced', 'Fully Invoiced'),
