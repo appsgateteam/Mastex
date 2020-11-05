@@ -33,9 +33,11 @@ class AccountBalanceReport(models.TransientModel):
                                    'account_id', 'journal_id',
                                    string='Journals', required=True,
                                    default=[])
+    is_account_type = fields.Boolean(string="Account Type",default=False)
 
     def _print_report(self, data):
         data = self.pre_print_report(data)
+        data['is_type']=self.is_account_type
         records = self.env[data['model']].browse(data.get('ids', []))
         return self.env.ref(
             'base_accounting_kit.action_report_trial_balance').report_action(

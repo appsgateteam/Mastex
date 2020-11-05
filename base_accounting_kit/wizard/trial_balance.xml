@@ -11,6 +11,10 @@
                 <xpath expr="//field[@name='target_move']" position="after">
                     <field name="display_account" widget="radio"/>
                     <newline/>
+
+                </xpath>
+                <xpath expr="//field[@name='company_id']" position="after">
+                   <field name="is_account_type"/>
                 </xpath>
             </data>
         </field>
