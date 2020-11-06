@@ -35,7 +35,7 @@
         'report/rfq_print.xml',
         'views/purchase_shipment_view.xml',
         'views/ir_attachment_view.xml',
-        'views/assets.xml',
+        #'views/assets.xml',
         'report/instruction_report_template.xml',
         'report/purchase_instruction_report_template.xml',
         'report/report.xml',
