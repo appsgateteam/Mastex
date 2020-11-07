@@ -234,10 +234,10 @@
                     <field name="shipment_date"/>
                 </xpath>
                  <xpath expr="//field[@name='shipment_date']" position="after">
-                    <field name="purcahse_landing_eta"/>
-                </xpath>
-                 <xpath expr="//field[@name='purcahse_landing_eta']" position="after">
                     <field name="purcahse_landing_etd"/>
+                </xpath>
+                 <xpath expr="//field[@name='purcahse_landing_etd']" position="after">
+                    <field name="purcahse_landing_eta"/>
                 </xpath>
                 <xpath expr="//field[@name='origin']" position="attributes">
                     <attribute name="invisible">True</attribute>
@@ -261,6 +261,12 @@
                 </xpath>
                 <xpath expr="//field[@name='customer_id']" position="after">
                     <field name="shipment_date"/>
+                </xpath>
+                <xpath expr="//field[@name='shipment_date']" position="after">
+                    <field name="purcahse_landing_etd"/>
+                </xpath>
+                 <xpath expr="//field[@name='purcahse_landing_etd']" position="after">
+                    <field name="purcahse_landing_eta"/>
                 </xpath>
                 <xpath expr="//field[@name='origin']" position="attributes">
                     <attribute name="invisible">True</attribute>
