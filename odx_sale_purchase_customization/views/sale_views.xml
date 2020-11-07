@@ -121,7 +121,7 @@
                 <xpath expr="//form/sheet/notebook/page[@name='instructions_tab']" position="after">
                     <page string="Bill Of Lading" name="bill_of_landings">
                         <field name="landing_line_ids"
-                               context="{'default_reference': name,'default_destination': destination_id,'default_marks':marks}">
+                               context="{'default_reference': name,'default_destination': destination_id,'default_marks':marks}" readonly="1">
                             <tree editable="bottom">
                                 <field name="reference"/>
                                 <field name="landing_date_etd"/>
@@ -139,7 +139,7 @@
                         </field>
                     </page>
                    <page string="Courier" name="shipment_tab">
-                        <field name="purchase_shipment_ids" context="{'default_reference': name}">
+                        <field name="purchase_shipment_ids" context="{'default_reference': name}" readonly="1">
                             <tree string="Courier Details" editable="bottom">
                                 <field name="type"/>
                                 <field name="shipment_from"/>
@@ -348,12 +348,7 @@
                 <xpath expr="//field[@name='commitment_date']" position="replace">
                     <field name="shipment_date"/>
                 </xpath>
-                <xpath expr="//field[@name='shipment_date']" position="after">
-                    <field name="sale_landing_eta"/>
-                </xpath>
-                <xpath expr="//field[@name='sale_landing_eta']" position="after">
-                    <field name="sale_landing_etd"/>
-                </xpath>
+               
                 <xpath expr="//field[@name='amount_total']" position="after">
                     <field name="actual_grand_total" string="Actual Total" sum="Actual Total" widget="monetary"/>
                     <field name="planned_total" sum="Planned Total" widget="monetary"/>
@@ -380,12 +375,7 @@
                 <xpath expr="//field[@name='commitment_date']" position="replace">
                     <field name="shipment_date"/>
                 </xpath>
-                 <xpath expr="//field[@name='shipment_date']" position="after">
-                    <field name="sale_landing_eta"/>
-                </xpath>
-                <xpath expr="//field[@name='sale_landing_eta']" position="after">
-                    <field name="sale_landing_etd"/>
-                </xpath>
+                
                 <xpath expr="//field[@name='amount_total']" position="after">
                     <field name="actual_grand_total" string="Actual Total" sum="Actual Total" widget="monetary"/>
                     <field name="planned_total" sum="Planned Total" widget="monetary"/>
