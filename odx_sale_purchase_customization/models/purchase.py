@@ -284,52 +284,40 @@ class PurchaseOrder(models.Model):
                         elif shipment.type == 'send_document_customer':
                             record.is_send_document_customer = True
     
+    
+    @api.onchange('landing_line_ids')
+    def _onchange_landing_line_ids(self):
+        if self.sale_order_id:
+            for line in self.landing_line_ids:
+                line.sale_id = self.sale_order_id.id
+
+    @api.onchange('purchase_shipment_ids')
+    def _onchange_purchase_shipment_ids(self):
+        if self.sale_order_id:
+            for line in self.purchase_shipment_ids:
+                line.sale_id = self.sale_order_id.id
+                
     def write(self,vals): 
-        for record in self:
+         for record in self:
             res = super(PurchaseOrder, self).write(vals)
+            if 'landing_line_ids' or 'purchase_shipment_ids' in vals:
+                if record.sale_order_id:
+                    landing_line_ids = []
+                    purchase_shipment_ids = []
 
-            if record.sale_order_id:
-                landing_line_ids = []
-                purchase_shipment_ids = []
+                    sale_order_obj = self.env['sale.order']
+                    for landing in record.landing_line_ids:
+                       landing.sale_id = self.sale_order_id.id
 
-                sale_order_obj = self.env['sale.order']
-                for landing in record.landing_line_ids:
-                    landing_line_ids.append((0, 0, {
-                        "name": landing.name,
-                        "landing_date_etd": landing.landing_date_etd,
-                        "landing_date_eta": landing.landing_date_eta,
-                        "shipping_company_id": landing.shipping_company_id.id,
-                        "landing_attachment": landing.landing_attachment,
-                        "landing_attachment_name": landing.landing_attachment_name,
-                        "no_of_packages": landing.no_of_packages,
-                        "destination": landing.destination.id,
-                        "marks": landing.marks,
-                        "container_no": landing.container_no,
-                        "reference": landing.reference,
-                        "status": landing.status
-                    }))
+                    for shipment in record.purchase_shipment_ids:
+                       shipment.sale_id = self.sale_order_id.id
 
-                for shipment in record.purchase_shipment_ids:
-                    purchase_shipment_ids.append((0, 0, {
-                        "shipment_to": shipment.shipment_to.id,
-                        "shipment_from": shipment.shipment_from.id,
-                        "courier_company": shipment.courier_company.id,
-                        "from_date": shipment.from_date,
-                        "to_date": shipment.to_date,
-                        "reference": shipment.reference,
-                        "airway_bill_number": shipment.airway_bill_number,
-                        "description": shipment.description,
-                        "status": shipment.status,
-                        "type": shipment.type,
-                        "attachment": shipment.attachment,
-                        "attachment_name": shipment.attachment_name
-                    }))
-                vals = {
-                    "landing_line_ids": landing_line_ids,
-                    "purchase_shipment_ids": purchase_shipment_ids
+                    vals = {
+                        "landing_line_ids": landing_line_ids,
+                        "purchase_shipment_ids": purchase_shipment_ids
                     }
-                sale_order = record.sale_order_id.write(vals)
-            return res
+                    sale_order = record.sale_order_id.write(vals)
+                return res
 
 
     def button_confirm(self):
@@ -353,11 +341,6 @@ class PurchaseOrder(models.Model):
                         "create_uid": attchment.create_uid.id,
                     }))
 
-
-
-                
-
-         
 
                 vals = {
                     "partner_id": record.customer_id.id,
@@ -537,6 +520,8 @@ class LandingCost(models.Model):
     landing_attachment = fields.Binary(string='Document', attachment=True)
     landing_attachment_name = fields.Char(string='Document Name')
     purchase_id = fields.Many2one(comodel_name='purchase.order', string="Purchase Order", ondelete='cascade')
+    sale_id = fields.Many2one(comodel_name='sale.order', string="Sales Order", ondelete='cascade',store=True)
+
     no_of_packages = fields.Char(string='No Of Packages')
     destination = fields.Many2one(comodel_name='res.destination', string='Destination')
     marks = fields.Char(string="Marks")
@@ -593,6 +578,8 @@ class PurchaseShipment(models.Model):
     attachment = fields.Binary(string="Files", attachment=True)
     attachment_name = fields.Char(string="File Name")
     purchase_id = fields.Many2one('purchase.order', string="purchase Order", ondelete='cascade')
+    sale_id = fields.Many2one('sale.order', string="Sales Order", ondelete='cascade')
+
 
 class ShippingDestination(models.Model):
     _name = 'shipment.destination'
