@@ -64,7 +64,7 @@ class SaleOrder(models.Model):
 
     attachment_ids = fields.One2many('ir.attachment', 'sale_id', string='Attachment')
     attachment_count = fields.Integer(compute='_compute_attachment_count')
-    actual_grand_total = fields.Float(string="Actual Grand Total", store=True, compute='_compute_grand_total')
+    actual_grand_total = fields.Float(string="Actual Grand Total", store=True,compute='_compute_grand_total')
     planned_total = fields.Float(string="Planned Total",store=True, compute='_compute_grand_total')
     invoice_status = fields.Selection([
         ('upselling', 'Upselling Opportunity'),
@@ -106,7 +106,7 @@ class SaleOrder(models.Model):
                 order.invoice_status = 'to invoice'
             elif line_invoice_status and all(invoice_status == 'invoiced' for invoice_status in line_invoice_status):
                 order.invoice_status = 'invoiced'
-            
+         
             elif line_invoice_status and all(invoice_status in ('invoiced', 'upselling') for invoice_status in line_invoice_status):
                 order.invoice_status = 'upselling'
             else:
@@ -123,7 +123,7 @@ class SaleOrder(models.Model):
             record.actual_grand_total = grand_total
             record.planned_total = planned_total
             
-    
+  
     
     @api.depends('purchase_order_id.invoice_status')
     def _compute_bill_status(self):
