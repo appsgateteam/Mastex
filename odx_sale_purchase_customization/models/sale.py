@@ -125,8 +125,8 @@ class SaleOrder(models.Model):
             
     
     
-   @api.depends('purchase_order_id.invoice_status')
-   def _compute_bill_status(self):
+    @api.depends('purchase_order_id.invoice_status')
+    def _compute_bill_status(self):
         for record in self:
             bill_status_id = self.env['purchase.order'].search([('sale_order_id', '=', record.id)])
             record.billing_status = bill_status_id.invoice_status
