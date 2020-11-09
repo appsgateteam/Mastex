@@ -15,7 +15,7 @@ class InsTrialBalance(models.TransientModel):
 
     @api.onchange('date_range', 'financial_year')
     def onchange_date_range(self):
-        if self.date_range:
+        if self.date_range and not self.is_using_dates:
             date = datetime.today()
             if self.date_range == 'today':
                 self.date_from = date.strftime("%Y-%m-%d")
@@ -136,7 +136,7 @@ class InsTrialBalance(models.TransientModel):
     )
     strict_range = fields.Boolean(
         string='Strict Range',
-        default=False
+        default=lambda self: self.env.company.strict_range
     )
     show_hierarchy = fields.Boolean(
         string='Show hierarchy'
@@ -171,6 +171,12 @@ class InsTrialBalance(models.TransientModel):
         'res.company', string='Company',
         default=lambda self: self.env.company
     )
+    is_using_dates = fields.Boolean(
+        string='Using Dates',default=False
+    )
+
+
+
 
     def write(self, vals):
 
@@ -193,7 +199,7 @@ class InsTrialBalance(models.TransientModel):
         return ret
 
     def validate_data(self):
-        if (self.date_from and self.date_to) and (self.date_from > self.date_to):
+        if self.date_from > self.date_to:
             raise ValidationError(_('"Date from" must be less than or equal to "Date to"'))
         return True
 
@@ -527,6 +533,8 @@ class InsTrialBalance(models.TransientModel):
 
     def action_pdf(self):
         filters, account_lines, retained, subtotal = self.get_report_datas()
+        print(retained)
+        print(filters)
         return self.env.ref(
             'account_dynamic_reports'
             '.action_print_trial_balance').with_context(landscape=True).report_action(
@@ -535,6 +543,7 @@ class InsTrialBalance(models.TransientModel):
                         'Subtotal':subtotal,
                         'Filters':filters
                         })
+
 
     def action_xlsx(self):
         raise UserError(_('Please install a free module "dynamic_xlsx".'
