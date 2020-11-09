@@ -90,8 +90,7 @@ class PurchaseOrder(models.Model):
     planned_total = fields.Float(string="Planned Total", store=True, compute='_compute_grand_total',digits=(12,2))
     invoice_status = fields.Selection([
         ('no', 'Nothing to Bill'),
-        ('to invoice', 'Waiting Bills'),
-        ('pendinvoiced', 'Pending Bills'),
+        ('to invoice', 'To Bill'),
         ('invoiced', 'Fully Billed'),
     ], string='Billing Status', compute='_get_invoiced', store=True, readonly=True, copy=False, default='no')
 
@@ -194,14 +193,14 @@ class PurchaseOrder(models.Model):
 
                     float_compare(
                         line.qty_invoiced,
-                        line.product_qty if line.product_id.purchase_method == 'purchase' else line.qty_received,
+                        line.product_qty if line.product_id.purchase_method == 'purchase' else line.actual_qty,
                         precision_digits=precision,
                     )
-                    == 0
+                    == -1
 
                     for line in order.order_line.filtered(lambda l: not l.display_type)
             ):
-                order.invoice_status = 'pendinvoiced'
+                order.invoice_status = 'to invoice'
             elif (
                     all(
                         float_compare(
@@ -215,19 +214,6 @@ class PurchaseOrder(models.Model):
                     and order.invoice_ids
             ):
                 order.invoice_status = 'invoiced'
-            elif (
-                    all(
-                        float_compare(
-                            line.qty_invoiced,
-                            line.product_qty if line.product_id.purchase_method == "purchase" and line.actual_qty >=0  else line.qty_received,
-                            precision_digits=precision,
-                        )
-                        >= 1
-                        for line in order.order_line.filtered(lambda l: not l.display_type)
-                    )
-                    and order.invoice_ids
-            ):
-                order.invoice_status = 'to invoice'
             else:
                 order.invoice_status = 'no'
     # end of purchase states.
