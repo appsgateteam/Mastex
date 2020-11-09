@@ -36,17 +36,15 @@ class SaleOrder(models.Model):
     
     billing_status = fields.Selection([         
         ('no', 'Nothing to Bill'),
-        ('to invoice', 'Waiting Bills'),
-        ('pendinvoiced', 'Pending Bills'),
+        ('to invoice', 'To Bill'),
         ('invoiced', 'Fully Billed'),
-    ], string='Billing Status', compute='_compute_bill_status', store=True, readonly=True, copy=False, default='no')
+    ], string='Billing Status', compute='_compute_bill_status', store=True, copy=False)
     
     vendor_id = fields.Many2one(comodel_name='res.partner', string="Vendor")
 
-    landing_line_ids = fields.One2many(comodel_name='sale.landing.cost', inverse_name='sale_id',
+    landing_line_ids = fields.One2many(comodel_name='purchase.landing.cost', inverse_name='sale_id',
                                        string="Bill Of Ladings")
-    
-    purchase_shipment_ids = fields.One2many('sale.shipment', 'sale_id', string="Shipment Details")
+    purchase_shipment_ids = fields.One2many('purchase.shipment', 'sale_id', string="Shipment Details")
     # Instructions
     colour_instructions = fields.Text(string="Colour Instructions")
     packing = fields.Text(string="Packing")
@@ -71,7 +69,6 @@ class SaleOrder(models.Model):
     invoice_status = fields.Selection([
         ('upselling', 'Upselling Opportunity'),
         ('invoiced', 'Fully Invoiced'),
-        ('pendinvoiced', 'Pending Invoice'),
         ('to invoice', 'To Invoice'),
         ('no', 'Nothing to Invoice')
         ], string='Invoice Status', compute='_get_invoice_status', store=True, readonly=True)
@@ -109,8 +106,7 @@ class SaleOrder(models.Model):
                 order.invoice_status = 'to invoice'
             elif line_invoice_status and all(invoice_status == 'invoiced' for invoice_status in line_invoice_status):
                 order.invoice_status = 'invoiced'
-            elif line_invoice_status and all(invoice_status == 'pendinvoiced' for invoice_status in line_invoice_status):
-                order.invoice_status = 'pendinvoiced'
+            
             elif line_invoice_status and all(invoice_status in ('invoiced', 'upselling') for invoice_status in line_invoice_status):
                 order.invoice_status = 'upselling'
             else:
@@ -129,8 +125,8 @@ class SaleOrder(models.Model):
             
     
     
-    @api.depends('billing_status')
-    def _compute_bill_status(self):
+   @api.depends('purchase_order_id.invoice_status')
+   def _compute_bill_status(self):
         for record in self:
             bill_status_id = self.env['purchase.order'].search([('sale_order_id', '=', record.id)])
             record.billing_status = bill_status_id.invoice_status
@@ -387,7 +383,6 @@ class SaleOrderLine(models.Model):
     invoice_status = fields.Selection([
         ('upselling', 'Upselling Opportunity'),
         ('invoiced', 'Fully Invoiced'),
-        ('pendinvoiced', 'Pending Invoice'),
         ('to invoice', 'To Invoice'),
         ('no', 'Nothing to Invoice')
         ], string='Invoice Status', compute='_compute_invoice_status', store=True, readonly=True, default='no')
@@ -441,11 +436,9 @@ class SaleOrderLine(models.Model):
             elif line.state == 'sale' and line.product_id.invoice_policy == 'order' and \
                     float_compare(line.qty_delivered, line.actual_qty, precision_digits=precision) == 1:
                 line.invoice_status = 'upselling'
-            elif float_compare(line.qty_invoiced, line.actual_qty, precision_digits=precision) > 0:
+            elif float_compare(line.qty_invoiced, line.product_uom_qty, precision_digits=precision) >= 0:
                 
                 line.invoice_status = 'invoiced'
-            elif line.actual_qty == 0:
-                line.invoice_status = 'pendinvoiced'
             else:
                 line.invoice_status = 'no'
 
