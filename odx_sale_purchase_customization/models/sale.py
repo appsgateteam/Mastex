@@ -36,7 +36,7 @@ class SaleOrder(models.Model):
     
     billing_status = fields.Selection([         
         ('no', 'Nothing to Bill'),
-        ('to invoice', 'Waiting Bills'),
+        ('to invoice', 'To Bill'),
         ('invoiced', 'Fully Billed'),
     ], string='Billing Status', compute='_compute_bill_status', store=True, copy=False)
     
