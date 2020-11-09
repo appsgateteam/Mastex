@@ -13,6 +13,7 @@
                         <field name="display_accounts" widget="radio"/>
                         <field name="date_from"/>
                         <field name="date_to"/>
+                        <field name="is_using_dates"/>
                         <field name="show_hierarchy" invisible="1"/>
                         <field name="financial_year" invisible="1"/>
                     </group>
@@ -27,7 +28,7 @@
                                 domain="[('company_id','=',company_id)]"
                                 options="{'no_create_edit': True,'no_create': True, 'no_quick_create': True}"/>
                         <field name="strict_range" help="If checked the accounts will act strict to the date range
-                                    else it will consider initial balance to account" />
+                                    else it will consider initial balance to account"/>
                     </group>
                     <footer>
                         <button name="action_pdf" type="object" string="PDF" class="oe_highlight"/>
