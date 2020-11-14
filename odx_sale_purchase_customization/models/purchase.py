@@ -114,9 +114,15 @@ class PurchaseOrder(models.Model):
     @api.depends('landing_line_ids')# change to be done in demo
     def _compute_eta(self):
         for record in self:
+            lnd_etd = False
+            lnd_eta = False
             landing_ids = self.env['purchase.landing.cost'].search([('purchase_id','=', record.id)])
-            record.purcahse_landing_etd = landing_ids.landing_date_etd
-            record.purcahse_landing_eta = landing_ids.landing_date_eta
+            for line in landing_ids:
+                lnd_etd = line.landing_date_etd
+                lnd_eta = line.landing_date_eta
+
+            record.purcahse_landing_etd = lnd_etd
+            record.purcahse_landing_eta = lnd_eta
 
         return False
     
