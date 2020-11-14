@@ -348,6 +348,12 @@
                 <xpath expr="//field[@name='commitment_date']" position="replace">
                     <field name="shipment_date"/>
                 </xpath>
+                <xpath expr="//field[@name='shipment_date']" position="after"><!--change to be done in demo-->
+                    <field name="sale_landing_etd"/>
+                </xpath>
+                <xpath expr="//field[@name='sale_landing_etd']" position="after"><!--change to be done in demo-->
+                    <field name="sale_landing_eta"/>
+                </xpath>
               
                 <xpath expr="//field[@name='amount_total']" position="after">
                     <field name="actual_grand_total" string="Actual Total" sum="Actual Total" widget="monetary"/>
@@ -374,6 +380,12 @@
                 </xpath>
                 <xpath expr="//field[@name='commitment_date']" position="replace">
                     <field name="shipment_date"/>
+                </xpath>
+                <xpath expr="//field[@name='shipment_date']" position="after"><!--change to be done in demo-->
+                    <field name="sale_landing_etd"/>
+                </xpath>
+                <xpath expr="//field[@name='sale_landing_etd']" position="after"><!--change to be done in demo-->
+                    <field name="sale_landing_eta"/>
                 </xpath>
                 
                 <xpath expr="//field[@name='amount_total']" position="after">
