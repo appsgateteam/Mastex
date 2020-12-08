@@ -4,12 +4,13 @@
 {
     'name': 'AG_mastex_reports',
     'author': 'Fouad',
-    'depends': ['sale'],
+    'depends': ['sale','account'],
     'data': [
         
         'report/invoice_arabic.xml',
         'report/account_report_ar.xml',
         'report/report_templates.xml',
+        'views/account_view.xml'
        
     ],
     'installable': True,

@@ -8,219 +8,235 @@
         <template id="mastex_invoice_report">
             <t t-call="web.external_layout_boxed">
 
-            <style type="text/css">
-            
-              /* United */
-              @font-face {
-                font-family: 'Calibri Regular';
-                font-style: heavy;
-                font-weight: 400;
-                src: url(/ .static/fonts/Calibri Regular.ttf) format('truetype');
-              }
-
-              
-              @font-face {
-                font-family: 'Calibri Bold';
-                font-style: heavy;
-                font-weight: 400;
-                src: url(/ .static/fonts/Calibri Bold.TTF) format('truetype');
-              }
-              
-            </style>
-
-            
-           
-      
-
-            <!-- <t t-call="custom_external_layout"> -->
-
+                <style type="text/css">
                 
-           
-                <t t-set="o" t-value="o.with_context(lang=lang)" />
-                <div style="float: right;" >
-                <br></br>
-                <br></br>
-                    <div class="text-right">
-                        <span style="margin-right:30px; font-size:12px; font-family: Calibri Regular;color:black;" t-field="o.partner_id.name"/><br></br>
-                        <!-- <span t-field="o.partner_id.street"/><br></br>
-                        <span t-field="o.partner_id.city"/><br></br>
-                        <span t-field="o.partner_id.country_id"/><br></br>
-                        <span t-field="o.partner_id.phone"/><br></br>      
-                        <span t-field="o.partner_id.email"/><br></br>
-                        <span t-field="o.partner_id.website"/><br></br>
-                        <div t-if="o.partner_id.vat" class="mt16">
-                                    <t t-if="o.company_id.country_id.vat_label" t-esc="o.company_id.country_id.vat_label" id="inv_tax_id_label"/>
-                                    <t t-else="">Tax ID</t>: <span t-field="o.partner_id.vat"/></div> -->
-                    </div>
+                  /* United */
+                  @font-face {
+                    font-family: 'Calibri Regular';
+                    font-style: heavy;
+                    font-weight: 400;
+                    src: url(/AG_mastex_reports/static/src/fonts/Calibri Regular.ttf) format('truetype');
+                  }
 
-                    
-
-
-                    <h5>
-                        <br></br>
-                            <span class="text-nowrap" t-if="o.type == 'out_invoice' and o.state == 'posted'"><span style="margin-right:30px; font-size:12px; font-family: Calibri Regular;color:black; float: right;"><span style="font-size:12px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Invoice /رقم الفاتورة</span></span>
-                            <span class="text-nowrap" t-if="o.type == 'out_invoice' and o.state == 'draft'"><span style="margin-right:30px; font-size:12px; font-family: Calibri Regular;color:black; float: right;"><span style="font-size:12px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Draft Invoice/رقم الفاتورة</span></span>
-                            <span class="text-nowrap" t-if="o.type == 'out_invoice' and o.state == 'cancel'"><span style="margin-right:30px; font-size:12px; font-family: Calibri Regular;color:black; float: right;"><span style="font-size:12px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Cancelled Invoice/رقم الفاتورة</span></span>
-                            <span class="text-nowrap" t-if="o.type == 'out_refund'"><span style="margin-right:30px; font-size:12px; font-family: Calibri Regular;color:black; float: right;"><span style="font-size:12px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Credit Note/رقم الفاتورة</span></span>
-                            <span class="text-nowrap" t-if="o.type == 'in_refund'"><span style="margin-right:30px; font-size:12px; font-family: Calibri Regular;color:black; float: right;"><span style="font-size:12px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Vendor Credit Note/رقم الفاتورة</span></span>
-                            <span class="text-nowrap" t-if="o.type == 'in_invoice'"><span style="margin-right:30px; font-size:12px; font-family: Calibri Regular;color:black; float: right;"><span style="font-size:12px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Vendor Bill/رقم الفاتورة</span></span>
-                            
-                        <br/>
-                        <br/>
-
-                       
-                            
-                            
-                            <span class="text-nowrap" style="margin-right:30px; font-size:12px; font-family: Calibri Regular;color:black; float: right;"><strong><span style="font-size:12px; font-family: Calibri Bold;color:black;" class="text-nowrap" /></strong>   : Carton / عدد الطرود</span> 
-                            <br/>
-                            <br/>
-                            <span style="margin-right:30px; font-size:12px; font-family: Calibri Bold;color:black; float: right;"><strong><span style="font-size:12px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-field="o.amount_total"/></strong>  : Amount Due / المبلغ المطلوب</span><br/>
-                            <br/>
-                           
-                            <span style="margin-right:30px; font-size:12px; font-family: Calibri Bold;color:black; float: right; " class="text-nowrap"><span style="font-size:12px; font-family: Calibri Regular;color:black;" class="text-nowrap" t-field="o.invoice_date"/> : Invoice / تاريخ الفاتورة</span><br/>
-                        
-                        <br/>
-                      
-                    </h5>
-                    
-                </div>
-                
-            <div class="page_mastex">
-                
-
+                  @font-face {
+                    font-family: 'Cambria';
+                    font-style: heavy;
+                    font-weight: 400;
+                    src: url(/AG_mastex_reports/static/src/fonts/Cambria.ttf) format('truetype');
+                  }
+                  @font-face {
+                    font-family: 'ARIAL';
+                    font-style: heavy;
+                    font-weight: 400;
+                    src: url(/AG_mastex_reports/static/src/fonts/ARIAL.ttf) format('truetype');
+                  }
+    
                   
-                    <t t-set="display_discount" t-value="any([l.discount for l in o.invoice_line_ids])"/>
-
-                    <table style="border-bottom: 1px solid black;width: 100%;" name="invoice_line_table">
-                        <thead>
-                            <tr>
-                                <!-- TODO: remove in master -->
-                                <t t-set="colspan" t-value="6"/>
-                                <th name="th_description" class="text-center"><span style="font-size:12px; font-family: Calibri Bold;color:black;">Product/الخامة</span></th>
-                                <!-- TODO: remove in master -->
-                                <th name="th_source" class="d-none text-left" t-if="0"><span style="font-size:12px; font-family: Calibri Bold;color:black;">Source Document</span></th>
-                                <th name="th_quantity" class="text-center"><span style="font-size:12px; font-family: Calibri Bold;color:black;">Quantity/الكمية</span></th>
-                                <th name="th_quantity" class="text-center"><span style="font-size:12px; font-family: Calibri Bold;color:black;">Uint/الوحدة</span></th>
-                                <th name="th_priceunit" t-attf-class="text-center {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}"><span style="font-size:12px; font-family: Calibri Bold;color:black;">Unit Price/سعر الوحدة</span></th>
-                                <th name="th_price_unit" t-if="display_discount" t-attf-class="text-center {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
-                                    <span style="font-size:12px; font-family: Calibri Bold;color:black;">Disc.%/الحسم</span>
-                                    <!-- TODO: remove in master -->
-                                    <t t-set="colspan" t-value="colspan+1"/>
-                                </th>
-                                <!-- <th name="th_taxes" t-attf-class="text-left {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}"><span style="font-size:14px;">Taxes/الخصم</span></th> -->
-                                <th name="th_subtotal" class="text-center">
-                                    <span groups="account.group_show_line_subtotals_tax_excluded" style="font-size:12px; font-family: Calibri Bold;color:black;">Amount/القيمة</span>
-                                    <span groups="account.group_show_line_subtotals_tax_included" style="font-size:12px; font-family: Calibri Bold;color:black;">Total Price/السعر الكلي</span>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="invoice_tbody" style="font-size:12px; font-family: Calibri Bold;color:black;">
-                            <t t-set="current_subtotal" t-value="0"/>
-                            <t t-set="lines" t-value="o.invoice_line_ids.sorted(key=lambda l: (-l.sequence, l.date, l.move_name, -l.id), reverse=True)"/>
-
-                            <t t-foreach="lines" t-as="line">
-                                <t t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal" groups="account.group_show_line_subtotals_tax_excluded"/>
-                                <t t-set="current_subtotal" t-value="current_subtotal + line.price_total" groups="account.group_show_line_subtotals_tax_included"/>
-
-                                <tr t-att-class="'bg-200 font-weight-bold o_line_section' if line.display_type == 'line_section' else 'font-italic o_line_note' if line.display_type == 'line_note' else ''">
-                                    <t t-if="not line.display_type" name="account_invoice_line_accountable">
-                                        <td name="account_invoice_line_name"><span t-field="line.name" t-options="{'widget': 'text'}"/></td>
-                                        <td class="text-center">
-                                            <span t-field="line.quantity"/>
-                                        </td>
-                                        <td class="text-center">
-                                            <!-- add unit -->
-                                                <span t-field="line.product_uom_id"  groups="uom.group_uom"/>
-                                           
-                                        </td>
-                                        <td t-attf-class="text-center {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
-                                            <span class="text-nowrap" t-field="line.price_unit"/>
-                                        </td>
-                                        <td t-if="display_discount" t-attf-class="text-center {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
-                                            <span class="text-nowrap" t-field="line.discount"/>
-                                        </td>
-                                        <!-- <td t-attf-class="text-center {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
-                                            <span t-esc="', '.join(map(lambda x: (x.description or x.name), line.tax_ids))" id="line_tax_ids"/>
-                                        </td> -->
-                                        <td class="text-center o_price_total">
-                                            <span class="text-nowrap" t-field="line.price_subtotal" groups="account.group_show_line_subtotals_tax_excluded"/>
-                                            <span class="text-nowrap" t-field="line.price_total" groups="account.group_show_line_subtotals_tax_included"/>
-                                        </td>
-                                    </t>
-                                    <t t-if="line.display_type == 'line_section'">
-                                        <td colspan="99">
-                                            <span t-field="line.name" t-options="{'widget': 'text'}"/>
-                                        </td>
-                                        <t t-set="current_section" t-value="line"/>
-                                        <t t-set="current_subtotal" t-value="0"/>
-                                    </t>
-                                    <t t-if="line.display_type == 'line_note'">
-                                        <td colspan="99">
-                                            <span t-field="line.name" t-options="{'widget': 'text'}"/>
-                                        </td>
-                                    </t>
-                                </tr>
-
-                                <t t-if="current_section and (line_last or lines[line_index+1].display_type == 'line_section')">
-                                    <tr class="is-subtotal text-center">
-                                        <td colspan="99">
-                                            <strong class="mr16" style="font-size:12px; font-family: Calibri Bold;color:black;">Subtotal/قيمة الفاتورة</strong>
-                                            <span style="font-size:12px; font-family: Calibri Bold;color:black;" 
-                                                t-esc="current_subtotal"
-                                                t-options='{"widget": "monetary", "display_currency": o.currency_id}'
-                                            />
-                                        </td>
-                                    </tr>
-                                </t>
-                            </t>
-                        </tbody>
-                    </table>
-
+                  @font-face {
+                    font-family: 'Calibri Bold';
+                    font-style: heavy;
+                    font-weight: 400;
+                    src: url(/AG_mastex_reports/static/src/fonts/Calibri Bold.TTF) format('truetype');
+                  }
+                  
+                </style>
+    
+                
+               
+          
+    
+                <!-- <t t-call="custom_external_layout"> -->
+    
+                    
+               
+                    <t t-set="o" t-value="o.with_context(lang=lang)"/>
+                    <div style="float: right;">
+                    <br/>
+                    <br/>
+                    <br/>
+                        <div class="text-right mb-4">
+                            <span style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black; font-weight: bold;" t-field="o.partner_id.name"/><br/>
+                            <!-- <span style="margin-right:30px; font-size:18px; font-family: ARIAL;color:black; font-weight: bold;" t-field="o.partner_id.city"/><br/>
+                            <span style="margin-right:30px; font-size:18px; font-family: ARIAL;color:black; font-weight: bold;" t-field="o.partner_id.email"/><br/>
+                            <span style="margin-right:30px; font-size:18px; font-family: ARIAL;color:black; font-weight: bold;" t-field="o.partner_id.phone"/><br/>   -->
+                            <!-- <span t-field="o.partner_id.street"/><br></br>
+                            <span t-field="o.partner_id.city"/><br></br>
+                            <span t-field="o.partner_id.country_id"/><br></br>
+                            <span t-field="o.partner_id.phone"/><br></br>      
+                            <span t-field="o.partner_id.email"/><br></br>
+                            <span t-field="o.partner_id.website"/><br></br>
+                            <div t-if="o.partner_id.vat" class="mt16">
+                                        <t t-if="o.company_id.country_id.vat_label" t-esc="o.company_id.country_id.vat_label" id="inv_tax_id_label"/>
+                                        <t t-else="">Tax ID</t>: <span t-field="o.partner_id.vat"/></div> -->
+                        </div>
+    
+                        
+    
+    
+                        <h5>
+                            <!-- <br/> -->
+                                <span class="text-nowrap mb-4" t-if="o.type == 'out_invoice' and o.state == 'posted'"><span style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black; float: right;"><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.reference"/> : Invoice /رقم الفاتورة</span></span>
+                                <span class="text-nowrap mb-4" t-if="o.type == 'out_invoice' and o.state == 'draft'"><span style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black; float: right;"><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.reference"/> : Draft Invoice/رقم الفاتورة</span></span>
+                                <span class="text-nowrap mb-4" t-if="o.type == 'out_invoice' and o.state == 'cancel'"><span style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black; float: right;"><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.reference"/> : Cancelled Invoice/رقم الفاتورة</span></span>
+                                <span class="text-nowrap mb-4" t-if="o.type == 'out_refund'"><span style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black; float: right;"><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.reference"/> : Credit Note/رقم الفاتورة</span></span>
+                                <span class="text-nowrap mb-4" t-if="o.type == 'in_refund'"><span style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black; float: right;"><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.reference"/> : Vendor Credit Note/رقم الفاتورة</span></span>
+                                <span class="text-nowrap mb-4" t-if="o.type == 'in_invoice'"><span style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black; float: right;"><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.reference"/> : Vendor Bill/رقم الفاتورة</span></span>
+                                
+                            <br/>
+                            <br/>
+    
+                           
+                                
+                                
+                                <span class="text-nowrap mb-4" style="margin-right:70px; font-size:18px; font-family: ARIAL; color:black;  float: right;"><span style="font-size:18px; font-family: ARIAL; color:black;" class="text-nowrap"><t t-esc="int(o.sale_id.packages)"/></span>    : Carton / عدد الطرود</span> 
+                                <br/>
+                                <!-- <br/> -->
+                                <span class="text-nowrap mb-4" style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black;  float: right;"><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-field="o.amount_total"/>  : Amount Due / المبلغ المطلوب</span><br/>
+                                <!-- <br/> -->
+                               
+                                <span style="margin-right:70px; font-size:18px; font-size:18px; font-family: ARIAL; color:black; float: right; " class="text-nowrap mb-4"><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-field="o.invoice_date"/> : Invoice / تاريخ الفاتورة</span><br/>
+                            
+                            <!-- <br/> -->
+                            <!-- <br/> -->
+                          
+                        </h5>
+                        
                     </div>
-
-                    <div class="clearfix" style="font-size:12px; font-family: Calibri Bold;color:black;" >
-                        <div id="total" class="row">
-                            <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ml-auto">
-                                <table class="table table-sm" style="page-break-inside: avoid;">
-                                    <tr class=" o_subtotal" style="">
-                                        <td><strong style="font-size:12px; font-family: Calibri Bold;color:black;">TOTAL/قيمة الفاتورة:</strong></td>
-                                        <td class="text-right">
-                                            <span style="font-size:12px; font-family: Calibri Bold;color:black;" t-field="o.amount_untaxed"/>
-                                        </td>
+                    
+                <div class="page_mastex" style="margin-right:50px;margin-left:50px;">
+                    
+    
+                      
+                        <t t-set="display_discount" t-value="any([l.discount for l in o.invoice_line_ids])"/>
+    
+                        <table style="border-bottom: 1px solid black;width: 100%;" name="invoice_line_table">
+                            <thead>
+                                <tr>
+                                    <!-- TODO: remove in master -->
+                                    <t t-set="colspan" t-value="6"/>
+                                    <th name="th_description" style="padding:4px;" class="text-center"><span style="padding:2px;font-size:15px; font-family: ARIAL; color:black;">Product/الخامة</span></th>
+                                    <!-- TODO: remove in master -->
+                                    <th name="th_source" style="padding:4px;" class="d-none text-left" t-if="0"><span style="padding:2px;font-size:15px; font-family: ARIAL; color:black;">Source Document</span></th>
+                                    <th name="th_quantity" class="text-center" style="padding:4px;"><span style="padding:2px;font-size:15px; font-family: ARIAL; color:black;">Quantity/الكمية</span></th>
+                                    <th name="th_quantity" class="text-center" style="padding:4px;"><span style="padding:2px;font-size:15px; font-family: ARIAL; color:black;">Uint/الوحدة</span></th>
+                                    <th name="th_priceunit" style="padding:4px;" t-attf-class="text-center {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}"><span style="padding:2px;font-size:15px; font-family: ARIAL; color:black;">Unit Price/سعر الوحدة</span></th>
+                                    <th name="th_price_unit" style="padding:4px;" t-if="display_discount" t-attf-class="text-center {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                        <span style="padding:2px;font-size:15px; font-family: ARIAL; color:black;">Disc.%/الحسم</span>
+                                        <!-- TODO: remove in master -->
+                                        <t t-set="colspan" t-value="colspan+1"/>
+                                    </th>
+                                    <!-- <th name="th_taxes" t-attf-class="text-left {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}"><span style="font-size:14px;">Taxes/الخصم</span></th> -->
+                                    <th name="th_subtotal" class="text-center" style="padding:4px;">
+                                        <span groups="account.group_show_line_subtotals_tax_excluded" style="padding:2px;font-size:15px; font-family: ARIAL; color:black;">Amount/القيمة</span>
+                                        <span groups="account.group_show_line_subtotals_tax_included" style="padding:2px;font-size:15px; font-family: ARIAL; color:black;">Total Price/السعر الكلي</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="invoice_tbody" style="font-size:18px; font-family: ARIAL; color:black;">
+                                <t t-set="current_subtotal" t-value="0"/>
+                                <t t-set="lines" t-value="o.invoice_line_ids.sorted(key=lambda l: (-l.sequence, l.date, l.move_name, -l.id), reverse=True)"/>
+    
+                                <t t-foreach="lines" t-as="line">
+                                    <t t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal" groups="account.group_show_line_subtotals_tax_excluded"/>
+                                    <t t-set="current_subtotal" t-value="current_subtotal + line.price_total" groups="account.group_show_line_subtotals_tax_included"/>
+    
+                                    <tr t-att-class="'bg-200 font-weight-bold o_line_section' if line.display_type == 'line_section' else 'font-italic o_line_note' if line.display_type == 'line_note' else ''">
+                                        <t t-if="not line.display_type" name="account_invoice_line_accountable">
+                                            <td name="account_invoice_line_name" class="text-center" style="padding:4px;"><span t-field="line.name" t-options="{'widget': 'text'}"/></td>
+                                            <td class="text-center" style="padding:4px;">
+                                                <span t-field="line.quantity"/>
+                                            </td>
+                                            <td class="text-center" style="padding:4px;">
+                                                <!-- add unit -->
+                                                    <span t-field="line.product_uom_id" groups="uom.group_uom"/>
+                                               
+                                            </td>
+                                            <td style="padding:4px;" t-attf-class="text-center {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                                <span class="text-nowrap" t-field="line.price_unit" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                            </td>
+                                            <td style="padding:4px;" t-if="display_discount" t-attf-class="text-center {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                                <span class="text-nowrap" t-field="line.discount"/>
+                                            </td>
+                                            <!-- <td t-attf-class="text-center {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                                <span t-esc="', '.join(map(lambda x: (x.description or x.name), line.tax_ids))" id="line_tax_ids"/>
+                                            </td> -->
+                                            <td style="padding:4px;background-color:transparent;" class="text-center o_price_total">
+                                                <span class="text-nowrap" t-field="line.price_subtotal" groups="account.group_show_line_subtotals_tax_excluded"/>
+                                                <span class="text-nowrap" t-field="line.price_total" groups="account.group_show_line_subtotals_tax_included"/>
+                                            </td>
+                                        </t>
+                                        <t t-if="line.display_type == 'line_section'">
+                                            <td colspan="99" style="padding:4px;">
+                                                <span t-field="line.name" t-options="{'widget': 'text'}"/>
+                                            </td>
+                                            <t t-set="current_section" t-value="line"/>
+                                            <t t-set="current_subtotal" t-value="0"/>
+                                        </t>
+                                        <t t-if="line.display_type == 'line_note'">
+                                            <td colspan="99" style="padding:4px;">
+                                                <span t-field="line.name" t-options="{'widget': 'text'}"/>
+                                            </td>
+                                        </t>
                                     </tr>
-                                    <tr class=" o_subtotal" style="">
-                                        <td><strong style="font-size:12px; font-family: Calibri Bold;color:black;">Currency Charge	/فرق العملة:</strong></td>
-                                        <td class="text-right">
-                                            <span style="font-size:12px; font-family: Calibri Bold;color:black;" t-field="o.currency_charge"/>
-                                        </td>
-                                    </tr>
-                                    <tr class=" o_subtotal" style="">
-                                        <td><strong style="font-size:12px; font-family: Calibri Bold;color:black;">Bank Charge	/ مصاريف الحوالة - 100 درهم:</strong></td>
-                                        <td class="text-right">
-                                            <span style="font-size:12px; font-family: Calibri Bold;color:black;" t-field="o.bank_charge_currency"/>
-                                        </td>
-                                    </tr>
-
-                                    <tr class=" o_subtotal" style="">
-                                        <td style="font-size:12px; font-family: Calibri Bold;color:black;font-weight: bold;">Total Due/ الاجمالي المطلوب:</td>
-                                        <td class="text-right">
-                                             <span  style="font-size:12px; font-family: Calibri Bold;color:black;" t-field="o.amount_residual"/> 
-                                        </td>
-                                    </tr>
-                                    
-
-                                    <tr class="o_subtotal" style="background-color: #FFFFFF !important;">
+    
+                                    <t t-if="current_section and (line_last or lines[line_index+1].display_type == 'line_section')">
+                                        <tr class="is-subtotal text-center">
+                                            <td colspan="99" class="text-center" style="padding:4px;">
+                                                <strong class="mr16 text-nowrap" style="font-size:16px; font-family: ARIAL; color:black;">Subtotal/قيمة الفاتورة</strong>
+                                                <span style="font-size:18px; font-family: ARIAL; color:black;" t-esc="current_subtotal" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </t>
+                            </tbody>
+                        </table>
+    
+                        </div>
+                        <br/>
+                        <div class="clearfix" style="font-size:18px; font-family: ARIAL; color:black;margin-right:100px;">
+                            <!-- <div id="total" class="row" > -->
+                                <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ml-auto">
+                                    <table class="table table-sm" style="page-break-inside: avoid;border: none;">
+                                        <tr style="border-bottom: none;border-top: none;border-right: none;border-left: none;">
+                                            <td style="border: none;"><span class="text-nowrap" style="font-size:18px; font-family: ARIAL; color:black;">TOTAL/قيمة الفاتورة</span></td>
+                                            <td class="text-right" style="border: none;">
+                                                <span style="font-size:18px; font-family: ARIAL; color:black;" t-field="o.amount_untaxed"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border-bottom: none;border-top: none;border-right: none;border-left: none;">
+                                            <td style="border-bottom: none;border-top: none;border-right: none;border-left: none;"><span class="text-nowrap" style="font-size:18px; font-family: ARIAL; color:black;">Currency Charge/فرق العملة</span></td>
+                                            <td class="text-right" style="border-bottom: none;border-top: none;border-right: none;border-left: none;">
+                                                <span style="font-size:18px; font-family: ARIAL;color:black;" t-field="o.currency_charge"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid black;border-top: none;border-right: none;border-left: none;">
+                                            <td style="border-top: none;border-right: none;border-left: none;"><span class="text-nowrap" style="font-size:18px; font-family: ARIAL; color:black;">Bank Charge/درهم 100-مصاريف الحوالة</span></td>
+                                            <td class="text-right" style="border-top: none;border-right: none;border-left: none;">
+                                                <span style="font-size:18px; font-family: ARIAL;color:black;" t-field="o.bank_charge_currency"/>
+                                            </td>
+                                        </tr>
+    
+                                        <tr style="border-bottom: none;border-top: 1px solid black;border-right: none;border-left: none;">
+                                            <td class="text-nowrap" style="border-bottom: none;border-right: none;border-left: none;font-size:18px; font-family: ARIAL; color:black;">Total Due/الاجمالي المطلوب</td>
+                                            <td class="text-right" style=";border-right: none;border-left: none;border-bottom : double black;">
+                                                 <span style="font-size:18px; font-family: ARIAL;color:black;font-weight: bold;" t-field="o.amount_residual"/> 
+                                            </td>
+                                        </tr>
                                         
-                                    </tr>
-                                </table>
+    
+                                        <tr class="o_subtotal" style="background-color: #FFFFFF !important;border: none;">
+                                            
+                                        </tr>
+                                    </table>
+                                <!-- </div> -->
                             </div>
                         </div>
-                    </div>
-                    <br></br>
-                    <br></br>
-                    
-                   
-           </t>
+                        <br/>
+                        <br/>
+                        
+                       
+               </t>
+    
         </template>
 
         <!-- <template id="mastex_with_payments" inherit_id="AG_mastex_reports.mastex_invoice_report" primary="True">

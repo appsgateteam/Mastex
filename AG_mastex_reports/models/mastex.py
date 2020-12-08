@@ -11,8 +11,25 @@ from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 import odoo.exceptions
 import re 
 
-# class account_inhert(models.Model):
-#     _inherit = "account.move"
+class accountmove(models.Model):
+    _inherit = "sale.order"
+
+    packages = fields.Float("No Of Packages",compute="get_packages",store=True)
+
+    # @api.depends('invoice_origin')
+    def get_packages(self):
+        for rec in self:
+            # rec.packages = 0
+
+            packs = 0.0
+            # sale = self.env['sale.order'].search([('name','in',rec.invoice_origin)])
+            # for sa in sale:
+            for line in rec.landing_line_ids:
+                pack = float(line.no_of_packages)
+                packs += pack
+            rec.packages = packs
+
+
 
 
 
