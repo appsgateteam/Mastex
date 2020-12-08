@@ -11,8 +11,25 @@ from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 import odoo.exceptions
 import re 
 
-# class account_inhert(models.Model):
-#     _inherit = "account.move"
+class accountmove(models.Model):
+    _inherit = "account.move"
+
+    packages = fields.Float("No Of Packages",compute="get_packages",store=True)
+
+    @api.depends('sale_id')
+    def get_packages(self):
+        for rec in self:
+            if rec.sale_id:
+                packs = 0.0
+                for line in rec.sale_id.landing_line_ids:
+                    pack = float(line.no_of_packages)
+                    packs += pack
+                rec.packages = packs
+                    
+            else:
+                rec.packages = 0
+
+
 
 
 
