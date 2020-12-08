@@ -24,10 +24,10 @@ class accountmove(models.Model):
             packs = 0.0
             # sale = self.env['sale.order'].search([('name','in',rec.invoice_origin)])
             # for sa in sale:
-            # for line in rec.landing_line_ids:
-            #     packa = line.no_of_packages.replace(' Bales', '').replace(' Bales-','').replace(' cartons-','').replace(' cartons','')
-            #     pack = float(packa)
-            #     packs += pack
+            for line in rec.landing_line_ids:
+                packa = line.no_of_packages.replace(' Bales', '').replace(' Bales-','').replace(' Cartons-','').replace(' Cartons','')
+                pack = float(packa)
+                packs += pack
             rec.packages = packs
 
 
