@@ -291,15 +291,17 @@
                 
                     
                     <!-- en -->
-                    <div class="col-5 text-left mb4" style="font-size:18px; font-family: ARIAL;color:black; margin-top: 4%;">
+                    <div class="col-5 text-left mb4" style="font-size:16px; font-family: ARIAL;color:black; margin-top: 4%;">
                         <h4 class="mt0" t-field="res_company.report_header"/>
                         <div name="company_address" class="mb4">
                             <!--<span class="company_address" style="color:black;font-family: ARIAL;" t-field="res_company.partner_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: true}"/>-->
                             <!--<br/>-->
                             <!--<div t-if="res_company.vat" style="color:black;font-family: ARIAL;" class="mt16">TRN No: <span t-field="res_company.vat" style="color:black;"/></div>-->
-                          <div style="color:black;font-family: ARIAL;" class="text-left text-nowrap "> <span t-field="res_company.name" /></div>
+                          <div style="color:black;font-family: ARIAL;" class="text-left text-nowrap "> <span t-field="res_company.name"/></div>
+                          <div style="color:black;font-family: ARIAL;" class="text-left text-nowrap "> <span t-field="res_company.street"/></div>
+                          <div style="color:black;font-family: ARIAL;" class="text-left text-nowrap ">P.O.  <span t-field="res_company.zip"/></div>
                          
-                            <div style="color:black;font-family: ARIAL;" class="text-left text-nowrap "><span><span t-field="res_company.city" /> - <span t-field="res_company.country_id.name" /></span></div>
+                            <div style="color:black;font-family: ARIAL;" class="text-left text-nowrap "><span><span t-field="res_company.city"/> - <span t-field="res_company.country_id.name"/></span></div>
                             <div style="color:black;font-family: ARIAL;" class="text-left text-nowrap ">Email:<span style="font-size:18px; font-family: Calibri Regular; color:black;" t-field="res_company.partner_id.email"/></div>
                             <div style="color:black;font-family: ARIAL;" class="text-left text-nowrap "> Tel: <span style="font-size:18px; font-family: Calibri Regular; color:black;" class="text-right " t-field="res_company.phone"/> </div>
                     
@@ -312,6 +314,9 @@
                     <!-- ar -->
                     <div class="col-5  mb4" style="font-size:18px; font-family: ARIAL;color:black;  color:black; float: right; margin-top: 4%;">
                             <div style="color:black;font-family: ARIAL;" class="text-right text-nowrap ">شركة المصري والسعودي للتجارة</div>
+                            <div style="color:black;font-family: ARIAL;" class="text-right text-nowrap ">السوق الكبير- بناية الحاكم- مكتب 103</div>
+                            <div style="color:black;font-family: ARIAL;" class="text-right text-nowrap "><span style="font-size:18px; font-family: Calibri Regular; color:black;" t-field="res_company.zip"/> :  صندوق بريد</div>
+
                          
                             <div style="color:black;font-family: ARIAL;" class="text-right text-nowrap ">الامارات العربية المتحدة - دبي  </div>
                             <div style="color:black;font-family: ARIAL;" class="text-right text-nowrap "><span style="font-size:18px; font-family: Calibri Regular; color:black;" t-field="res_company.partner_id.email"/> :  البريد الالكتروني   </div>

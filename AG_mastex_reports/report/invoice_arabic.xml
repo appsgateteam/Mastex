@@ -53,6 +53,7 @@
                     <div style="float: right;">
                     <br/>
                     <br/>
+                    <br/>
                         <div class="text-right mb-4">
                             <span style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black; font-weight: bold;" t-field="o.partner_id.name"/><br/>
                             <!-- <span style="margin-right:30px; font-size:18px; font-family: ARIAL;color:black; font-weight: bold;" t-field="o.partner_id.city"/><br/>
@@ -74,12 +75,12 @@
     
                         <h5>
                             <!-- <br/> -->
-                                <span class="text-nowrap mb-4" t-if="o.type == 'out_invoice' and o.state == 'posted'"><span style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black; float: right;"><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Invoice /رقم الفاتورة</span></span>
-                                <span class="text-nowrap mb-4" t-if="o.type == 'out_invoice' and o.state == 'draft'"><span style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black; float: right;"><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Draft Invoice/رقم الفاتورة</span></span>
-                                <span class="text-nowrap mb-4" t-if="o.type == 'out_invoice' and o.state == 'cancel'"><span style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black; float: right;"><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Cancelled Invoice/رقم الفاتورة</span></span>
-                                <span class="text-nowrap mb-4" t-if="o.type == 'out_refund'"><span style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black; float: right;"><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Credit Note/رقم الفاتورة</span></span>
-                                <span class="text-nowrap mb-4" t-if="o.type == 'in_refund'"><span style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black; float: right;"><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Vendor Credit Note/رقم الفاتورة</span></span>
-                                <span class="text-nowrap mb-4" t-if="o.type == 'in_invoice'"><span style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black; float: right;"><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.name"/> : Vendor Bill/رقم الفاتورة</span></span>
+                                <span class="text-nowrap mb-4" t-if="o.type == 'out_invoice' and o.state == 'posted'"><span style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black; float: right;"><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.reference"/> : Invoice /رقم الفاتورة</span></span>
+                                <span class="text-nowrap mb-4" t-if="o.type == 'out_invoice' and o.state == 'draft'"><span style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black; float: right;"><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.reference"/> : Draft Invoice/رقم الفاتورة</span></span>
+                                <span class="text-nowrap mb-4" t-if="o.type == 'out_invoice' and o.state == 'cancel'"><span style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black; float: right;"><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.reference"/> : Cancelled Invoice/رقم الفاتورة</span></span>
+                                <span class="text-nowrap mb-4" t-if="o.type == 'out_refund'"><span style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black; float: right;"><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.reference"/> : Credit Note/رقم الفاتورة</span></span>
+                                <span class="text-nowrap mb-4" t-if="o.type == 'in_refund'"><span style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black; float: right;"><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.reference"/> : Vendor Credit Note/رقم الفاتورة</span></span>
+                                <span class="text-nowrap mb-4" t-if="o.type == 'in_invoice'"><span style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black; float: right;"><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-if="o.name != '/'" t-field="o.reference"/> : Vendor Bill/رقم الفاتورة</span></span>
                                 
                             <br/>
                             <br/>
@@ -87,10 +88,10 @@
                            
                                 
                                 
-                                <span class="text-nowrap mb-4" style="margin-right:70px; font-size:18px; font-family: ARIAL; color:black;  float: right;"><strong><span style="font-size:18px; font-family: ARIAL; color:black;" class="text-nowrap" t-field="o.sale_id.packages"/></strong>   : Carton / عدد الطرود</span> 
+                                <span class="text-nowrap mb-4" style="margin-right:70px; font-size:18px; font-family: ARIAL; color:black;  float: right;"><span style="font-size:18px; font-family: ARIAL; color:black;" class="text-nowrap"><t t-esc="int(o.sale_id.packages)"/></span>    : Carton / عدد الطرود</span> 
                                 <br/>
                                 <!-- <br/> -->
-                                <span class="text-nowrap mb-4" style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black;  float: right;"><strong><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-field="o.amount_total"/></strong>  : Amount Due / المبلغ المطلوب</span><br/>
+                                <span class="text-nowrap mb-4" style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black;  float: right;"><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-field="o.amount_total"/>  : Amount Due / المبلغ المطلوب</span><br/>
                                 <!-- <br/> -->
                                
                                 <span style="margin-right:70px; font-size:18px; font-size:18px; font-family: ARIAL; color:black; float: right; " class="text-nowrap mb-4"><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-field="o.invoice_date"/> : Invoice / تاريخ الفاتورة</span><br/>
@@ -194,28 +195,28 @@
                         <br/>
                         <div class="clearfix" style="font-size:18px; font-family: ARIAL; color:black;margin-right:100px;">
                             <!-- <div id="total" class="row" > -->
-                                <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ml-auto" >
+                                <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ml-auto">
                                     <table class="table table-sm" style="page-break-inside: avoid;border: none;">
-                                        <tr  style="border-bottom: none;border-top: none;border-right: none;border-left: none;">
+                                        <tr style="border-bottom: none;border-top: none;border-right: none;border-left: none;">
                                             <td style="border: none;"><span class="text-nowrap" style="font-size:18px; font-family: ARIAL; color:black;">TOTAL/قيمة الفاتورة</span></td>
                                             <td class="text-right" style="border: none;">
                                                 <span style="font-size:18px; font-family: ARIAL; color:black;" t-field="o.amount_untaxed"/>
                                             </td>
                                         </tr>
-                                        <tr  style="border-bottom: none;border-top: none;border-right: none;border-left: none;">
+                                        <tr style="border-bottom: none;border-top: none;border-right: none;border-left: none;">
                                             <td style="border-bottom: none;border-top: none;border-right: none;border-left: none;"><span class="text-nowrap" style="font-size:18px; font-family: ARIAL; color:black;">Currency Charge/فرق العملة</span></td>
                                             <td class="text-right" style="border-bottom: none;border-top: none;border-right: none;border-left: none;">
                                                 <span style="font-size:18px; font-family: ARIAL;color:black;" t-field="o.currency_charge"/>
                                             </td>
                                         </tr>
-                                        <tr  style="border-bottom: 1px solid black;border-top: none;border-right: none;border-left: none;">
-                                            <td style="border-top: none;border-right: none;border-left: none;"><span class="text-nowrap" style="font-size:18px; font-family: ARIAL; color:black;">Bank Charge/درهم- مصاريف الحوالة100 </span></td>
+                                        <tr style="border-bottom: 1px solid black;border-top: none;border-right: none;border-left: none;">
+                                            <td style="border-top: none;border-right: none;border-left: none;"><span class="text-nowrap" style="font-size:18px; font-family: ARIAL; color:black;">Bank Charge/درهم 100-مصاريف الحوالة</span></td>
                                             <td class="text-right" style="border-top: none;border-right: none;border-left: none;">
                                                 <span style="font-size:18px; font-family: ARIAL;color:black;" t-field="o.bank_charge_currency"/>
                                             </td>
                                         </tr>
     
-                                        <tr  style="border-bottom: none;border-top: 1px solid black;border-right: none;border-left: none;">
+                                        <tr style="border-bottom: none;border-top: 1px solid black;border-right: none;border-left: none;">
                                             <td class="text-nowrap" style="border-bottom: none;border-right: none;border-left: none;font-size:18px; font-family: ARIAL; color:black;">Total Due/الاجمالي المطلوب</td>
                                             <td class="text-right" style=";border-right: none;border-left: none;border-bottom : double black;">
                                                  <span style="font-size:18px; font-family: ARIAL;color:black;font-weight: bold;" t-field="o.amount_residual"/> 

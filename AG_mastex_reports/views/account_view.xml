@@ -9,7 +9,7 @@
             <field name="arch" type="xml">
                 
                 <xpath expr="//field[@name='date_order']" position="after">
-                    <field name="packages"  />
+                    <field name="packages" invisible="1" />
                 </xpath>
                 
             </field>
