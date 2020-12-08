@@ -87,7 +87,7 @@
                            
                                 
                                 
-                                <span class="text-nowrap mb-4" style="margin-right:70px; font-size:18px; font-family: ARIAL; color:black;  float: right;"><strong><span style="font-size:18px; font-family: ARIAL; color:black;" class="text-nowrap" t-field="o.packages"/></strong>   : Carton / عدد الطرود</span> 
+                                <span class="text-nowrap mb-4" style="margin-right:70px; font-size:18px; font-family: ARIAL; color:black;  float: right;"><strong><span style="font-size:18px; font-family: ARIAL; color:black;" class="text-nowrap" t-field="o.sale_id.packages"/></strong>   : Carton / عدد الطرود</span> 
                                 <br/>
                                 <!-- <br/> -->
                                 <span class="text-nowrap mb-4" style="margin-right:70px; font-size:18px; font-family: ARIAL;color:black;  float: right;"><strong><span style="font-size:18px; font-family: ARIAL;color:black;" class="text-nowrap" t-field="o.amount_total"/></strong>  : Amount Due / المبلغ المطلوب</span><br/>
