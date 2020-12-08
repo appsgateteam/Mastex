@@ -16,18 +16,18 @@ class accountmove(models.Model):
 
     packages = fields.Float("No Of Packages",compute="get_packages",store=True)
 
-    @api.depends('sale_id')
+    @api.depends('invoice_origin')
     def get_packages(self):
         for rec in self:
-            if rec.sale_id:
-                packs = 0.0
-                for line in rec.sale_id.landing_line_ids:
+            # rec.packages = 0
+
+            packs = 0.0
+            sale = self.env['sale.order'].search([('name','in',rec.invoice_origin)])
+            for sa in sale:
+                for line in sa.landing_line_ids:
                     pack = float(line.no_of_packages)
                     packs += pack
-                rec.packages = packs
-                    
-            else:
-                rec.packages = 0
+            rec.packages = packs
 
 
 
