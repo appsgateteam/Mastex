@@ -299,7 +299,7 @@
                             <!--<div t-if="res_company.vat" style="color:black;font-family: ARIAL;" class="mt16">TRN No: <span t-field="res_company.vat" style="color:black;"/></div>-->
                           <div style="color:black;font-family: ARIAL;" class="text-left text-nowrap "> <span t-field="res_company.name"/></div>
                           <div style="color:black;font-family: ARIAL;" class="text-left text-nowrap "> <span t-field="res_company.street"/></div>
-                          <div style="color:black;font-family: ARIAL;" class="text-left text-nowrap ">P.O.  <span t-field="res_company.zip"/></div>
+                          <div style="color:black;font-family: ARIAL;" class="text-left text-nowrap ">P.O Box:  <span t-field="res_company.zip"/>  <span t-field="res_company.city"/></div>
                          
                             <div style="color:black;font-family: ARIAL;" class="text-left text-nowrap "><span><span t-field="res_company.city"/> - <span t-field="res_company.country_id.name"/></span></div>
                             <div style="color:black;font-family: ARIAL;" class="text-left text-nowrap ">Email:<span style="font-size:18px; font-family: Calibri Regular; color:black;" t-field="res_company.partner_id.email"/></div>
