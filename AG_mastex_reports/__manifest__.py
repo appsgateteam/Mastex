@@ -4,7 +4,7 @@
 {
     'name': 'AG_mastex_reports',
     'author': 'Fouad',
-    'depends': ['sale'],
+    'depends': ['sale','account'],
     'data': [
         
         'report/invoice_arabic.xml',
