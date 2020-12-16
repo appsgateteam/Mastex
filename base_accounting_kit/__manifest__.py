@@ -97,6 +97,8 @@
         'report/account_day_book_view.xml',
         'report/account_asset_report_views.xml',
         'report/report.xml',
+        'wizard/partner_ledger_report.xml',
+        'report/partner_ledger_report_template.xml'
     ],
     'qweb': [
         'static/src/xml/template.xml'

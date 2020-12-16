@@ -69,8 +69,6 @@ class ReportTrialBalance(models.AbstractModel):
             currency = account.currency_id and account.currency_id or account.company_id.currency_id
             res['code'] = account.code
             res['name'] = account.name
-            res['type'] = account.user_type_id
-            # res['is_type'] = account.is_account_type
             if account.id in account_result:
                 res['debit'] = account_result[account.id].get('debit')
                 res['credit'] = account_result[account.id].get('credit')
@@ -91,24 +89,21 @@ class ReportTrialBalance(models.AbstractModel):
         if not data.get('form') or not self.env.context.get('active_model'):
             raise UserError(
                 _("Form content is missing, this report cannot be printed."))
+
         self.model = self.env.context.get('active_model')
-        docs = self.env[self.model].browse(self.env.context.get('active_ids', []))
+        docs = self.env[self.model].browse(
+            self.env.context.get('active_ids', []))
         display_account = data['form'].get('display_account')
-        accounts = docs if self.model == 'account.account' else self.env['account.account'].search([])
-        account_res = self.with_context(data['form'].get('used_context'))._get_accounts(accounts,display_account)
-        is_type = data['is_type']
-        type_list = []
-        for rec in account_res:
-            if rec.get('type'):
-                if rec.get('type') not in type_list:
-                    type_list.append(rec.get('type'))
+        accounts = docs if self.model == 'account.account' else self.env[
+            'account.account'].search([])
+        account_res = self.with_context(
+            data['form'].get('used_context'))._get_accounts(accounts,
+                                                            display_account)
         return {
             'doc_ids': self.ids,
             'doc_model': self.model,
             'data': data['form'],
-            'is_type': data['is_type'],
             'docs': docs,
             'time': time,
             'Accounts': account_res,
-            'account_type': type_list
         }
