@@ -35,7 +35,6 @@
         'report/rfq_print.xml',
         'views/purchase_shipment_view.xml',
         'views/ir_attachment_view.xml',
-        #'views/assets.xml',
         'report/instruction_report_template.xml',
         'report/purchase_instruction_report_template.xml',
         'report/report.xml',
@@ -43,7 +42,8 @@
         'wizard/mail_compose_message_view.xml',
         'views/product_view.xml',
         'report/external_layout_standard.xml',
-        'report/invoice_new_report.xml'
+        'report/invoice_new_report.xml',
+        'views/account_payment_view.xml'
 
     ],
     # only loaded in demonstration mode

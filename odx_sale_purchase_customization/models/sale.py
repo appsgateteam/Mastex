@@ -122,7 +122,7 @@ class SaleOrder(models.Model):
                 planned_total = planned_total + line.price_subtotal
             record.actual_grand_total = grand_total
             record.planned_total = planned_total
-            
+    
     @api.depends('landing_line_ids')
     def _compute_sale_eta(self):
         for record in self:
@@ -137,6 +137,7 @@ class SaleOrder(models.Model):
 
 
         return False
+  
     
     @api.depends('purchase_order_id.invoice_status')
     def _compute_bill_status(self):
