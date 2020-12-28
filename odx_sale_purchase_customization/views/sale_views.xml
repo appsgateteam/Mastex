@@ -341,6 +341,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="attributes">
                     <attribute name="delete">false</attribute>
+                     <attribute name="class">o_column_sortable</attribute>
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="vendor_id"/>
@@ -388,6 +389,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="attributes">
                     <attribute name="delete">false</attribute>
+                    <attribute name="class">o_column_sortable</attribute>
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="vendor_id"/>
@@ -411,6 +413,7 @@
                 <xpath expr="//field[@name='sale_landing_etd']" position="after"><!--change to be done in demo-->
                     <field name="sale_landing_eta"/>
                 </xpath>
+
 
                 <xpath expr="//field[@name='amount_total']" position="after">
                     <field name="actual_grand_total" string="Actual Total" sum="Actual Total" widget="monetary"/>

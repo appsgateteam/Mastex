@@ -59,8 +59,8 @@ class SaleOrder(models.Model):
     insurance_id = fields.Many2one(comodel_name='res.insurance', string="Insurance")
     destination_id = fields.Many2one(comodel_name='res.destination', string='Destination')
     marks = fields.Char(string="Marks")
-    sale_landing_eta = fields.Date(string='ETA', compute='_compute_sale_eta')
-    sale_landing_etd = fields.Date(string='ETD', compute='_compute_sale_eta')
+    sale_landing_eta = fields.Date(string='ETA', compute='_compute_sale_eta',store=True)
+    sale_landing_etd = fields.Date(string='ETD', compute='_compute_sale_eta',store=True)
 
     attachment_ids = fields.One2many('ir.attachment', 'sale_id', string='Attachment')
     attachment_count = fields.Integer(compute='_compute_attachment_count')

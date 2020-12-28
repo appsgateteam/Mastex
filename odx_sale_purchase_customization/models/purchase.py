@@ -67,8 +67,8 @@ class PurchaseOrder(models.Model):
     shipment_date = fields.Date(string="Shipment Date")
     destination_id = fields.Many2one(comodel_name='res.destination', string='Destination')
     marks = fields.Char(string="Marks")
-    purcahse_landing_eta = fields.Date(string='ETA',compute='_compute_eta')
-    purcahse_landing_etd = fields.Date(string='ETD',compute='_compute_eta')
+    purcahse_landing_eta = fields.Date(string='ETA',compute='_compute_eta',store=True)
+    purcahse_landing_etd = fields.Date(string='ETD',compute='_compute_eta',store=True)
 
 
     # Shipment details

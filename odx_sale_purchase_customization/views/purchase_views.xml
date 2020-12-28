@@ -265,6 +265,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="attributes">
                     <attribute name="delete">false</attribute>
+                     <attribute name="class">o_column_sortable</attribute>
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="customer_id"/>
