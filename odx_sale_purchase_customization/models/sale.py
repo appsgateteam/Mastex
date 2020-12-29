@@ -59,12 +59,12 @@ class SaleOrder(models.Model):
     insurance_id = fields.Many2one(comodel_name='res.insurance', string="Insurance")
     destination_id = fields.Many2one(comodel_name='res.destination', string='Destination')
     marks = fields.Char(string="Marks")
-    sale_landing_eta = fields.Date(string='ETA', compute='_compute_sale_eta',store=True)
-    sale_landing_etd = fields.Date(string='ETD', compute='_compute_sale_eta',store=True)
+    sale_landing_eta = fields.Date(string='ETA', compute='_compute_sale_eta')
+    sale_landing_etd = fields.Date(string='ETD', compute='_compute_sale_eta')
 
     attachment_ids = fields.One2many('ir.attachment', 'sale_id', string='Attachment')
     attachment_count = fields.Integer(compute='_compute_attachment_count')
-    actual_grand_total = fields.Float(string="Actual Grand Total", store=True,compute='_compute_grand_total')
+    actual_grand_total = fields.Float(string="Actual Grand Total",compute='_compute_grand_total')
     planned_total = fields.Float(string="Planned Total",store=True, compute='_compute_grand_total')
     invoice_status = fields.Selection([
         ('upselling', 'Upselling Opportunity'),
@@ -73,17 +73,6 @@ class SaleOrder(models.Model):
         ('no', 'Nothing to Invoice')
         ], string='Invoice Status', compute='_get_invoice_status', store=True, readonly=True)
 
-
-    def write(self,vals):
-        res = super(SaleOrder,self).write(vals)
-        grand_total = 0
-        planned_total = 0
-        for line in self.order_line:
-            grand_total = grand_total + line.actual_net_amount
-            planned_total = planned_total + line.price_subtotal
-        self.actual_grand_total = grand_total
-        self.planned_total = planned_total
-        return res
 
     @api.depends('state', 'order_line.invoice_status')
     def _get_invoice_status(self):
