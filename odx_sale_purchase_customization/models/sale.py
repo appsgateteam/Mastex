@@ -74,6 +74,11 @@ class SaleOrder(models.Model):
         ], string='Invoice Status', compute='_get_invoice_status', store=True, readonly=True)
 
 
+    def write(self,vals):
+        res = super(SaleOrder,self).write(vals)
+        self._compute_grand_total()
+        return res
+
     @api.depends('state', 'order_line.invoice_status')
     def _get_invoice_status(self):
         """
