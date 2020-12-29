@@ -76,7 +76,13 @@ class SaleOrder(models.Model):
 
     def write(self,vals):
         res = super(SaleOrder,self).write(vals)
-        self._compute_grand_total()
+        grand_total = 0
+        planned_total = 0
+        for line in self.order_line:
+            grand_total = grand_total + line.actual_net_amount
+            planned_total = planned_total + line.price_subtotal
+        self.actual_grand_total = grand_total
+        self.planned_total = planned_total
         return res
 
     @api.depends('state', 'order_line.invoice_status')
