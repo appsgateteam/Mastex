@@ -230,17 +230,27 @@
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="customer_id"/>
                 </xpath>
+                <xpath expr="//field[@name='date_order']" position="replace">
+                    <field name="date_order" string="Order Date" widget="date"/>
+                </xpath>
                 <xpath expr="//field[@name='customer_id']" position="after">
                     <field name="shipment_date"/>
                 </xpath>
                  <xpath expr="//field[@name='shipment_date']" position="after">
-                    <field name="purcahse_landing_etd"/>
+
+                        <field name="purcahse_landing_etd" />
+
                 </xpath>
                  <xpath expr="//field[@name='purcahse_landing_etd']" position="after">
                     <field name="purcahse_landing_eta"/>
                 </xpath>
+
+
                 <xpath expr="//field[@name='origin']" position="attributes">
                     <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='invoice_status']" position="replace">
+                    <field name="invoice_status" optional="show"/>
                 </xpath>
                 <xpath expr="//field[@name='amount_total']" position="after">
                     <field name="actual_total" sum="Actual Total" widget="monetary"/>
@@ -255,9 +265,13 @@
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="attributes">
                     <attribute name="delete">false</attribute>
+                     <attribute name="class">o_column_sortable</attribute>
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="customer_id"/>
+                </xpath>
+                <xpath expr="//field[@name='date_approve']" position="replace">
+                    <field name="date_approve" string="Confirmation Date" widget="date"/>
                 </xpath>
                 <xpath expr="//field[@name='customer_id']" position="after">
                     <field name="shipment_date"/>

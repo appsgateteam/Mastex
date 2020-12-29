@@ -341,19 +341,34 @@
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="attributes">
                     <attribute name="delete">false</attribute>
+                     <attribute name="class">o_column_sortable</attribute>
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="vendor_id"/>
                 </xpath>
+                 <xpath expr="//field[@name='date_order']" position="replace">
+                    <field name="date_order" string="Order Date" widget="date"/>
+                </xpath>
+
+
+                <xpath expr="//field[@name='vendor_id']" position="after">
+                    <field name="commitment_date"/>
+                </xpath>
+                 <xpath expr="//field[@name='commitment_date']" position="replace">
+
+                </xpath>
                 <xpath expr="//field[@name='commitment_date']" position="replace">
                     <field name="shipment_date"/>
                 </xpath>
+
                 <xpath expr="//field[@name='shipment_date']" position="after"><!--change to be done in demo-->
                     <field name="sale_landing_etd"/>
                 </xpath>
                 <xpath expr="//field[@name='sale_landing_etd']" position="after"><!--change to be done in demo-->
                     <field name="sale_landing_eta"/>
                 </xpath>
+
+
               
                 <xpath expr="//field[@name='amount_total']" position="after">
                     <field name="actual_grand_total" string="Actual Total" sum="Actual Total" widget="monetary"/>
@@ -374,9 +389,20 @@
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="attributes">
                     <attribute name="delete">false</attribute>
+                    <attribute name="class">o_column_sortable</attribute>
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="vendor_id"/>
+                </xpath>
+                 <xpath expr="//field[@name='create_date']" position="replace">
+                    <field name="create_date" string="Create Date" widget="date"/>
+                </xpath>
+
+                <xpath expr="//field[@name='vendor_id']" position="after">
+                    <field name="commitment_date"/>
+                </xpath>
+                 <xpath expr="//field[@name='commitment_date']" position="replace">
+
                 </xpath>
                 <xpath expr="//field[@name='commitment_date']" position="replace">
                     <field name="shipment_date"/>
@@ -387,7 +413,8 @@
                 <xpath expr="//field[@name='sale_landing_etd']" position="after"><!--change to be done in demo-->
                     <field name="sale_landing_eta"/>
                 </xpath>
-                
+
+
                 <xpath expr="//field[@name='amount_total']" position="after">
                     <field name="actual_grand_total" string="Actual Total" sum="Actual Total" widget="monetary"/>
                     <field name="planned_total" sum="Planned Total" widget="monetary"/>
@@ -396,7 +423,7 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//field[@name='invoice_status']" position="after">
-                    <field name="billing_status"/> 
+                    <field name="billing_status"/>
                 </xpath>
             </field>
         </record>
