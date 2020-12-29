@@ -108,5 +108,13 @@
             file="base_accounting_kit.day_book_report_template"
             attachment_use="True"
     />
+     <report
+            id="action_report_partnerledger_report"
+            model="account.report.partner.ledger.report"
+            string="Partner Ledger"
+            report_type="qweb-pdf"
+            name="base_accounting_kit.report_partnerledger_report"
+            file="base_accounting_kit.report_partnerledger_report"
+    />
 
 </odoo>

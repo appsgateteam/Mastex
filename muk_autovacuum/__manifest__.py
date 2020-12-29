@@ -19,7 +19,7 @@
 #    along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ###################################################################################
-#used as dependency
+
 { 
     'name': 'MuK Autovacuum',
     'summary': 'Configure automatic garbage collection',
@@ -53,4 +53,5 @@
     'application': False,
     'installable': True,
     'auto_install': False,
+
 }

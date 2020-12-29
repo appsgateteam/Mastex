@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_partnerledger_report">
+        <t t-call="web.html_container">
+            <t t-call="web.internal_layout">
+                <t t-set="data_report_margin_top" t-value="12"/>
+                <t t-set="data_report_header_spacing" t-value="9"/>
+                <t t-set="data_report_dpi" t-value="110"/>
+                <div class="page">
+                    <h2>Partner Ledger</h2>
+                    <div class="row">
+                        <div class="col-3">
+                            <strong>Company:</strong>
+                            <p t-esc="env.company.name"/>
+                        </div>
+                        <div class="col-3">
+                            <t t-if="data['form']['date_from']">
+                                <strong>Date from :</strong>
+                                <span t-esc="data['form']['date_from']"/>
+                                <br/>
+                            </t>
+                            <t t-if="data['form']['date_to']">
+                                <strong>Date to :</strong>
+                                <span t-esc="data['form']['date_to']"/>
+                            </t>
+                        </div>
+                        <div class="col-3">
+                            <strong>Target Moves:</strong>
+                            <p t-if="data['form']['target_move'] == 'all'">All Entries</p>
+                            <p t-if="data['form']['target_move'] == 'posted'">All Posted Entries</p>
+                        </div>
+                    </div>
+
+                    <table class="table table-sm table-reports">
+                        <thead>
+                            <tr class="text-center">
+                                <th style="width:100px;">Date</th>
+                                <th colspan="2">Initial Balance</th>
+                                <th colspan="2">Transaction</th>
+                                <th colspan="2">Ending Balance</th>
+
+                            </tr>
+                            <tr class="text-center">
+                                <th></th>
+                                <th >Debit</th>
+                                <th>Credit</th>
+                                <th>Debit</th>
+                                <th>Credit</th>
+                                <th>Debit</th>
+                                <th>Credit</th>
+                            </tr>
+                        </thead>
+                        <t t-foreach="docs" t-as="o">
+                            <tbody>
+                                <tr class="text-center">
+                                    <td>
+                                        <strong t-esc="o.ref"/>
+                                        -
+                                        <strong t-esc="o.name"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-set="initial_debit"
+                                           t-value="get_initial_balance(data, o, 'COALESCE(account_move_line.debit) - COALESCE(account_move_line.credit)',True)"/>
+                                        <strong t-esc="get_initial_balance(data, o, 'COALESCE(account_move_line.debit) - COALESCE(account_move_line.credit)',True)"
+                                                t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-set="initial_credit"
+                                           t-value="get_initial_balance(data, o, 'COALESCE(account_move_line.debit) - COALESCE(account_move_line.credit)',False)"/>
+
+                                        <strong t-esc="get_initial_balance(data, o, 'COALESCE(account_move_line.debit) - COALESCE(account_move_line.credit)',False)"
+                                                t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-set="transaction_debit"
+                                           t-value="sum_partner(data, o, 'debit - credit',True)"/>
+
+                                        <strong t-esc="sum_partner(data, o, 'debit - credit',True)"
+                                                t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-set="transaction_credit"
+                                           t-value="sum_partner(data, o, 'debit - credit',False)"/>
+                                        <strong t-esc="sum_partner(data, o, 'debit - credit',False)"
+                                                t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                    </td>
+                                    <t t-set="ending_balance"
+                                           t-value="initial_debit-initial_credit+transaction_debit-transaction_credit"/>
+                                    <t t-set="zero"
+                                           t-value="0"/>
+                                    <td class="text-right">
+                                        <t t-if="ending_balance &gt; 0">
+                                            <strong t-esc="ending_balance"
+                                                t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                        </t>
+                                        <t t-else="">
+                                            <strong t-esc="zero"
+                                                t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                        </t>
+
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-if="ending_balance &lt; 0">
+                                            <strong t-esc="-1 * ending_balance"
+                                                t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                        </t>
+                                        <t t-else="">
+                                            <strong t-esc="zero"
+                                                t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                        </t>
+
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </t>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>
