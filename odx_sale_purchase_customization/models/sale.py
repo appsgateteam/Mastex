@@ -59,8 +59,8 @@ class SaleOrder(models.Model):
     insurance_id = fields.Many2one(comodel_name='res.insurance', string="Insurance")
     destination_id = fields.Many2one(comodel_name='res.destination', string='Destination')
     marks = fields.Char(string="Marks")
-    sale_landing_eta = fields.Date(string='ETA', compute='_compute_sale_eta',store=True)
-    sale_landing_etd = fields.Date(string='ETD', compute='_compute_sale_eta',store=True)
+    sale_landing_eta = fields.Date(string='ETA', compute='_compute_sale_eta')
+    sale_landing_etd = fields.Date(string='ETD', compute='_compute_sale_eta')
 
     attachment_ids = fields.One2many('ir.attachment', 'sale_id', string='Attachment')
     attachment_count = fields.Integer(compute='_compute_attachment_count')
@@ -286,6 +286,7 @@ class SaleOrder(models.Model):
                                                                            'taxes_id': [(6, 0, taxes_id.ids)],
                                                                            })
                     line.purchase_order_line_id = purchase_order_line.id
+
             return res   
 
             
@@ -450,10 +451,20 @@ class SaleOrderLine(models.Model):
             elif line.state == 'sale' and line.product_id.invoice_policy == 'order' and \
                     float_compare(line.qty_delivered, line.actual_qty, precision_digits=precision) == 1:
                 line.invoice_status = 'upselling'
-            elif float_compare(line.qty_invoiced, line.product_uom_qty, precision_digits=precision) >= 0:
-                
-                line.invoice_status = 'invoiced'
+
+
+            # elif float_compare(line.qty_invoiced, line.product_uom_qty,precision_digits=precision) >= 0 :
+            #     line.invoice_status = 'invoiced'
+           
+
+            # elif float_compare(line.product_uom_qty,line.actual_qty, precision_digits=precision) == 1 :
+            #      line.invoice_status = 'no'
+
+            elif not float_is_zero(line.qty_invoiced, precision_digits=precision):
+
+                 line.invoice_status = 'invoiced'
             else:
+
                 line.invoice_status = 'no'
 
     @api.depends('qty_invoiced', 'qty_delivered', 'actual_qty', 'order_id.state')
