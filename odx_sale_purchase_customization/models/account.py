@@ -134,6 +134,8 @@ class AccountMove(models.Model):
                 customer_currency_amount = ((currency_amount * customer_currency_rate) / currency_rate)
                 currency_charge = customer_currency_amount - currency_amount
 
+
+
             move.amount_total = sign * (
                 total_currency if len(currencies) == 1 else total) - total_commission - amount_discount
             if move.type in ['out_invoice', 'out_refund']:
