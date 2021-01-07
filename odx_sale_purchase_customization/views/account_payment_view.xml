@@ -9,6 +9,16 @@
                 <field name="customer_currency_id"/>
                 <field name="amount_in_currency"/>
             </xpath>
+            <!--<xpath expr="//group[@name='right_column']" position="after">
+                <group name="side_col">
+                    <label for="amount_in_currency"/>
+                        <div name="amount_curr" class="o_row">
+                            <field name="amount_in_currency"/>
+                            <field name="symbol" readonly="True"/>
+                        </div>
+
+                </group>
+            </xpath>-->
         </field>
     </record>
 </odoo>
