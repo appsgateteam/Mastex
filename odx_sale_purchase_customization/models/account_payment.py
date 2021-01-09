@@ -33,6 +33,7 @@ class AccountPayment(models.Model):
 
     def _prepare_payment_moves(self):
        # res = super(AccountPayment, self)._prepare_payment_moves()
+        print('--enter payment function--')
         all_move_vals = []
         for payment in self:
             company_currency = payment.company_id.currency_id
