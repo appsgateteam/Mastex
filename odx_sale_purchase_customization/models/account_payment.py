@@ -10,7 +10,7 @@ class AccountPayment(models.Model):
 
     customer_currency_id = fields.Many2one('res.currency', string='Customer Currency')
     amount_in_currency = fields.Float('Amount In Currency',compute='_compute_amount')
-    #symbol = fields.Char('symbol')
+   # symbol = fields.Char('symbol')
 
     @api.depends('currency_id','customer_currency_id')
     def _compute_amount(self):
@@ -46,15 +46,24 @@ class AccountPayment(models.Model):
                 counterpart_amount = payment.amount
                 liquidity_line_account = payment.journal_id.default_debit_account_id
             else:
+               # counterpart_amount = -payment.amount
                 counterpart_amount = -payment.amount
                 liquidity_line_account = payment.journal_id.default_credit_account_id
 
             # Manage currency.
-            if payment.currency_id == company_currency:
+            if payment.currency_id == company_currency and payment.payment_type in ('outbound', 'transfer'):
                 # Single-currency.
                 balance = counterpart_amount
                 write_off_balance = write_off_amount
+
                 counterpart_amount = payment.amount_in_currency
+                currency_id = payment.customer_currency_id.id
+
+            elif payment.currency_id == company_currency and payment.payment_type == 'inbound':
+                balance = counterpart_amount
+                write_off_balance = write_off_amount
+
+                counterpart_amount = -payment.amount_in_currency
                 currency_id = payment.customer_currency_id.id
             else:
                 # Multi-currencies.
