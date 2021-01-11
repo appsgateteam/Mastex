@@ -9,10 +9,10 @@ class AccountPayment(models.Model):
     _inherit = 'account.payment'
 
     customer_currency_id = fields.Many2one('res.currency', string='Customer Currency')
-    amount_in_currency = fields.Float('Amount In Currency',compute='_compute_amount')
-   # symbol = fields.Char('symbol')
+    amount_in_currency = fields.Monetary('Amount In Currency',compute='_compute_amount')
+    #symbol = fields.Char('symbol')
 
-    @api.depends('currency_id','customer_currency_id')
+    @api.depends('customer_currency_id','currency_id')
     def _compute_amount(self):
         for payment in self:
             if payment.company_id and payment.currency_id:
@@ -27,9 +27,9 @@ class AccountPayment(models.Model):
     # def _onchnage_customer_currency_id(self):
     #     for payment in self:
     #         if payment.customer_currency_id:
-    #             payment.symbol = payment.customer_currency_id.symbol
+    #             payment.amount_in_currency.symbol = payment.customer_currency_id.symbol
     #         else:
-    #             payment.symbol = False
+    #             payment.amount_in_currency.symbol = False
 
     def _prepare_payment_moves(self):
        # res = super(AccountPayment, self)._prepare_payment_moves()
