@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='communication']" position="after">
                 <field name="customer_currency_id"/>
-                <field name="amount_in_currency"/>
+                <field name="amount_in_currency"  widget='monetary' options="{'currency_field': 'customer_currency_id'}" readonly="1"/>
 <!--                <label for="amount_in_currency"/>-->
 <!--                <div name="amount_curr" class="o_row">-->
 <!--                            <field name="symbol" readonly="True" width="10px"/>-->
