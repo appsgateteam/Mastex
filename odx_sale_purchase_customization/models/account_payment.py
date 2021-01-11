@@ -9,7 +9,7 @@ class AccountPayment(models.Model):
     _inherit = 'account.payment'
 
     customer_currency_id = fields.Many2one('res.currency', string='Customer Currency')
-    amount_in_currency = fields.Monetary('Amount In Currency',compute='_compute_amount')
+    amount_in_currency = fields.Float('Amount In Currency',compute='_compute_amount')
     #symbol = fields.Char('symbol')
 
     @api.depends('customer_currency_id','currency_id')
