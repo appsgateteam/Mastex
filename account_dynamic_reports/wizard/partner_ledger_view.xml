@@ -14,9 +14,10 @@
                         <field name="display_accounts" widget="radio"/>
                         <field name="type" widget="radio"/>
                         <field name="initial_balance"/>
+                        <field name="include_details" help="It will show detailed lines in reports"/>
                         <field name="date_from"/>
                         <field name="date_to"/>
-                        <field name="include_details" help="It will show detailed lines in reports"/>
+                        
                         <field name="balance_less_than_zero"/>
                         <field name="balance_greater_than_zero"/>
                         <field name="financial_year" invisible="1"/>
@@ -75,8 +76,8 @@
         <menuitem id="account_report_plg" sequence="20" action="action_ins_partner_ledger_wizard"
                   name="Partner Ledger" parent="account_reports_ins" groups="account.group_account_user"/>
 
-        <menuitem id="account_report_plg_wiz" sequence="20" action="action_dynamic_allinone_plg_report"
-                  name="Partner Ledger" parent="account_reports_ins_wiz" groups="account.group_account_user"/>
+        <!--<menuitem id="account_report_plg_wiz" sequence="20" action="action_dynamic_allinone_plg_report"
+                  name="Partner Ledger" parent="account_reports_ins_wiz" groups="account.group_account_user"/>-->
 
     </data>
 </odoo>
