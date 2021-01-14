@@ -485,6 +485,11 @@ class PurchaseOrderLine(models.Model):
         if self.sale_order_line_id:
             self.sale_order_line_id.actual_qty = self.actual_qty
 
+    #@api.onchange('product_qty', 'product_uom')
+    def _onchange_quantity(self):
+       return super(PurchaseOrderLine, self)._onchange_quantity()
+
+
     @api.model_create_multi
     def create(self, values):
         """
