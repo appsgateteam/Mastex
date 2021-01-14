@@ -17,7 +17,7 @@
                         <field name="include_details" help="It will show detailed lines in reports"/>
                         <field name="date_from"/>
                         <field name="date_to"/>
-                        
+
                         <field name="balance_less_than_zero"/>
                         <field name="balance_greater_than_zero"/>
                         <field name="financial_year" invisible="1"/>
