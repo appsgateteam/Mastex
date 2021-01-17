@@ -42,7 +42,7 @@
                             </tr>
                             <tr class="text-center">
                                 <th></th>
-                                <th >Debit</th>
+                                <th>Debit</th>
                                 <th>Credit</th>
                                 <th>Debit</th>
                                 <th>Credit</th>
@@ -50,6 +50,12 @@
                                 <th>Credit</th>
                             </tr>
                         </thead>
+                        <t t-set="initial_debit_total" t-value="0"/>
+                        <t t-set="initial_credit_total" t-value="0"/>
+                        <t t-set="transaction_debit_total" t-value="0"/>
+                        <t t-set="transaction_debit_total" t-value="0"/>
+                        <t t-set="ending_balance_debit_total" t-value="0"/>
+                        <t t-set="ending_balance_total" t-value="0"/>
                         <t t-foreach="docs" t-as="o">
                             <tbody>
                                 <tr class="text-center">
@@ -61,19 +67,22 @@
                                     <td class="text-right">
                                         <t t-set="initial_debit"
                                            t-value="get_initial_balance(data, o, 'COALESCE(account_move_line.debit) - COALESCE(account_move_line.credit)',True)"/>
+                                        <t t-set="initial_debit_total" t-value="initial_debit_total+initial_debit"/>
                                         <strong t-esc="get_initial_balance(data, o, 'COALESCE(account_move_line.debit) - COALESCE(account_move_line.credit)',True)"
                                                 t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                     </td>
                                     <td class="text-right">
                                         <t t-set="initial_credit"
                                            t-value="get_initial_balance(data, o, 'COALESCE(account_move_line.debit) - COALESCE(account_move_line.credit)',False)"/>
-
+                                        <t t-set="initial_credit_total" t-value="initial_credit_total+initial_credit"/>
                                         <strong t-esc="get_initial_balance(data, o, 'COALESCE(account_move_line.debit) - COALESCE(account_move_line.credit)',False)"
                                                 t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                     </td>
                                     <td class="text-right">
                                         <t t-set="transaction_debit"
                                            t-value="sum_partner(data, o, 'debit - credit',True)"/>
+                                        <t t-set="transaction_debit_total"
+                                           t-value="transaction_debit_total+transaction_debit"/>
 
                                         <strong t-esc="sum_partner(data, o, 'debit - credit',True)"
                                                 t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
@@ -81,32 +90,38 @@
                                     <td class="text-right">
                                         <t t-set="transaction_credit"
                                            t-value="sum_partner(data, o, 'debit - credit',False)"/>
+                                        <t t-set="transaction_debit_total"
+                                           t-value="transaction_debit_total+transaction_credit"/>
                                         <strong t-esc="sum_partner(data, o, 'debit - credit',False)"
                                                 t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                     </td>
                                     <t t-set="ending_balance"
-                                           t-value="initial_debit-initial_credit+transaction_debit-transaction_credit"/>
+                                       t-value="initial_debit-initial_credit+transaction_debit-transaction_credit"/>
                                     <t t-set="zero"
-                                           t-value="0"/>
+                                       t-value="0"/>
                                     <td class="text-right">
                                         <t t-if="ending_balance &gt; 0">
+                                            <t t-set="ending_balance_debit_total"
+                                               t-value="ending_balance_debit_total+ending_balance"/>
                                             <strong t-esc="ending_balance"
-                                                t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                                    t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                         </t>
                                         <t t-else="">
                                             <strong t-esc="zero"
-                                                t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                                    t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                         </t>
 
                                     </td>
                                     <td class="text-right">
                                         <t t-if="ending_balance &lt; 0">
+                                            <t t-set="ending_balance_total"
+                                               t-value="ending_balance_total+(-1 * ending_balance)"/>
                                             <strong t-esc="-1 * ending_balance"
-                                                t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                                    t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                         </t>
                                         <t t-else="">
                                             <strong t-esc="zero"
-                                                t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                                                    t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                         </t>
 
                                     </td>
@@ -114,6 +129,27 @@
                                 </tr>
                             </tbody>
                         </t>
+                        <tr class="text-right">
+                            <th class="text-right">Total</th>
+                            <th class="text-right">
+                                <strong t-esc="initial_debit_total" t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"></strong>
+                            </th>
+                            <th class="text-right">
+                                <strong t-esc="initial_credit_total" t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"></strong>
+                            </th>
+                            <th class="text-right">
+                                <strong t-esc="transaction_debit_total" t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"></strong>
+                            </th>
+                            <th class="text-right">
+                                <strong t-esc="transaction_debit_total" t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"></strong>
+                            </th>
+                            <th class="text-right">
+                                <strong t-esc="ending_balance_debit_total" t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"></strong>
+                            </th>
+                            <th class="text-right">
+                                <strong t-esc="ending_balance_total" t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"></strong>
+                            </th>
+                        </tr>
                     </table>
                 </div>
             </t>
