@@ -15,13 +15,20 @@ class AccountPayment(models.Model):
     @api.depends('customer_currency_id','currency_id')
     def _compute_amount(self):
         for payment in self:
-            if payment.company_id and payment.currency_id:
-                payment.amount_in_currency = payment.currency_id._convert(payment.amount, payment.customer_currency_id,
+            if not payment.company_id:
+                payment.company_id = self.env.company.id
+            if not payment.currency_id:
+                payment.currency_id = self.env.company.currency_id.id
+
+
+            # if payment.company_id and payment.currency_id:
+            payment.amount_in_currency = payment.currency_id._convert(payment.amount, payment.customer_currency_id,
                                                                               payment.company_id,
                                                                               payment.payment_date)
 
-            else:
-                payment.company_id = payment.currency_id = 0
+            # else:
+            #
+            #     payment.currency_id = self.env.company.currency_id.id
 
     # @api.onchange('customer_currency_id')
     # def _onchnage_customer_currency_id(self):

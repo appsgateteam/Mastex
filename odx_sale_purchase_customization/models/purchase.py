@@ -67,8 +67,8 @@ class PurchaseOrder(models.Model):
     shipment_date = fields.Date(string="Shipment Date")
     destination_id = fields.Many2one(comodel_name='res.destination', string='Destination')
     marks = fields.Char(string="Marks")
-    purcahse_landing_eta = fields.Date(string='ETA',compute='_compute_eta',store=True)
-    purcahse_landing_etd = fields.Date(string='ETD',compute='_compute_eta',store=True)
+    purcahse_landing_eta = fields.Date(string='ETA',compute='_compute_eta',store=True,track_visibility='always')
+    purcahse_landing_etd = fields.Date(string='ETD',compute='_compute_eta',store=True,track_visibility='always')
 
 
     # Shipment details
@@ -484,6 +484,11 @@ class PurchaseOrderLine(models.Model):
     def _onchange_actual_qty(self):
         if self.sale_order_line_id:
             self.sale_order_line_id.actual_qty = self.actual_qty
+
+    #@api.onchange('product_qty', 'product_uom')
+    def _onchange_quantity(self):
+       return super(PurchaseOrderLine, self)._onchange_quantity()
+
 
     @api.model_create_multi
     def create(self, values):
