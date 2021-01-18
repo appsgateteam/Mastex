@@ -122,8 +122,7 @@ class ReportPartnerLedger(models.AbstractModel):
             move_lines = self.env['account.move.line'].search(
                 [('partner_id', '=', partner.id), ('date', '<', date_from)])
         else:
-            move_lines = self.env['account.move.line'].search(
-                [('partner_id', '=', partner.id)])
+            return 0
         for line in move_lines:
             result += line.debit - line.credit
         if result > 0 and positive:
