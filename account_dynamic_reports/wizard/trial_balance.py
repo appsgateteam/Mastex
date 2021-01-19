@@ -449,12 +449,18 @@ class InsTrialBalance(models.TransientModel):
                 move_lines[account.code]['ending_debit'] = end_dr
 
                 if data.get('display_accounts') == 'balance_not_zero':
+
                     if end_blns: # debit or credit exist
+
                         total_deb += deb
                         total_cre += cre
                         total_bln += bln
                     elif bln:
-                        continue
+
+                        #continue
+                        total_deb += deb
+                        total_cre += cre
+                        total_bln += bln
                     else:
                         move_lines.pop(account.code)
                 else:
