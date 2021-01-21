@@ -131,8 +131,16 @@
                                     <tr class="pims_report_line_tb"> <!-- Normal lines -->
                                         <t t-set="initial_balance"
                                            t-value="Ledger_data[line]['initial_balance']"/>
+                                        <t t-set="initial_balance_db"
+                                           t-value="Ledger_data[line]['initial_debit']"/>
+                                        <t t-set="initial_balance_cr"
+                                           t-value="Ledger_data[line]['initial_credit']"/>
                                         <t t-set="ending_balance"
                                            t-value="Ledger_data[line]['ending_balance']"/>
+                                        <t t-set="ending_balance_db"
+                                           t-value="Ledger_data[line]['ending_debit']"/>
+                                        <t t-set="ending_balance_cr"
+                                           t-value="Ledger_data[line]['ending_credit']"/>
                                         <t t-set="zero"
                                            t-value="0"/>
                                         <td>
@@ -154,11 +162,11 @@
                                             <t t-if="initial_balance &gt; 0">
                                                 <t t-set="initial_balance_debit"
                                                    t-value="initial_balance_debit + initial_balance"/>
-                                                <strong t-esc="initial_balance"
+                                                <strong t-esc="initial_balance_db"
                                                         t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                             </t>
                                             <t t-else="">
-                                                <strong t-esc="zero"
+                                                <strong t-esc="initial_balance_db"
                                                         t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                             </t>
 
@@ -167,11 +175,11 @@
                                             <t t-if="initial_balance &lt; 0">
                                                 <t t-set="initial_balance_credit"
                                                    t-value="initial_balance_debit + (-1 * initial_balance)"/>
-                                                <strong t-esc="-1 * initial_balance"
+                                                <strong t-esc="initial_balance_cr"
                                                         t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                             </t>
                                             <t t-else="">
-                                                <strong t-esc="zero"
+                                                <strong t-esc="initial_balance_cr"
                                                         t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                             </t>
 
@@ -201,11 +209,11 @@
                                             <t t-if="ending_balance &gt; 0">
                                                 <t t-set="ending_balance_debit"
                                                    t-value="ending_balance_debit + ending_balance"/>
-                                                <strong t-esc="ending_balance"
+                                                <strong t-esc="ending_balance_db"
                                                         t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                             </t>
                                             <t t-else="">
-                                                <strong t-esc="zero"
+                                                <strong t-esc="ending_balance_db"
                                                         t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                             </t>
 
@@ -214,11 +222,11 @@
                                             <t t-if="ending_balance &lt; 0">
                                                 <t t-set="ending_balance_credit"
                                                    t-value="ending_balance_credit + (-1 * ending_balance)"/>
-                                                <strong t-esc="-1 * ending_balance"
+                                                <strong t-esc="ending_balance_cr"
                                                         t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                             </t>
                                             <t t-else="">
-                                                <strong t-esc="zero"
+                                                <strong t-esc="ending_balance_cr"
                                                         t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                             </t>
 
@@ -236,8 +244,18 @@
                                        t-value="line['initial_balance']"/>
                                     <t t-set="ending_balance"
                                        t-value="line['ending_balance']"/>
+                                    <t t-set="initial_balance_db"
+                                       t-value="line['initial_debit']"/>
+                                    <t t-set="initial_balance_cr"
+                                       t-value="line['initial_credit']"/>
+                                    <t t-set="ending_balance_db"
+                                       t-value="line['ending_debit']"/>
+                                    <t t-set="ending_balance_cr"
+                                       t-value="line['ending_credit']"/>
                                     <t t-set="zero"
                                        t-value="0"/>
+
+
 
                                     <t t-if="line['parent'] != '0'">
                                         <t t-set="tr_style" t-value="'border-bottom:1px solid grey;'"/>
@@ -277,11 +295,11 @@
                                             <t t-if="initial_balance &gt; 0">
                                                 <t t-set="initial_balance_debit"
                                                    t-value="initial_balance_debit + initial_balance"/>
-                                                <strong t-esc="initial_balance"
+                                                <strong t-esc="initial_balance_db"
                                                         t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                             </t>
                                             <t t-else="">
-                                                <strong t-esc="zero"
+                                                <strong t-esc="initial_balance_db"
                                                         t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                             </t>
 
@@ -290,11 +308,11 @@
                                             <t t-if="initial_balance &lt; 0">
                                                 <t t-set="initial_balance_debit"
                                                    t-value="initial_balance_debit + (-1 *initial_balance)"/>
-                                                <strong t-esc="-1 * initial_balance"
+                                                <strong t-esc="initial_balance_cr"
                                                         t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                             </t>
                                             <t t-else="">
-                                                <strong t-esc="zero"
+                                                <strong t-esc="initial_balance_cr"
                                                         t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                             </t>
 
@@ -326,11 +344,11 @@
                                             <t t-if="ending_balance &gt; 0">
                                                 <t t-set="ending_balance_debit"
                                                    t-value="ending_balance_debit + ending_balance"/>
-                                                <strong t-esc="ending_balance"
+                                                <strong t-esc="ending_balance_db"
                                                         t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                             </t>
                                             <t t-else="">
-                                                <strong t-esc="zero"
+                                                <strong t-esc="ending_balance_db"
                                                         t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                             </t>
 
@@ -339,11 +357,11 @@
                                             <t t-if="ending_balance &lt; 0">
                                                 <t t-set="ending_balance_credit"
                                                    t-value="ending_balance_credit +(-1 * ending_balance)"/>
-                                                <strong t-esc="-1 * ending_balance"
+                                                <strong t-esc="ending_balance_cr"
                                                         t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                             </t>
                                             <t t-else="">
-                                                <strong t-esc="zero"
+                                                <strong t-esc="ending_balance_cr"
                                                         t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                             </t>
 
@@ -469,20 +487,18 @@
                                             <t t-esc="Subtotal[line]['name']"/>
                                         </span>
                                     </td>
-                                    <!--                                    <td class="text-right">-->
-                                    <!--                                        <span t-esc="Subtotal[line]['initial_debit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>-->
-                                    <!--                                    </td>-->
-                                    <!--                                    <td class="text-right">-->
-                                    <!--                                        <span t-esc="Subtotal[line]['initial_credit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>-->
-                                    <!--                                    </td>-->
                                     <td class="text-right">
-                                        <span t-esc="initial_balance_debit"
-                                              t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        <span t-esc="Subtotal[line]['initial_debit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
                                     </td>
                                     <td class="text-right">
-                                        <span t-esc="initial_balance_credit"
-                                              t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        <span t-esc="Subtotal[line]['initial_credit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
                                     </td>
+                                   <!-- <td class="text-right">
+                                        <span t-esc="initial_balance_db" t-options="{'widget': 'Float', 'display_currency': res_company.currency_id}"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="initial_balance_cr" t-options="{'widget': 'Float', 'display_currency': res_company.currency_id}"/>
+                                    </td>-->
                                     <td class="text-right">
                                         <span t-esc="Subtotal[line]['debit']"
                                               t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
@@ -495,20 +511,20 @@
                                         <span t-esc="Subtotal[line]['balance']"
                                               t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
                                     </td>
-                                    <!--                                    <td class="text-right">-->
-                                    <!--                                        <span t-esc="Subtotal[line]['ending_debit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>-->
-                                    <!--                                    </td>-->
-                                    <!--                                    <td class="text-right">-->
-                                    <!--                                        <span t-esc="Subtotal[line]['ending_credit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>-->
-                                    <!--                                    </td>-->
                                     <td class="text-right">
+                                        <span t-esc="Subtotal[line]['ending_debit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="Subtotal[line]['ending_credit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                    </td>
+                                    <!--<td class="text-right">
                                         <span t-esc="ending_balance_debit"
                                               t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
                                     </td>
                                     <td class="text-right">
                                         <span t-esc="ending_balance_credit"
                                               t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
-                                    </td>
+                                    </td>-->
                                     <td></td>
                                 </tr>
                             </t>
