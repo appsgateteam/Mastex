@@ -31,6 +31,7 @@ class ReportPartnerLedger(models.AbstractModel):
     _description = 'Partner Ledger Report'
 
     def _lines(self, data, partner):
+        print('---enetered lines---')
         full_account = []
         currency = self.env['res.currency']
         query_get_data = self.env['account.move.line'].with_context(
@@ -78,7 +79,7 @@ class ReportPartnerLedger(models.AbstractModel):
         return full_account
 
     def _sum_partner(self, data, partner, field,positive):
-
+        print('---enetered sum---')
         if field not in ['debit', 'credit', 'debit - credit', 'amount_currency',
                          'COALESCE(account_move_line.debit) - COALESCE(account_move_line.credit)']:
             return
@@ -111,13 +112,12 @@ class ReportPartnerLedger(models.AbstractModel):
             return 0
 
     def _get_initial_balance(self, data, partner, field,positive):
-
         if field not in ['debit', 'credit', 'debit - credit', 'amount_currency',
                          'COALESCE(account_move_line.debit) - COALESCE(account_move_line.credit)']:
             return
 
         date_from = data['form'].get('date_from')
-        result = 0
+        result = 0.0
         if date_from:
             move_lines = self.env['account.move.line'].search(
                 [('partner_id', '=', partner.id), ('date', '<', date_from)])
@@ -133,6 +133,7 @@ class ReportPartnerLedger(models.AbstractModel):
             return 0
 
     def _get_partner_currency(self, data, partner):
+        print('---enetered partber cure---')
         currency = self.env['res.currency']
 
         query_get_data = self.env['account.move.line'].with_context(
