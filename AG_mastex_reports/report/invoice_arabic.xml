@@ -219,7 +219,7 @@
                                         <tr style="border-bottom: none;border-top: 1px solid black;border-right: none;border-left: none;">
                                             <td class="text-nowrap" style="border-bottom: none;border-right: none;border-left: none;font-size:18px; font-family: ARIAL; color:black;">Total Due/الاجمالي المطلوب</td>
                                             <td class="text-right" style=";border-right: none;border-left: none;border-bottom : double black;">
-                                                 <span style="font-size:18px; font-family: ARIAL;color:black;font-weight: bold;" t-field="o.amount_residual"/> 
+                                                 <span style="font-size:18px; font-family: ARIAL;color:black;font-weight: bold;" t-field="o.amount_total"/>
                                             </td>
                                         </tr>
                                         
