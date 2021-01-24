@@ -28,34 +28,36 @@ class PartnerBalReport(models.AbstractModel):
         #         }
         #         array.append(vals)
         
-        d_from = str(start_date)
-        to = str(end_date)
-        # raise UserError(d_from)
+        # d_from = '%s' %(start_date)
+        # to = '%s' %(end_date)
+        # raise UserError(to)
         self.env.cr.execute("""select 
-                        init.partner_id as partner_id,
-                        sum(init.debit) as init_dr,
-                        sum(init.credit) as init_cr,
-                        sum(init.balance) as init_bal,
-                        --trn.partner_id as partner_id,
-                        sum(trn.debit) as trn_dr,
-                        sum(trn.credit) as trn_cr,
-                        sum(trn.balance) as trn_bal,
-                    (sum(init.debit)+sum(trn.debit))Ending_dr,
-                    (sum(init.credit)+sum(trn.credit))Ending_cr,
-                    (sum(init.balance)+sum(trn.balance))Ending_bal
-                    from 	account_move_line init, 
-                        account_move_line trn
-                    where init.account_internal_type in ('receivable','payable')
-                        and init.parent_state='posted' 
-                        and init.date < to_date('%s','yyyy-mm-dd')
-                        --and init.partner_id=291
-                        and trn.account_internal_type in ('receivable','payable')
-                        and trn.parent_state='posted' 
-                        and trn.date between to_date('%s','yyyy-mm-dd') and to_date('%s','yyyy-mm-dd')
-                        --and trn.partner_id=291
-                    group by init.partner_id"""% (d_from,d_from,to))
+                            init.partner_id as partner_id,
+                            sum(init.debit) as init_dr,
+                            sum(init.credit) as init_cr,
+                            sum(init.balance) as init_bal,
+                            sum(trn.debit) as trn_dr,
+                            sum(trn.credit) as trn_cr,
+                            sum(trn.balance) as trn_bal,
+                        (sum(init.debit)+sum(trn.debit))Ending_dr,
+                        (sum(init.credit)+sum(trn.credit))Ending_cr,
+                        (sum(init.balance)+sum(trn.balance))Ending_bal
+                        from 	account_move_line init, 
+                            account_move_line trn
+                        where init.account_internal_type in ('receivable','payable')
+                            and init.parent_state='posted' 
+                            and init.date < to_date('%s','yyyy-mm-dd')
+                            and trn.account_internal_type in ('receivable','payable')
+                            and trn.parent_state='posted' 
+                            and trn.date between to_date('%s','yyyy-mm-dd') and to_date('%s','yyyy-mm-dd')
+                        group by init.partner_id"""%(start_date,start_date,end_date))
         # querys = self.env.cr.execute(query,)
         result = self.env.cr.dictfetchall()
+
+        # if data['form']['partner']:
+        #     raise UserError("tesst")
+        # else:
+        raise UserError(result)
         
         if data['form']['partner']:
             for res in result:
