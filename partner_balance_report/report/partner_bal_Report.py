@@ -70,9 +70,9 @@ class PartnerBalReport(models.AbstractModel):
                             'trn_dr':res['trn_dr'],
                             'trn_cr':res['trn_cr'],
                             'trn_bal':res['trn_bal'],
-                            'Ending_dr':res['Ending_dr'],
-                            'Ending_cr':res['Ending_cr'],
-                            'Ending_bal':res['Ending_bal'],
+                            'Ending_dr':res['init_dr'] + res['trn_dr'],
+                            'Ending_cr':res['init_cr'] + res['trn_cr'],
+                            'Ending_bal':res['init_bal'] + res['trn_bal'],
                         }
                         array3.append(vals)
         else:
@@ -86,9 +86,9 @@ class PartnerBalReport(models.AbstractModel):
                     'trn_dr':res['trn_dr'],
                     'trn_cr':res['trn_cr'],
                     'trn_bal':res['trn_bal'],
-                    'Ending_dr':res['Ending_dr'],
-                    'Ending_cr':res['Ending_cr'],
-                    'Ending_bal':res['Ending_bal'],
+                    'Ending_dr':res['init_dr'] + res['trn_dr'],
+                    'Ending_cr':res['init_cr'] + res['trn_cr'],
+                    'Ending_bal':res['init_bal'] + res['trn_bal'],
                 }
                 array3.append(vals)
 
