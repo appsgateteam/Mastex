@@ -57,11 +57,12 @@ class PartnerBalReport(models.AbstractModel):
         # if data['form']['partner']:
         #     raise UserError("tesst")
         # else:
-        raise UserError(result)
+        # raise UserError(result)
         
         if data['form']['partner']:
             for res in result:
                 for rec in data['form']['partner']:
+                    raise UserError("%s %s"%(res['partner_id'],rec['id']))
                     if rec['id'] == res['partner_id']:
                         vals = {
                             'init_dr':res['init_dr'],
