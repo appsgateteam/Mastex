@@ -39,9 +39,9 @@ class PartnerBalReport(models.AbstractModel):
                             sum(trn.debit) as trn_dr,
                             sum(trn.credit) as trn_cr,
                             sum(trn.balance) as trn_bal,
-                        (sum(init.debit)+sum(trn.debit))Ending_dr,
-                        (sum(init.credit)+sum(trn.credit))Ending_cr,
-                        (sum(init.balance)+sum(trn.balance))Ending_bal
+                        (sum(init.debit)+sum(trn.debit)) as Ending_dr,
+                        (sum(init.credit)+sum(trn.credit)) as Ending_cr,
+                        (sum(init.balance)+sum(trn.balance)) as Ending_bal
                         from 	account_move_line init, 
                             account_move_line trn
                         where init.account_internal_type in ('receivable','payable')
