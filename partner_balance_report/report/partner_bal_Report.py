@@ -30,27 +30,34 @@ class PartnerBalReport(models.AbstractModel):
         
         d_from = str(start_date)
         to = str(end_date)
-        self.env.cr.execute("""select sum(init.debit) as init_dr,
-                            sum(init.credit) as init_cr,
-                            sum(init.balance) as init_bal,
-                            --
-                            sum(trn.debit) as trn_dr,
-                            sum(trn.credit) as trn_cr,
-                            sum(trn.balance) as trn_bal,
-                            init.partner_id as partner_id
-                        from account_move_line init, account_move_line trn
-                        where init.account_internal_type in ('receivable','payable')
-                            and init.parent_state='posted' 
-                            and CAST(init.date as date) < '%s'
-                            and init.partner_id=trn.partner_id
-                            and trn.account_internal_type in ('receivable','payable')
-                            and trn.parent_state='posted' 
-                            and (CAST(trn.date as date) >= '%s' and CAST(trn.date as date) <= '%s')
-                        group by init.partner_id"""% (d_from,d_from,to))
+        # raise UserError(d_from)
+        self.env.cr.execute("""select 
+                        init.partner_id as partner_id,
+                        sum(init.debit) as init_dr,
+                        sum(init.credit) as init_cr,
+                        sum(init.balance) as init_bal,
+                        --trn.partner_id as partner_id,
+                        sum(trn.debit) as trn_dr,
+                        sum(trn.credit) as trn_cr,
+                        sum(trn.balance) as trn_bal,
+                    (sum(init.debit)+sum(trn.debit))Ending_dr,
+                    (sum(init.credit)+sum(trn.credit))Ending_cr,
+                    (sum(init.balance)+sum(trn.balance))Ending_bal
+                    from 	account_move_line init, 
+                        account_move_line trn
+                    where init.account_internal_type in ('receivable','payable')
+                        and init.parent_state='posted' 
+                        and init.date < to_date('%s','yyyy-mm-dd')
+                        --and init.partner_id=291
+                        and trn.account_internal_type in ('receivable','payable')
+                        and trn.parent_state='posted' 
+                        and trn.date between to_date('%s','yyyy-mm-dd') and to_date('%s','yyyy-mm-dd')
+                        --and trn.partner_id=291
+                    group by init.partner_id"""% (d_from,d_from,to))
         # querys = self.env.cr.execute(query,)
         result = self.env.cr.dictfetchall()
         
-        if  data['form']['partner']:
+        if data['form']['partner']:
             for res in result:
                 for rec in data['form']['partner']:
                     if rec['id'] == res['partner_id']:
@@ -61,6 +68,9 @@ class PartnerBalReport(models.AbstractModel):
                             'trn_dr':res['trn_dr'],
                             'trn_cr':res['trn_cr'],
                             'trn_bal':res['trn_bal'],
+                            'Ending_dr':res['Ending_dr'],
+                            'Ending_cr':res['Ending_cr'],
+                            'Ending_bal':res['Ending_bal'],
                         }
                         array3.append(vals)
         else:
@@ -74,6 +84,9 @@ class PartnerBalReport(models.AbstractModel):
                     'trn_dr':res['trn_dr'],
                     'trn_cr':res['trn_cr'],
                     'trn_bal':res['trn_bal'],
+                    'Ending_dr':res['Ending_dr'],
+                    'Ending_cr':res['Ending_cr'],
+                    'Ending_bal':res['Ending_bal'],
                 }
                 array3.append(vals)
 
