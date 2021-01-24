@@ -64,7 +64,9 @@ class PartnerBalReport(models.AbstractModel):
             for rec in data['form']['partner']:
                 for res in result:
                     # raise UserError("%s %s"%(res['partner_id'],rec['id']))
-                    if rec['id'] == res['partner_id']:
+                    p_id = rec['id']
+                    pa_id = res['partner_id']
+                    if p_id == pa_id:
                         vals = {
                             'init_dr':res['init_dr'],
                             'init_cr':res['init_cr'],
