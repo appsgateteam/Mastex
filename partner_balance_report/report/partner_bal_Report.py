@@ -33,6 +33,7 @@ class PartnerBalReport(models.AbstractModel):
         # raise UserError(to)
         self.env.cr.execute("""select 
                             init.partner_id as partner_id,
+                            trn.partner_id as partner_ids,
                             sum(init.debit) as init_dr,
                             sum(init.credit) as init_cr,
                             sum(init.balance) as init_bal,
@@ -50,7 +51,7 @@ class PartnerBalReport(models.AbstractModel):
                             and trn.account_internal_type in ('receivable','payable')
                             and trn.parent_state='posted' 
                             and trn.date between to_date('%s','yyyy-mm-dd') and to_date('%s','yyyy-mm-dd')
-                        group by init.partner_id"""%(start_date,start_date,end_date))
+                        group by init.partner_id,trn.partner_id"""%(start_date,start_date,end_date))
         # querys = self.env.cr.execute(query,)
         result = self.env.cr.dictfetchall()
 
@@ -66,7 +67,8 @@ class PartnerBalReport(models.AbstractModel):
                     # raise UserError("%s %s"%(res['partner_id'],rec['id']))
                     p_id = rec['id']
                     pa_id = res['partner_id']
-                    if p_id == pa_id:
+                    par_id = res['partner_ids']
+                    if p_id == pa_id or p_id == par_id :
                         vals = {
                             'init_dr':res['init_dr'],
                             'init_cr':res['init_cr'],
