@@ -32,7 +32,7 @@
                             
                             <thead>
                               <tr>
-                                <th class="text-center" colspan="1" style="width: 10%;color:black;" ><span>Partner name</span>  </th>
+                                <th class="text-center" colspan="1" style="width: 10%;color:black;" ><span>Partner Name</span>  </th>
                                 <th class="text-center" colspan="4" style="width: 30%;color:black;" ><span>Initial balanace</span>  </th>
                                 <th class="text-center" colspan="4" style="width: 30%;color:black;" > <span>Transaction</span> </th>
                                 <th class="text-center" colspan="4" style="width: 30%;color:black;" ><span>Ending Balance</span>  </th>

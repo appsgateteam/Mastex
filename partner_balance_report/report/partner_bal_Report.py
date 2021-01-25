@@ -62,16 +62,12 @@ class PartnerBalReport(models.AbstractModel):
         if data['form']['partner']:
             
             for rec in data['form']['partner']:
-                partn = self.env['res.partner'].browse(rec['id'])
                 for res in result:
                     # raise UserError("%s %s"%(res['partner_id'],rec['id']))
-                    part = self.env['res.partner'].browse(res['partner_id'])
-                    
-                    # raise UserError("%s %s"%(part.id,part.name))
-                    if partn.id == part.id:
+                    if rec['id'] == res['partner_id']:
                         vals = {
                             'init_dr':res['init_dr'],
-                            'name':part.name,
+                            'name':self.env['res.partner'].browse(res['partner_id']).name,
                             'init_cr':res['init_cr'],
                             'init_bal':res['init_bal'],
                             'trn_dr':res['trn_dr'],
@@ -85,10 +81,10 @@ class PartnerBalReport(models.AbstractModel):
         else:
             for res in result:
                 # for rec in data['form']['partner']:
-                part = self.env['res.partner'].browse(res['partner_id'])
+            
                 vals = {
                     'init_dr':res['init_dr'],
-                    'name':part.name,
+                    'name':self.env['res.partner'].browse(res['partner_id']).name,
                     'init_cr':res['init_cr'],
                     'init_bal':res['init_bal'],
                     'trn_dr':res['trn_dr'],
