@@ -48,7 +48,7 @@ class PartnerBalReport(models.AbstractModel):
                             account_move_line trn
                         where init.account_internal_type in ('receivable','payable')
                             and init.parent_state='posted' 
-                            and init.date < to_date('%s','yyyy-mm-dd')
+                            and init.date > to_date('%s','yyyy-mm-dd')
                             and trn.account_internal_type in ('receivable','payable')
                             and trn.parent_state='posted' 
                             and trn.date between to_date('%s','yyyy-mm-dd') and to_date('%s','yyyy-mm-dd')
