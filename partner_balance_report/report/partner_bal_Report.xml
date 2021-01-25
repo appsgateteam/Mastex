@@ -32,24 +32,26 @@
                             
                             <thead>
                               <tr>
-                                <th class="text-center" colspan="4" style="width: 33.3%;color:black;" ><span>Initial balanace</span>  </th>
-                                <th class="text-center" colspan="4" style="width: 33.3%;color:black;" > <span>Transaction</span> </th>
-                                <th class="text-center" colspan="4" style="width: 33.3%;color:black;" ><span>Ending Balance</span>  </th>
+                                <th class="text-center" colspan="1" style="width: 10%;color:black;" ><span>Partner name</span>  </th>
+                                <th class="text-center" colspan="4" style="width: 30%;color:black;" ><span>Initial balanace</span>  </th>
+                                <th class="text-center" colspan="4" style="width: 30%;color:black;" > <span>Transaction</span> </th>
+                                <th class="text-center" colspan="4" style="width: 30%;color:black;" ><span>Ending Balance</span>  </th>
                                 
                               </tr>
                               <tr>
-                                <th class="text-center"  style="width: 8.3%;color:black;" ><span>Debit</span>  </th>
-                                <th class="text-center"  style="width: 8.3%;color:black;" > <span>Credit</span> </th>
-                                <th class="text-center"  style="width: 8.3%;color:black;" ><span>Balance</span>  </th>
-                                <th class="text-center"  style="width: 8.3%;color:black;" ><span>Foreign Balance</span>  </th>
-                                <th class="text-center"  style="width: 8.3%;color:black;" ><span>Debit</span>  </th>
-                                <th class="text-center"  style="width: 8.3%;color:black;" ><span>Credit</span>  </th>
-                                <th class="text-center"  style="width: 8.3%;color:black;" ><span>Balance</span>  </th>
-                                <th class="text-center"  style="width: 8.3%;color:black;" ><span>Foreign Balance</span>  </th>
-                                <th class="text-center"  style="width: 8.3%;color:black;" ><span>Debit</span>  </th>
-                                <th class="text-center"  style="width: 8.3%;color:black;" ><span>Credit</span>  </th>
-                                <th class="text-center"  style="width: 8.3%;color:black;" ><span>Balance</span>  </th>
-                                <th class="text-center"  style="width: 8.3%;color:black;" ><span>Foreign Balance</span>  </th>
+                                <th class="text-center"  style="width: 10%;color:black;" ></th>
+                                <th class="text-center"  style="width: 7.5%;color:black;" ><span>Debit</span>  </th>
+                                <th class="text-center"  style="width: 7.5%;color:black;" > <span>Credit</span> </th>
+                                <th class="text-center"  style="width: 7.5%;color:black;" ><span>Balance</span>  </th>
+                                <th class="text-center"  style="width: 7.5%;color:black;" ><span>Foreign Balance</span>  </th>
+                                <th class="text-center"  style="width: 7.5%;color:black;" ><span>Debit</span>  </th>
+                                <th class="text-center"  style="width: 7.5%;color:black;" ><span>Credit</span>  </th>
+                                <th class="text-center"  style="width: 7.5%;color:black;" ><span>Balance</span>  </th>
+                                <th class="text-center"  style="width: 7.5%;color:black;" ><span>Foreign Balance</span>  </th>
+                                <th class="text-center"  style="width: 7.5%;color:black;" ><span>Debit</span>  </th>
+                                <th class="text-center"  style="width: 7.5%;color:black;" ><span>Credit</span>  </th>
+                                <th class="text-center"  style="width: 7.5%;color:black;" ><span>Balance</span>  </th>
+                                <th class="text-center"  style="width: 7.5%;color:black;" ><span>Foreign Balance</span>  </th>
                                 
                               </tr>
                                 
@@ -57,18 +59,19 @@
                             <tbody>
                                 <t t-foreach="docs" t-as="doc">
                                   <tr>
-                                    <th class="text-center"  style="width: 8.3%;color:black;" ><span t-esc="doc['init_dr']" /> </th>
-                                    <th class="text-center"  style="width: 8.3%;color:black;" > <span t-esc="doc['init_cr']" />  </th>
-                                    <th class="text-center"  style="width: 8.3%;color:black;" ><span t-esc="doc['init_bal']" />   </th>
-                                    <th class="text-center"  style="width: 8.3%;color:black;" ><span t-esc="doc['init_bal']" />   </th>
-                                    <th class="text-center"  style="width: 8.3%;color:black;" ><span t-esc="doc['trn_dr']" />  </th>
-                                    <th class="text-center"  style="width: 8.3%;color:black;" ><span t-esc="doc['trn_cr']" />   </th>
-                                    <th class="text-center"  style="width: 8.3%;color:black;" ><span t-esc="doc['trn_bal']" />  </th>
-                                    <th class="text-center"  style="width: 8.3%;color:black;" ><span t-esc="doc['trn_bal']" />   </th>
-                                    <th class="text-center"  style="width: 8.3%;color:black;" ><span t-esc="doc['Ending_dr']" />   </th>
-                                    <th class="text-center"  style="width: 8.3%;color:black;" ><span t-esc="doc['Ending_cr']" />   </th>
-                                    <th class="text-center"  style="width: 8.3%;color:black;" ><span t-esc="doc['Ending_bal']" />   </th>
-                                    <th class="text-center"  style="width: 8.3%;color:black;" ><span t-esc="doc['Ending_bal']" />   </th>
+                                    <th class="text-center"  style="width: 10%;color:black;" ><span t-esc="doc['name']" /> </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['init_dr']" /> </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" > <span t-esc="doc['init_cr']" />  </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['init_bal']" />   </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['init_bal']" />   </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['trn_dr']" />  </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['trn_cr']" />   </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['trn_bal']" />  </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['trn_bal']" />   </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['Ending_dr']" />   </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['Ending_cr']" />   </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['Ending_bal']" />   </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['Ending_bal']" />   </th>
                                     
                                 </tr>
                                 </t>
