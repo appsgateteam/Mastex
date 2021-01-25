@@ -33,6 +33,8 @@ class PartnerBalReport(models.AbstractModel):
         # raise UserError(to)
         self.env.cr.execute("""select 
                             init.partner_id as partner_id,
+                            init.date as init_date,
+                            trn.date as tran_date,
                             sum(init.debit) as init_dr,
                             sum(init.credit) as init_cr,
                             sum(init.balance) as init_bal,
@@ -48,11 +50,11 @@ class PartnerBalReport(models.AbstractModel):
                             account_move_line trn
                         where init.account_internal_type in ('receivable','payable')
                             and init.parent_state='posted' 
-                            and init.date > to_date('%s','yyyy-mm-dd')
+                            
                             and trn.account_internal_type in ('receivable','payable')
                             and trn.parent_state='posted' 
-                            and trn.date between to_date('%s','yyyy-mm-dd') and to_date('%s','yyyy-mm-dd')
-                        group by init.partner_id"""%(start_date,start_date,end_date))
+                            
+                        group by init.partner_id,init.date,trn.date""")
         # querys = self.env.cr.execute(query,)
         result = self.env.cr.dictfetchall()
 
@@ -66,23 +68,24 @@ class PartnerBalReport(models.AbstractModel):
             for rec in data['form']['partner']:
                 for res in result:
                     # raise UserError("%s %s"%(res['partner_id'],rec['id']))
-                    if rec['id'] == res['partner_id']:
-                        vals = {
-                            'init_dr':res['init_dr'],
-                            'name':self.env['res.partner'].browse(res['partner_id']).name,
-                            'init_cr':res['init_cr'],
-                            'init_bal':res['init_bal'],
-                            'trn_dr':res['trn_dr'],
-                            'trn_cr':res['trn_cr'],
-                            'trn_bal':res['trn_bal'],
-                            'init_for':res['init_for'],
-                            'trn_for':res['trn_for'],
-                            'ending_for':res['init_for'] + res['trn_for'],
-                            'Ending_dr':res['init_dr'] + res['trn_dr'],
-                            'Ending_cr':res['init_cr'] + res['trn_cr'],
-                            'Ending_bal':res['init_bal'] + res['trn_bal'],
-                        }
-                        array3.append(vals)
+                    if res['init_date'] < start_date or (res['tran_date'] >= start_date and res['tran_date'] <= end_date):
+                        if rec['id'] == res['partner_id']:
+                            vals = {
+                                'init_dr':res['init_dr'],
+                                'name':self.env['res.partner'].browse(res['partner_id']).name,
+                                'init_cr':res['init_cr'],
+                                'init_bal':res['init_bal'],
+                                'trn_dr':res['trn_dr'],
+                                'trn_cr':res['trn_cr'],
+                                'trn_bal':res['trn_bal'],
+                                'init_for':res['init_for'],
+                                'trn_for':res['trn_for'],
+                                'ending_for':res['init_for'] + res['trn_for'],
+                                'Ending_dr':res['init_dr'] + res['trn_dr'],
+                                'Ending_cr':res['init_cr'] + res['trn_cr'],
+                                'Ending_bal':res['init_bal'] + res['trn_bal'],
+                            }
+                            array3.append(vals)
         else:
             for res in result:
                 # for rec in data['form']['partner']:
