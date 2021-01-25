@@ -60,18 +60,18 @@
                                 <t t-foreach="docs" t-as="doc">
                                   <tr>
                                     <th class="text-center"  style="width: 10%;color:black;" ><span t-esc="doc['name']" /> </th>
-                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['init_dr']" /> </th>
-                                    <th class="text-center"  style="width: 7.5%;color:black;" > <span t-esc="doc['init_cr']" />  </th>
-                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['init_bal']" />   </th>
-                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['init_for']" />   </th>
-                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['trn_dr']" />  </th>
-                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['trn_cr']" />   </th>
-                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['trn_bal']" />  </th>
-                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['trn_for']" />   </th>
-                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['Ending_dr']" />   </th>
-                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['Ending_cr']" />   </th>
-                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['Ending_bal']" />   </th>
-                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['ending_for']" />   </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['init_dr']" t-options="{&quot;widget&quot;:&quot;float&quot;,&quot;precision&quot;:2}"/> </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" > <span t-esc="doc['init_cr']" t-options="{&quot;widget&quot;:&quot;float&quot;,&quot;precision&quot;:2}"/>  </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['init_bal']" t-options="{&quot;widget&quot;:&quot;float&quot;,&quot;precision&quot;:2}"/>   </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['init_for']" t-options="{&quot;widget&quot;:&quot;float&quot;,&quot;precision&quot;:2}"/>   </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['trn_dr']" t-options="{&quot;widget&quot;:&quot;float&quot;,&quot;precision&quot;:2}"/>  </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['trn_cr']" t-options="{&quot;widget&quot;:&quot;float&quot;,&quot;precision&quot;:2}"/>   </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['trn_bal']" t-options="{&quot;widget&quot;:&quot;float&quot;,&quot;precision&quot;:2}"/>  </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['trn_for']" t-options="{&quot;widget&quot;:&quot;float&quot;,&quot;precision&quot;:2}"/>   </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['Ending_dr']" t-options="{&quot;widget&quot;:&quot;float&quot;,&quot;precision&quot;:2}"/>   </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['Ending_cr']" t-options="{&quot;widget&quot;:&quot;float&quot;,&quot;precision&quot;:2}"/>   </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['Ending_bal']" t-options="{&quot;widget&quot;:&quot;float&quot;,&quot;precision&quot;:2}"/>   </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['ending_for']" t-options="{&quot;widget&quot;:&quot;float&quot;,&quot;precision&quot;:2}"/>   </th>
                                     
                                 </tr>
                                 </t>
