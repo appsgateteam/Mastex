@@ -57,7 +57,7 @@ class PartnerBalReport(models.AbstractModel):
         # if data['form']['partner']:
         #     raise UserError("tesst")
         # else:
-        raise UserError(result)
+        # raise UserError(result)
         
         if data['form']['partner']:
             
@@ -67,6 +67,7 @@ class PartnerBalReport(models.AbstractModel):
                     if rec['id'] == res['partner_id']:
                         vals = {
                             'init_dr':res['init_dr'],
+                            'name':self.env['res.partner'].browse(res['partner_id']).name,
                             'init_cr':res['init_cr'],
                             'init_bal':res['init_bal'],
                             'trn_dr':res['trn_dr'],
@@ -83,6 +84,7 @@ class PartnerBalReport(models.AbstractModel):
             
                 vals = {
                     'init_dr':res['init_dr'],
+                    'name':self.env['res.partner'].browse(res['partner_id']).name,
                     'init_cr':res['init_cr'],
                     'init_bal':res['init_bal'],
                     'trn_dr':res['trn_dr'],
