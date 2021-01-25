@@ -36,9 +36,11 @@ class PartnerBalReport(models.AbstractModel):
                             sum(init.debit) as init_dr,
                             sum(init.credit) as init_cr,
                             sum(init.balance) as init_bal,
+                            sum(init.amount_currency) as init_for,
                             sum(trn.debit) as trn_dr,
                             sum(trn.credit) as trn_cr,
                             sum(trn.balance) as trn_bal,
+                            sum(trn.amount_currency) as trn_for,
                         (sum(init.debit)+sum(trn.debit)) as Ending_dr,
                         (sum(init.credit)+sum(trn.credit)) as Ending_cr,
                         (sum(init.balance)+sum(trn.balance)) as Ending_bal
@@ -46,7 +48,7 @@ class PartnerBalReport(models.AbstractModel):
                             account_move_line trn
                         where init.account_internal_type in ('receivable','payable')
                             and init.parent_state='posted' 
-                            and init.date < to_date('%s','yyyy-mm-dd')
+                            and init.date > to_date('%s','yyyy-mm-dd')
                             and trn.account_internal_type in ('receivable','payable')
                             and trn.parent_state='posted' 
                             and trn.date between to_date('%s','yyyy-mm-dd') and to_date('%s','yyyy-mm-dd')
@@ -73,6 +75,9 @@ class PartnerBalReport(models.AbstractModel):
                             'trn_dr':res['trn_dr'],
                             'trn_cr':res['trn_cr'],
                             'trn_bal':res['trn_bal'],
+                            'init_for':res['init_for'],
+                            'trn_for':res['trn_for'],
+                            'ending_for':res['init_for'] + res['trn_for'],
                             'Ending_dr':res['init_dr'] + res['trn_dr'],
                             'Ending_cr':res['init_cr'] + res['trn_cr'],
                             'Ending_bal':res['init_bal'] + res['trn_bal'],
@@ -90,6 +95,9 @@ class PartnerBalReport(models.AbstractModel):
                     'trn_dr':res['trn_dr'],
                     'trn_cr':res['trn_cr'],
                     'trn_bal':res['trn_bal'],
+                    'init_for':res['init_for'],
+                    'trn_for':res['trn_for'],
+                    'ending_for':res['init_for'] + res['trn_for'],
                     'Ending_dr':res['init_dr'] + res['trn_dr'],
                     'Ending_cr':res['init_cr'] + res['trn_cr'],
                     'Ending_bal':res['init_bal'] + res['trn_bal'],

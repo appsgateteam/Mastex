@@ -63,15 +63,15 @@
                                     <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['init_dr']" /> </th>
                                     <th class="text-center"  style="width: 7.5%;color:black;" > <span t-esc="doc['init_cr']" />  </th>
                                     <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['init_bal']" />   </th>
-                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['init_bal']" />   </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['init_for']" />   </th>
                                     <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['trn_dr']" />  </th>
                                     <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['trn_cr']" />   </th>
                                     <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['trn_bal']" />  </th>
-                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['trn_bal']" />   </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['trn_for']" />   </th>
                                     <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['Ending_dr']" />   </th>
                                     <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['Ending_cr']" />   </th>
                                     <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['Ending_bal']" />   </th>
-                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['Ending_bal']" />   </th>
+                                    <th class="text-center"  style="width: 7.5%;color:black;" ><span t-esc="doc['ending_for']" />   </th>
                                     
                                 </tr>
                                 </t>
