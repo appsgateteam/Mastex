@@ -68,7 +68,7 @@ class PartnerBalReport(models.AbstractModel):
             for rec in data['form']['partner']:
                 for res in result:
                     # raise UserError("%s %s"%(res['partner_id'],rec['id']))
-                    if res['init_date'] < start_date or (res['tran_date'] >= start_date and res['tran_date'] <= end_date):
+                    if str(res['init_date']) < str(start_date) or (str(res['tran_date']) >= str(start_date) and str(res['tran_date']) <= str(end_date)):
                         if rec['id'] == res['partner_id']:
                             vals = {
                                 'init_dr':res['init_dr'],
@@ -89,23 +89,23 @@ class PartnerBalReport(models.AbstractModel):
         else:
             for res in result:
                 # for rec in data['form']['partner']:
-            
-                vals = {
-                    'init_dr':res['init_dr'],
-                    'name':self.env['res.partner'].browse(res['partner_id']).name,
-                    'init_cr':res['init_cr'],
-                    'init_bal':res['init_bal'],
-                    'trn_dr':res['trn_dr'],
-                    'trn_cr':res['trn_cr'],
-                    'trn_bal':res['trn_bal'],
-                    'init_for':res['init_for'],
-                    'trn_for':res['trn_for'],
-                    'ending_for':res['init_for'] + res['trn_for'],
-                    'Ending_dr':res['init_dr'] + res['trn_dr'],
-                    'Ending_cr':res['init_cr'] + res['trn_cr'],
-                    'Ending_bal':res['init_bal'] + res['trn_bal'],
-                }
-                array3.append(vals)
+                if str(res['init_date']) < str(start_date) or (str(res['tran_date']) >= str(start_date) and str(res['tran_date']) <= str(end_date)):
+                    vals = {
+                        'init_dr':res['init_dr'],
+                        'name':self.env['res.partner'].browse(res['partner_id']).name,
+                        'init_cr':res['init_cr'],
+                        'init_bal':res['init_bal'],
+                        'trn_dr':res['trn_dr'],
+                        'trn_cr':res['trn_cr'],
+                        'trn_bal':res['trn_bal'],
+                        'init_for':res['init_for'],
+                        'trn_for':res['trn_for'],
+                        'ending_for':res['init_for'] + res['trn_for'],
+                        'Ending_dr':res['init_dr'] + res['trn_dr'],
+                        'Ending_cr':res['init_cr'] + res['trn_cr'],
+                        'Ending_bal':res['init_bal'] + res['trn_bal'],
+                    }
+                    array3.append(vals)
 
                     
           
