@@ -68,7 +68,7 @@ class PartnerBalReport(models.AbstractModel):
             for rec in data['form']['partner']:
                 for res in result:
                     # raise UserError("%s %s"%(res['partner_id'],rec['id']))
-                    if str(res['init_date']) < str(start_date) and (str(res['tran_date']) >= str(start_date) and str(res['tran_date']) <= str(end_date)):
+                    if str(res['init_date']) > str(start_date) and (str(res['tran_date']) >= str(start_date) and str(res['tran_date']) <= str(end_date)):
                         if rec['id'] == res['partner_id']:
                             vals = {
                                 'init_dr':res['init_dr'],
@@ -89,7 +89,7 @@ class PartnerBalReport(models.AbstractModel):
         else:
             for res in result:
                 # for rec in data['form']['partner']:
-                if str(res['init_date']) < str(start_date) and (str(res['tran_date']) >= str(start_date) and str(res['tran_date']) <= str(end_date)):
+                if str(res['init_date']) > str(start_date) and (str(res['tran_date']) >= str(start_date) and str(res['tran_date']) <= str(end_date)):
                     vals = {
                         'init_dr':res['init_dr'],
                         'name':self.env['res.partner'].browse(res['partner_id']).name,
