@@ -9,8 +9,13 @@ from odoo.tools.translate import _
 class PartnerBalanceReport(models.TransientModel):
     _name = 'partner.balance.report'
 
-    start_date = fields.Date('Start Date')
-    end_date = fields.Date('End Date')
+    start_date = fields.Date('Start Date',required=True)
+    end_date = fields.Date('End Date',required=True)
+    type = fields.Selection([
+        ('Payables Accounts', 'Payables Accounts'),
+        ('Receivables Accounts', 'Receivables Accounts'),
+        ('Payables and Receivables Accounts', 'Payables and Receivables Accounts'),
+        ], string='Type',required=True, default='both')
     partner_ids = fields.Many2many('res.partner', string='Partners')
 
     
@@ -26,7 +31,7 @@ class PartnerBalanceReport(models.TransientModel):
             'model': self._name,
             'ids': self.ids,
             'form': {
-                'start_date': self.start_date,'end_date': self.end_date, 'partner': pro,
+                'start_date': self.start_date,'end_date': self.end_date,'type': self.type, 'partner': pro,
             },
         }
         # if data['form']['patient_id']:

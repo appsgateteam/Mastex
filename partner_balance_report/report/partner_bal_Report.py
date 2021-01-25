@@ -10,6 +10,7 @@ class PartnerBalReport(models.AbstractModel):
     def _get_report_values(self, docids, data=None):
         start_date = data['form']['start_date']
         end_date = data['form']['end_date']
+        type = data['form']['type']
         partner = data['form']['partner']
         # if data['form']['project']:
         #     appointments = self.env['hospital.appointment'].search([('patient_id', '=', data['form']['patient_id'][0])])
@@ -31,30 +32,81 @@ class PartnerBalReport(models.AbstractModel):
         # d_from = '%s' %(start_date)
         # to = '%s' %(end_date)
         # raise UserError(to)
-        self.env.cr.execute("""select 
-                            init.partner_id as partner_id,
-                            init.date as init_date,
-                            trn.date as tran_date,
-                            sum(init.debit) as init_dr,
-                            sum(init.credit) as init_cr,
-                            sum(init.balance) as init_bal,
-                            sum(init.amount_currency) as init_for,
-                            sum(trn.debit) as trn_dr,
-                            sum(trn.credit) as trn_cr,
-                            sum(trn.balance) as trn_bal,
-                            sum(trn.amount_currency) as trn_for,
-                        (sum(init.debit)+sum(trn.debit)) as Ending_dr,
-                        (sum(init.credit)+sum(trn.credit)) as Ending_cr,
-                        (sum(init.balance)+sum(trn.balance)) as Ending_bal
-                        from 	account_move_line init, 
-                            account_move_line trn
-                        where init.account_internal_type in ('receivable','payable')
-                            and init.parent_state='posted' 
-                            and init.partner_id=trn.partner_id
-                            and trn.account_internal_type in ('receivable','payable')
-                            and trn.parent_state='posted' 
-                            
-                        group by init.partner_id,init.date,trn.date""")
+        if type == 'Payables Accounts':
+            self.env.cr.execute("""select 
+                                init.partner_id as partner_id,
+                                init.date as init_date,
+                                trn.date as tran_date,
+                                sum(init.debit) as init_dr,
+                                sum(init.credit) as init_cr,
+                                sum(init.balance) as init_bal,
+                                sum(init.amount_currency) as init_for,
+                                sum(trn.debit) as trn_dr,
+                                sum(trn.credit) as trn_cr,
+                                sum(trn.balance) as trn_bal,
+                                sum(trn.amount_currency) as trn_for,
+                            (sum(init.debit)+sum(trn.debit)) as Ending_dr,
+                            (sum(init.credit)+sum(trn.credit)) as Ending_cr,
+                            (sum(init.balance)+sum(trn.balance)) as Ending_bal
+                            from 	account_move_line init, 
+                                account_move_line trn
+                            where init.account_internal_type = 'payable'
+                                and init.parent_state='posted' 
+                                and init.partner_id=trn.partner_id
+                                and trn.account_internal_type = 'payable'
+                                and trn.parent_state='posted' 
+                                
+                            group by init.partner_id,init.date,trn.date""")
+        elif type == 'Receivables Accounts':
+            self.env.cr.execute("""select 
+                                init.partner_id as partner_id,
+                                init.date as init_date,
+                                trn.date as tran_date,
+                                sum(init.debit) as init_dr,
+                                sum(init.credit) as init_cr,
+                                sum(init.balance) as init_bal,
+                                sum(init.amount_currency) as init_for,
+                                sum(trn.debit) as trn_dr,
+                                sum(trn.credit) as trn_cr,
+                                sum(trn.balance) as trn_bal,
+                                sum(trn.amount_currency) as trn_for,
+                            (sum(init.debit)+sum(trn.debit)) as Ending_dr,
+                            (sum(init.credit)+sum(trn.credit)) as Ending_cr,
+                            (sum(init.balance)+sum(trn.balance)) as Ending_bal
+                            from 	account_move_line init, 
+                                account_move_line trn
+                            where init.account_internal_type = 'receivable'
+                                and init.parent_state='posted' 
+                                and init.partner_id=trn.partner_id
+                                and trn.account_internal_type = 'receivable'
+                                and trn.parent_state='posted' 
+                                
+                            group by init.partner_id,init.date,trn.date""")
+        else:
+            self.env.cr.execute("""select 
+                                init.partner_id as partner_id,
+                                init.date as init_date,
+                                trn.date as tran_date,
+                                sum(init.debit) as init_dr,
+                                sum(init.credit) as init_cr,
+                                sum(init.balance) as init_bal,
+                                sum(init.amount_currency) as init_for,
+                                sum(trn.debit) as trn_dr,
+                                sum(trn.credit) as trn_cr,
+                                sum(trn.balance) as trn_bal,
+                                sum(trn.amount_currency) as trn_for,
+                            (sum(init.debit)+sum(trn.debit)) as Ending_dr,
+                            (sum(init.credit)+sum(trn.credit)) as Ending_cr,
+                            (sum(init.balance)+sum(trn.balance)) as Ending_bal
+                            from 	account_move_line init, 
+                                account_move_line trn
+                            where init.account_internal_type in ('receivable','payable')
+                                and init.parent_state='posted' 
+                                and init.partner_id=trn.partner_id
+                                and trn.account_internal_type in ('receivable','payable')
+                                and trn.parent_state='posted' 
+                                
+                            group by init.partner_id,init.date,trn.date""")
         # querys = self.env.cr.execute(query,)
         result = self.env.cr.dictfetchall()
 
@@ -114,6 +166,7 @@ class PartnerBalReport(models.AbstractModel):
             'doc_model': data['model'],
             'start_date': start_date,
             'end_date': end_date,
+            'type': type,
             # 'date_end': date_end,
             # 'sales_person': sales_person,
             'docs': array3,

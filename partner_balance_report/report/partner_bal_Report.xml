@@ -14,14 +14,24 @@
                         <td class="text-left" style="border:0;width:20%;padding:0;">
                         <span>Start Date</span>
                         </td>
-                        <td class="text-left" style="border:0;width:30%;padding:0;">
+                        <td class="text-left" style="border:0;width:80%;padding:0;">
                           <span t-esc="start_date"/>
                         </td>
+                      </tr>
+                      <tr style="padding:0;">
                         <td class="text-left" style="border:0;width:20%;padding:0;">
                         <span>End Date</span>
                         </td>
-                        <td class="text-left" style="border:0;background-color:transparent;width:30%;padding:0;">
-                            <span t-esc="end_date"/>
+                        <td class="text-left" style="border:0;width:80%;padding:0;">
+                          <span t-esc="end_date"/>
+                        </td>
+                      </tr>
+                      <tr style="padding:0;">
+                        <td class="text-left" style="border:0;width:20%;padding:0;">
+                        <span>Type</span>
+                        </td>
+                        <td class="text-left" style="border:0;width:80%;padding:0;">
+                          <span t-esc="type"/>
                         </td>
                       </tr>
                       
