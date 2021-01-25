@@ -50,7 +50,7 @@ class PartnerBalReport(models.AbstractModel):
                             account_move_line trn
                         where init.account_internal_type in ('receivable','payable')
                             and init.parent_state='posted' 
-                            
+                            and init.partner_id=trn.partner_id
                             and trn.account_internal_type in ('receivable','payable')
                             and trn.parent_state='posted' 
                             
