@@ -15,7 +15,7 @@ class PartnerBalanceReport(models.TransientModel):
         ('Payables Accounts', 'Payables Accounts'),
         ('Receivables Accounts', 'Receivables Accounts'),
         ('Payables and Receivables Accounts', 'Payables and Receivables Accounts'),
-        ], string='Type',required=True, default='both')
+        ], string='Type',required=True, default='Payables and Receivables Accounts')
     partner_ids = fields.Many2many('res.partner', string='Partners')
 
     
