@@ -33,7 +33,7 @@ class PartnerBalReport(models.AbstractModel):
         # to = '%s' %(end_date)
         # raise UserError(to)
         if type == 'Payables Accounts':
-            self.env.cr.execute("""sselect partner_id, sum(init_debit) as init_debit, sum(init_credit) as init_credit, sum(init_balance) as init_balance, 
+            self.env.cr.execute("""select partner_id, sum(init_debit) as init_debit, sum(init_credit) as init_credit, sum(init_balance) as init_balance, 
                                     sum(init_for) as init_for,sum(trn_for) as trn_for,sum(trn_debit) as trn_debit, sum(trn_credit) as trn_credit, sum(trn_balance) as trn_balance
                                     from (
                                     select a.partner_id partner_id,
