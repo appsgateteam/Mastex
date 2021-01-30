@@ -33,80 +33,119 @@ class PartnerBalReport(models.AbstractModel):
         # to = '%s' %(end_date)
         # raise UserError(to)
         if type == 'Payables Accounts':
-            self.env.cr.execute("""select 
-                                init.partner_id as partner_id,
-                                init.date as init_date,
-                                trn.date as tran_date,
-                                sum(init.debit) as init_dr,
-                                sum(init.credit) as init_cr,
-                                sum(init.balance) as init_bal,
-                                sum(init.amount_currency) as init_for,
-                                sum(trn.debit) as trn_dr,
-                                sum(trn.credit) as trn_cr,
-                                sum(trn.balance) as trn_bal,
-                                sum(trn.amount_currency) as trn_for,
-                            (sum(init.debit)+sum(trn.debit)) as Ending_dr,
-                            (sum(init.credit)+sum(trn.credit)) as Ending_cr,
-                            (sum(init.balance)+sum(trn.balance)) as Ending_bal
-                            from 	account_move_line init, 
-                                account_move_line trn
-                            where init.account_internal_type = 'payable'
-                                and init.parent_state='posted' 
-                                and init.partner_id=trn.partner_id
-                                and trn.account_internal_type = 'payable'
-                                and trn.parent_state='posted' 
-                                
-                            group by init.partner_id,init.date,trn.date""")
+            self.env.cr.execute("""select partner_id, sum(init_debit) as init_debit, sum(init_credit) as init_credit, sum(init_balance) as init_balance, 
+                                    sum(init_for) as init_for,sum(trn_for) as trn_for,sum(trn_debit) as trn_debit, sum(trn_credit) as trn_credit, sum(trn_balance) as trn_balance
+                                    from (
+                                    select a.partner_id partner_id,
+                                        sum(a.debit) init_debit,
+                                        sum(a.credit) init_credit,
+                                        sum(a.balance) init_balance,
+                                        sum(a.amount_currency) init_for,
+                                        sum(0) trn_for,
+                                        sum(0) trn_debit,
+                                        sum(0) trn_credit,
+                                        sum(0) trn_balance
+                                    from account_move_line a
+                                    where 
+                                        a.account_internal_type = 'payable'
+                                        and a.parent_state='posted'
+                                        and a.date < to_date('%s','yyyy-mm-dd')
+                                        group by a.partner_id
+                                    union
+                                    select
+                                    b.partner_id partner_id,
+                                        sum(0) init_debit,
+                                        sum(0) init_credit,
+                                        sum(0) init_balance,
+                                        sum(0) init_for,
+                                        sum(b.amount_currency) trn_for,
+                                        sum(b.debit) trn_debit,
+                                        sum(b.credit) trn_credit,
+                                        sum(b.balance) trn_balance
+                                    from account_move_line b
+                                    where	b.account_internal_type = 'payable'
+                                        and b.parent_state='posted'
+                                        and b.date between to_date('%s','yyyy-mm-dd') and to_date('%s','yyyy-mm-dd')
+                                        group by b.partner_id
+                                        ) all_tables
+                                    --where partner_id=191
+                                        group by partner_id"""%(start_date,start_date,end_date))
         elif type == 'Receivables Accounts':
-            self.env.cr.execute("""select 
-                                init.partner_id as partner_id,
-                                init.date as init_date,
-                                trn.date as tran_date,
-                                sum(init.debit) as init_dr,
-                                sum(init.credit) as init_cr,
-                                sum(init.balance) as init_bal,
-                                sum(init.amount_currency) as init_for,
-                                sum(trn.debit) as trn_dr,
-                                sum(trn.credit) as trn_cr,
-                                sum(trn.balance) as trn_bal,
-                                sum(trn.amount_currency) as trn_for,
-                            (sum(init.debit)+sum(trn.debit)) as Ending_dr,
-                            (sum(init.credit)+sum(trn.credit)) as Ending_cr,
-                            (sum(init.balance)+sum(trn.balance)) as Ending_bal
-                            from 	account_move_line init, 
-                                account_move_line trn
-                            where init.account_internal_type = 'receivable'
-                                and init.parent_state='posted' 
-                                and init.partner_id=trn.partner_id
-                                and trn.account_internal_type = 'receivable'
-                                and trn.parent_state='posted' 
-                                
-                            group by init.partner_id,init.date,trn.date""")
+            self.env.cr.execute("""select partner_id, sum(init_debit) as init_debit, sum(init_credit) as init_credit, sum(init_balance) as init_balance, 
+                                    sum(init_for) as init_for,sum(trn_for) as trn_for,sum(trn_debit) as trn_debit, sum(trn_credit) as trn_credit, sum(trn_balance) as trn_balance
+                                    from (
+                                    select a.partner_id partner_id,
+                                        sum(a.debit) init_debit,
+                                        sum(a.credit) init_credit,
+                                        sum(a.balance) init_balance,
+                                        sum(a.amount_currency) init_for,
+                                        sum(0) trn_for,
+                                        sum(0) trn_debit,
+                                        sum(0) trn_credit,
+                                        sum(0) trn_balance
+                                    from account_move_line a
+                                    where 
+                                        a.account_internal_type = 'receivable'
+                                        and a.parent_state='posted'
+                                        and a.date < to_date('%s','yyyy-mm-dd')
+                                        group by a.partner_id
+                                    union
+                                    select
+                                    b.partner_id partner_id,
+                                        sum(0) init_debit,
+                                        sum(0) init_credit,
+                                        sum(0) init_balance,
+                                        sum(0) init_for,
+                                        sum(b.amount_currency) trn_for,
+                                        sum(b.debit) trn_debit,
+                                        sum(b.credit) trn_credit,
+                                        sum(b.balance) trn_balance
+                                    from account_move_line b
+                                    where	b.account_internal_type = 'receivable'
+                                        and b.parent_state='posted'
+                                        and b.date between to_date('%s','yyyy-mm-dd') and to_date('%s','yyyy-mm-dd')
+                                        group by b.partner_id
+                                        ) all_tables
+                                    --where partner_id=191
+                                        group by partner_id"""%(start_date,start_date,end_date))
         else:
-            self.env.cr.execute("""select 
-                                init.partner_id as partner_id,
-                                init.date as init_date,
-                                trn.date as tran_date,
-                                sum(init.debit) as init_dr,
-                                sum(init.credit) as init_cr,
-                                sum(init.balance) as init_bal,
-                                sum(init.amount_currency) as init_for,
-                                sum(trn.debit) as trn_dr,
-                                sum(trn.credit) as trn_cr,
-                                sum(trn.balance) as trn_bal,
-                                sum(trn.amount_currency) as trn_for,
-                            (sum(init.debit)+sum(trn.debit)) as Ending_dr,
-                            (sum(init.credit)+sum(trn.credit)) as Ending_cr,
-                            (sum(init.balance)+sum(trn.balance)) as Ending_bal
-                            from 	account_move_line init, 
-                                account_move_line trn
-                            where init.account_internal_type in ('receivable','payable')
-                                and init.parent_state='posted' 
-                                and init.partner_id=trn.partner_id
-                                and trn.account_internal_type in ('receivable','payable')
-                                and trn.parent_state='posted' 
-                                
-                            group by init.partner_id,init.date,trn.date""")
+            self.env.cr.execute("""select partner_id, sum(init_debit) as init_debit, sum(init_credit) as init_credit, sum(init_balance) as init_balance, 
+                                    sum(init_for) as init_for,sum(trn_for) as trn_for,sum(trn_debit) as trn_debit, sum(trn_credit) as trn_credit, sum(trn_balance) as trn_balance
+                                    from (
+                                    select a.partner_id partner_id,
+                                        sum(a.debit) init_debit,
+                                        sum(a.credit) init_credit,
+                                        sum(a.balance) init_balance,
+                                        sum(a.amount_currency) init_for,
+                                        sum(0) trn_for,
+                                        sum(0) trn_debit,
+                                        sum(0) trn_credit,
+                                        sum(0) trn_balance
+                                    from account_move_line a
+                                    where 
+                                        a.account_internal_type in ('receivable','payable')
+                                        and a.parent_state='posted'
+                                        and a.date < to_date('%s','yyyy-mm-dd')
+                                        group by a.partner_id
+                                    union
+                                    select
+                                    b.partner_id partner_id,
+                                        sum(0) init_debit,
+                                        sum(0) init_credit,
+                                        sum(0) init_balance,
+                                        sum(0) init_for,
+                                        sum(b.amount_currency) trn_for,
+                                        sum(b.debit) trn_debit,
+                                        sum(b.credit) trn_credit,
+                                        sum(b.balance) trn_balance
+                                    from account_move_line b
+                                    where	b.account_internal_type in ('receivable','payable')
+                                        and b.parent_state='posted'
+                                        and b.date between to_date('%s','yyyy-mm-dd') and to_date('%s','yyyy-mm-dd')
+                                        group by b.partner_id
+                                        ) all_tables
+                                    --where partner_id=191
+                                        group by partner_id"""%(start_date,start_date,end_date))
         # querys = self.env.cr.execute(query,)
         result = self.env.cr.dictfetchall()
 
@@ -120,44 +159,44 @@ class PartnerBalReport(models.AbstractModel):
             for rec in data['form']['partner']:
                 for res in result:
                     # raise UserError("%s %s"%(res['partner_id'],rec['id']))
-                    if str(res['init_date']) <= str(end_date) and (str(res['tran_date']) >= str(start_date) and str(res['tran_date']) <= str(end_date)):
-                        if rec['id'] == res['partner_id']:
-                            vals = {
-                                'init_dr':res['init_dr'],
-                                'name':self.env['res.partner'].browse(res['partner_id']).name,
-                                'init_cr':res['init_cr'],
-                                'init_bal':res['init_bal'],
-                                'trn_dr':res['trn_dr'],
-                                'trn_cr':res['trn_cr'],
-                                'trn_bal':res['trn_bal'],
-                                'init_for':res['init_for'],
-                                'trn_for':res['trn_for'],
-                                'ending_for':res['init_for'] + res['trn_for'],
-                                'Ending_dr':res['init_dr'] + res['trn_dr'],
-                                'Ending_cr':res['init_cr'] + res['trn_cr'],
-                                'Ending_bal':res['init_bal'] + res['trn_bal'],
-                            }
-                            array3.append(vals)
+                    # if str(res['init_date']) <= str(end_date) and (str(res['tran_date']) >= str(start_date) and str(res['tran_date']) <= str(end_date)):
+                    if rec['id'] == res['partner_id']:
+                        vals = {
+                            'init_dr':res['init_debit'],
+                            'name':self.env['res.partner'].browse(res['partner_id']).name,
+                            'init_cr':res['init_credit'],
+                            'init_bal':res['init_balance'],
+                            'trn_dr':res['trn_debit'],
+                            'trn_cr':res['trn_credit'],
+                            'trn_bal':res['trn_balance'],
+                            'init_for':res['init_for'],
+                            'trn_for':res['trn_for'],
+                            'ending_for':res['init_for'] + res['trn_for'],
+                            'Ending_dr':res['init_debit'] + res['trn_debit'],
+                            'Ending_cr':res['init_credit'] + res['trn_credit'],
+                            'Ending_bal':res['init_balance'] + res['trn_balance'],
+                        }
+                        array3.append(vals)
         else:
             for res in result:
                 # for rec in data['form']['partner']:
-                if str(res['init_date']) <= str(end_date) and (str(res['tran_date']) >= str(start_date) and str(res['tran_date']) <= str(end_date)):
-                    vals = {
-                        'init_dr':res['init_dr'],
-                        'name':self.env['res.partner'].browse(res['partner_id']).name,
-                        'init_cr':res['init_cr'],
-                        'init_bal':res['init_bal'],
-                        'trn_dr':res['trn_dr'],
-                        'trn_cr':res['trn_cr'],
-                        'trn_bal':res['trn_bal'],
-                        'init_for':res['init_for'],
-                        'trn_for':res['trn_for'],
-                        'ending_for':res['init_for'] + res['trn_for'],
-                        'Ending_dr':res['init_dr'] + res['trn_dr'],
-                        'Ending_cr':res['init_cr'] + res['trn_cr'],
-                        'Ending_bal':res['init_bal'] + res['trn_bal'],
-                    }
-                    array3.append(vals)
+                # if str(res['init_date']) <= str(end_date) and (str(res['tran_date']) >= str(start_date) and str(res['tran_date']) <= str(end_date)):
+                vals = {
+                    'init_dr':res['init_debit'],
+                    'name':self.env['res.partner'].browse(res['partner_id']).name,
+                    'init_cr':res['init_credit'],
+                    'init_bal':res['init_balance'],
+                    'trn_dr':res['trn_debit'],
+                    'trn_cr':res['trn_credit'],
+                    'trn_bal':res['trn_balance'],
+                    'init_for':res['init_for'],
+                    'trn_for':res['trn_for'],
+                    'ending_for':res['init_for'] + res['trn_for'],
+                    'Ending_dr':res['init_debit'] + res['trn_debit'],
+                    'Ending_cr':res['init_credit'] + res['trn_credit'],
+                    'Ending_bal':res['init_balance'] + res['trn_balance'],
+                }
+                array3.append(vals)
 
                     
           
