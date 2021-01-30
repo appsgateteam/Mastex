@@ -49,7 +49,7 @@ class PartnerBalReport(models.AbstractModel):
                                     where 
                                         a.account_internal_type = 'payable'
                                         and a.parent_state='posted'
-                                        and a.date <= to_date('%s','yyyy-mm-dd')
+                                        and a.date < to_date('%s','yyyy-mm-dd')
                                         group by a.partner_id
                                     union
                                     select
@@ -87,7 +87,7 @@ class PartnerBalReport(models.AbstractModel):
                                     where 
                                         a.account_internal_type = 'receivable'
                                         and a.parent_state='posted'
-                                        and a.date <= to_date('%s','yyyy-mm-dd')
+                                        and a.date < to_date('%s','yyyy-mm-dd')
                                         group by a.partner_id
                                     union
                                     select
@@ -125,7 +125,7 @@ class PartnerBalReport(models.AbstractModel):
                                     where 
                                         a.account_internal_type in ('receivable','payable')
                                         and a.parent_state='posted'
-                                        and a.date <= to_date('%s','yyyy-mm-dd')
+                                        and a.date < to_date('%s','yyyy-mm-dd')
                                         group by a.partner_id
                                     union
                                     select
