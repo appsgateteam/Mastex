@@ -184,40 +184,18 @@ class AccountMove(models.Model):
     is_order_to_invoice = fields.Boolean('Order To Invoice')
     bank_charge = fields.Float(string="Bank Charge", default=100, copy=True, readonly=True,store=True,
                                states={'draft': [('readonly', False)]})
-    bank_charge_currency = fields.Float(string="Bank Charge", default=False, compute='_onchange_bank_charge',copy=True, store=True, readonly=True,
+    bank_charge_currency = fields.Float(string="Bank Charge", default=False, compute='_onchange_bank_charge_change',copy=True, store=True, readonly=True,
                                         states={'draft': [('readonly', False)]})
     customer_currency_id = fields.Many2one('res.currency', string='Customer Currency')
     currency_charge = fields.Monetary('Currency Charge', compute='_compute_amount', default=0.00, store=True, readonly=True)
 
 
-    # def write(self,vals):
-    #     res = super(AccountMove,self).write(vals)
-    #     print('---write---')
-    #     if self.bank_charge:
-    #         if self.type in ['out_invoice', 'out_refund']:
-    #             if self.currency_id != self.company_id.currency_id:
-    #                 amount_currency = abs(self.bank_charge)
-    #                 self.bank_charge_currency = self.company_currency_id._convert(amount_currency, self.currency_id,
-    #                                                                               self.company_id,
-    #                                                                               self.date)
-    #             else:
-    #                 self.bank_charge_currency = self.bank_charge
-    #         self._recompute_dynamic_lines()
-    #     return res
 
     # @api.model_create_multi
     # def create(self, vals):
     #     res = super(AccountMove, self).create(vals)
-    #     if self.bank_charge:
-    #         if self.type in ['out_invoice', 'out_refund']:
-    #             if self.currency_id != self.company_id.currency_id:
-    #                 amount_currency = abs(self.bank_charge)
-    #                 self.bank_charge_currency = self.company_currency_id._convert(amount_currency, self.currency_id,
-    #                                                                               self.company_id,
-    #                                                                               self.date)
-    #             else:
-    #                 self.bank_charge_currency = self.bank_charge
-    #         self._recompute_dynamic_lines()
+    #     if res.bank_charge:
+    #         res._recompute_dynamic_lines()
     #     return res
 
     def _get_reconciled_info_JSON_values(self):
@@ -293,6 +271,18 @@ class AccountMove(models.Model):
         return True
 
     @api.depends('bank_charge', 'currency_id', 'customer_currency_id')
+    def _onchange_bank_charge_change(self):
+        if self.bank_charge_currency == 0:
+            if self.type in ['out_invoice', 'out_refund']:
+                if self.currency_id != self.company_id.currency_id:
+                    amount_currency = abs(self.bank_charge)
+                    self.bank_charge_currency = self.company_currency_id._convert(amount_currency, self.currency_id,
+                                                                                  self.company_id,
+                                                                                  self.date)
+                else:
+                    self.bank_charge_currency = self.bank_charge
+            self._recompute_dynamic_lines()
+
     @api.onchange('bank_charge', 'currency_id', 'customer_currency_id')
     def _onchange_bank_charge(self):
         if self.type in ['out_invoice', 'out_refund']:
@@ -704,6 +694,7 @@ class AccountMove(models.Model):
                 currency_charge_move_line = _prepare_currency_move_line(self)
                 create_method = in_draft_mode and self.env['account.move.line'].new or self.env[
                     'account.move.line'].create
+
                 new_discount_line = create_method(currency_charge_move_line)
 
                 if in_draft_mode:
