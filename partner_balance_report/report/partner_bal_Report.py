@@ -33,119 +33,122 @@ class PartnerBalReport(models.AbstractModel):
         # to = '%s' %(end_date)
         # raise UserError(to)
         if type == 'Payables Accounts':
-            self.env.cr.execute("""select partner_id, sum(init_debit) as init_debit, sum(init_credit) as init_credit, sum(init_balance) as init_balance, 
+            self.env.cr.execute("""select partner_id as partner_id,name as name, sum(init_debit) as init_debit, sum(init_credit) as init_credit, sum(init_balance) as init_balance, 
                                     sum(init_for) as init_for,sum(trn_for) as trn_for,sum(trn_debit) as trn_debit, sum(trn_credit) as trn_credit, sum(trn_balance) as trn_balance
-                                    from (
-                                    select a.partner_id partner_id,
-                                        sum(a.debit) init_debit,
-                                        sum(a.credit) init_credit,
-                                        sum(a.balance) init_balance,
-                                        sum(a.amount_currency) init_for,
-                                        sum(0) trn_for,
-                                        sum(0) trn_debit,
-                                        sum(0) trn_credit,
-                                        sum(0) trn_balance
-                                    from account_move_line a
-                                    where 
-                                        a.account_internal_type = 'payable'
-                                        and a.parent_state='posted'
-                                        and a.date < to_date('%s','yyyy-mm-dd')
-                                        group by a.partner_id
-                                    union
-                                    select
-                                    b.partner_id partner_id,
-                                        sum(0) init_debit,
-                                        sum(0) init_credit,
-                                        sum(0) init_balance,
-                                        sum(0) init_for,
-                                        sum(b.amount_currency) trn_for,
-                                        sum(b.debit) trn_debit,
-                                        sum(b.credit) trn_credit,
-                                        sum(b.balance) trn_balance
-                                    from account_move_line b
-                                    where	b.account_internal_type = 'payable'
-                                        and b.parent_state='posted'
-                                        and b.date between to_date('%s','yyyy-mm-dd') and to_date('%s','yyyy-mm-dd')
-                                        group by b.partner_id
-                                        ) all_tables
-                                    --where partner_id=191
-                                        group by partner_id"""%(start_date,start_date,end_date))
+                                from (
+                                select a.partner_id partner_id,
+                                sum(a.debit) init_debit,
+                                sum(a.credit) init_credit,
+                                sum(a.balance) init_balance,
+                                sum(a.amount_currency) init_for,
+                                sum(0) trn_for,
+                                sum(0) trn_debit,
+                                sum(0) trn_credit,
+                                sum(0) trn_balance
+                                from account_move_line a
+                                where 
+                                a.account_internal_type = 'payable'
+                                and a.parent_state='posted'
+                                and a.date < to_date('%s','yyyy-mm-dd')
+                                group by a.partner_id
+                                union
+                                select
+                                b.partner_id partner_id,
+                                sum(0) init_debit,
+                                sum(0) init_credit,
+                                sum(0) init_balance,
+                                sum(0) init_for,
+                                sum(b.amount_currency) trn_for,
+                                sum(b.debit) trn_debit,
+                                sum(b.credit) trn_credit,
+                                sum(b.balance) trn_balance
+                                from account_move_line b
+                                where	b.account_internal_type = 'payable'
+                                and b.parent_state='posted'
+                                and b.date between to_date('%s','yyyy-mm-dd') and to_date('%s','yyyy-mm-dd')
+                                group by b.partner_id
+                                ) all_tables , res_partner
+                                where id=partner_id
+                                group by partner_id, name
+                                order by name"""%(start_date,start_date,end_date))
         elif type == 'Receivables Accounts':
-            self.env.cr.execute("""select partner_id, sum(init_debit) as init_debit, sum(init_credit) as init_credit, sum(init_balance) as init_balance, 
+            self.env.cr.execute("""select partner_id as partner_id,name as name, sum(init_debit) as init_debit, sum(init_credit) as init_credit, sum(init_balance) as init_balance, 
                                     sum(init_for) as init_for,sum(trn_for) as trn_for,sum(trn_debit) as trn_debit, sum(trn_credit) as trn_credit, sum(trn_balance) as trn_balance
-                                    from (
-                                    select a.partner_id partner_id,
-                                        sum(a.debit) init_debit,
-                                        sum(a.credit) init_credit,
-                                        sum(a.balance) init_balance,
-                                        sum(a.amount_currency) init_for,
-                                        sum(0) trn_for,
-                                        sum(0) trn_debit,
-                                        sum(0) trn_credit,
-                                        sum(0) trn_balance
-                                    from account_move_line a
-                                    where 
-                                        a.account_internal_type = 'receivable'
-                                        and a.parent_state='posted'
-                                        and a.date < to_date('%s','yyyy-mm-dd')
-                                        group by a.partner_id
-                                    union
-                                    select
-                                    b.partner_id partner_id,
-                                        sum(0) init_debit,
-                                        sum(0) init_credit,
-                                        sum(0) init_balance,
-                                        sum(0) init_for,
-                                        sum(b.amount_currency) trn_for,
-                                        sum(b.debit) trn_debit,
-                                        sum(b.credit) trn_credit,
-                                        sum(b.balance) trn_balance
-                                    from account_move_line b
-                                    where	b.account_internal_type = 'receivable'
-                                        and b.parent_state='posted'
-                                        and b.date between to_date('%s','yyyy-mm-dd') and to_date('%s','yyyy-mm-dd')
-                                        group by b.partner_id
-                                        ) all_tables
-                                    --where partner_id=191
-                                        group by partner_id"""%(start_date,start_date,end_date))
+                                from (
+                                select a.partner_id partner_id,
+                                sum(a.debit) init_debit,
+                                sum(a.credit) init_credit,
+                                sum(a.balance) init_balance,
+                                sum(a.amount_currency) init_for,
+                                sum(0) trn_for,
+                                sum(0) trn_debit,
+                                sum(0) trn_credit,
+                                sum(0) trn_balance
+                                from account_move_line a
+                                where 
+                                a.account_internal_type = 'receivable'
+                                and a.parent_state='posted'
+                                and a.date < to_date('%s','yyyy-mm-dd')
+                                group by a.partner_id
+                                union
+                                select
+                                b.partner_id partner_id,
+                                sum(0) init_debit,
+                                sum(0) init_credit,
+                                sum(0) init_balance,
+                                sum(0) init_for,
+                                sum(b.amount_currency) trn_for,
+                                sum(b.debit) trn_debit,
+                                sum(b.credit) trn_credit,
+                                sum(b.balance) trn_balance
+                                from account_move_line b
+                                where	b.account_internal_type = 'receivable'
+                                and b.parent_state='posted'
+                                and b.date between to_date('%s','yyyy-mm-dd') and to_date('%s','yyyy-mm-dd')
+                                group by b.partner_id
+                                ) all_tables , res_partner
+                                where id=partner_id
+                                group by partner_id, name
+                                order by name"""%(start_date,start_date,end_date))
         else:
-            self.env.cr.execute("""select partner_id, sum(init_debit) as init_debit, sum(init_credit) as init_credit, sum(init_balance) as init_balance, 
+            self.env.cr.execute("""select partner_id as partner_id,name as name, sum(init_debit) as init_debit, sum(init_credit) as init_credit, sum(init_balance) as init_balance, 
                                     sum(init_for) as init_for,sum(trn_for) as trn_for,sum(trn_debit) as trn_debit, sum(trn_credit) as trn_credit, sum(trn_balance) as trn_balance
-                                    from (
-                                    select a.partner_id partner_id,
-                                        sum(a.debit) init_debit,
-                                        sum(a.credit) init_credit,
-                                        sum(a.balance) init_balance,
-                                        sum(a.amount_currency) init_for,
-                                        sum(0) trn_for,
-                                        sum(0) trn_debit,
-                                        sum(0) trn_credit,
-                                        sum(0) trn_balance
-                                    from account_move_line a
-                                    where 
-                                        a.account_internal_type in ('receivable','payable')
-                                        and a.parent_state='posted'
-                                        and a.date < to_date('%s','yyyy-mm-dd')
-                                        group by a.partner_id
-                                    union
-                                    select
-                                    b.partner_id partner_id,
-                                        sum(0) init_debit,
-                                        sum(0) init_credit,
-                                        sum(0) init_balance,
-                                        sum(0) init_for,
-                                        sum(b.amount_currency) trn_for,
-                                        sum(b.debit) trn_debit,
-                                        sum(b.credit) trn_credit,
-                                        sum(b.balance) trn_balance
-                                    from account_move_line b
-                                    where	b.account_internal_type in ('receivable','payable')
-                                        and b.parent_state='posted'
-                                        and b.date between to_date('%s','yyyy-mm-dd') and to_date('%s','yyyy-mm-dd')
-                                        group by b.partner_id
-                                        ) all_tables
-                                    --where partner_id=191
-                                        group by partner_id"""%(start_date,start_date,end_date))
+                                from (
+                                select a.partner_id partner_id,
+                                sum(a.debit) init_debit,
+                                sum(a.credit) init_credit,
+                                sum(a.balance) init_balance,
+                                sum(a.amount_currency) init_for,
+                                sum(0) trn_for,
+                                sum(0) trn_debit,
+                                sum(0) trn_credit,
+                                sum(0) trn_balance
+                                from account_move_line a
+                                where 
+                                a.account_internal_type in ('receivable','payable')
+                                and a.parent_state='posted'
+                                and a.date < to_date('%s','yyyy-mm-dd')
+                                group by a.partner_id
+                                union
+                                select
+                                b.partner_id partner_id,
+                                sum(0) init_debit,
+                                sum(0) init_credit,
+                                sum(0) init_balance,
+                                sum(0) init_for,
+                                sum(b.amount_currency) trn_for,
+                                sum(b.debit) trn_debit,
+                                sum(b.credit) trn_credit,
+                                sum(b.balance) trn_balance
+                                from account_move_line b
+                                where	b.account_internal_type in ('receivable','payable')
+                                and b.parent_state='posted'
+                                and b.date between to_date('%s','yyyy-mm-dd') and to_date('%s','yyyy-mm-dd')
+                                group by b.partner_id
+                                ) all_tables , res_partner
+                                where id=partner_id
+                                group by partner_id, name
+                                order by name"""%(start_date,start_date,end_date))
         # querys = self.env.cr.execute(query,)
         result = self.env.cr.dictfetchall()
 
@@ -163,7 +166,7 @@ class PartnerBalReport(models.AbstractModel):
                     if rec['id'] == res['partner_id']:
                         vals = {
                             'init_dr':res['init_debit'],
-                            'name':self.env['res.partner'].browse(res['partner_id']).name,
+                            'name':res['name'],
                             'init_cr':res['init_credit'],
                             'init_bal':res['init_balance'],
                             'trn_dr':res['trn_debit'],
@@ -183,7 +186,7 @@ class PartnerBalReport(models.AbstractModel):
                 # if str(res['init_date']) <= str(end_date) and (str(res['tran_date']) >= str(start_date) and str(res['tran_date']) <= str(end_date)):
                 vals = {
                     'init_dr':res['init_debit'],
-                    'name':self.env['res.partner'].browse(res['partner_id']).name,
+                    'name':res['name'],
                     'init_cr':res['init_credit'],
                     'init_bal':res['init_balance'],
                     'trn_dr':res['trn_debit'],
