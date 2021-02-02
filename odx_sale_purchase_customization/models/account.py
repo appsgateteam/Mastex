@@ -99,6 +99,8 @@ class AccountMove(models.Model):
                     total_residual += line.amount_residual
                     total_residual_currency += line.amount_residual_currency
 
+
+
             total = total_untaxed + total_tax
             total_currency = total_untaxed_currency + total_tax_currency
             if move.type == 'entry' or move.is_outbound():
@@ -161,6 +163,7 @@ class AccountMove(models.Model):
                     move.invoice_payment_state = 'paid'
             else:
                 move.invoice_payment_state = 'not_paid'
+        # self._recompute_dynamic_lines()
 
     def _get_default_reference(self):
         """:return PO reference"""
@@ -184,19 +187,39 @@ class AccountMove(models.Model):
     is_order_to_invoice = fields.Boolean('Order To Invoice')
     bank_charge = fields.Float(string="Bank Charge", default=100, copy=True, readonly=True,store=True,
                                states={'draft': [('readonly', False)]})
-    bank_charge_currency = fields.Float(string="Bank Charge", default=False, compute='_onchange_bank_charge_change',copy=True, store=True, readonly=True,
+    # bank_charge_currency = fields.Float(string="Bank Charge", default=False, readonly=True,
+    #                                     states={'draft': [('readonly', False)]})
+    bank_charge_currency = fields.Float(string="Bank Charge", default=False, compute='_onchange_bank_charge_change',
+                                        copy=True, store=True, readonly=True,
                                         states={'draft': [('readonly', False)]})
     customer_currency_id = fields.Many2one('res.currency', string='Customer Currency')
-    currency_charge = fields.Monetary('Currency Charge', compute='_compute_amount', default=0.00, store=True, readonly=True)
-
+    currency_charge = fields.Float('Currency Charge', compute='_compute_amount', default=0.00, digits=(16,3), store=True, readonly=True) # modified by bincy changed the monetary field to float and added decimal digits(16,3)
+    test_flag = fields.Integer('Prove',default=0)
 
 
     # @api.model_create_multi
     # def create(self, vals):
     #     res = super(AccountMove, self).create(vals)
-    #     if res.bank_charge:
-    #         res._recompute_dynamic_lines()
+    #     # if res.type in ['out_invoice', 'out_refund']:
+    #     #     #if res.bank_charge_currency == 0:
+    #     #
+    #     #     if res.currency_id != res.company_id.currency_id:
+    #     #         amount_currency = abs(res.bank_charge)
+    #     #         # currency = self.currency_id.id
+    #     #         # self.bank_charge_currency = self.company_currency_id._convert(amount_currency, self.currency_id,
+    #     #         #                                                               self.company_id,
+    #     #         #                                                               self.date)
+    #     #         res.bank_charge_currency = amount_currency * res.currency_id.rate
+    #     #         # res.write({'bank_charge_currency': amount_currency * res.currency_id.rate})
+    #     #     else:
+    #     #         res.bank_charge_currency = res.bank_charge
+    #     #         # res.write({'bank_charge_currency': res.bank_charge})
+    #         self._recompute_dynamic_lines()
+    #
+    #             # raise UserError("tesst 3")
     #     return res
+
+
 
     def _get_reconciled_info_JSON_values(self):
         self.ensure_one()
@@ -272,28 +295,39 @@ class AccountMove(models.Model):
 
     @api.depends('bank_charge', 'currency_id', 'customer_currency_id')
     def _onchange_bank_charge_change(self):
-        if self.bank_charge_currency == 0:
-            if self.type in ['out_invoice', 'out_refund']:
+        #if self.test_flag != 1:
+        if self.type in ['out_invoice', 'out_refund']:
+            if self.bank_charge_currency == 0 :#and self.bank_charge != 0 :
                 if self.currency_id != self.company_id.currency_id:
                     amount_currency = abs(self.bank_charge)
-                    self.bank_charge_currency = self.company_currency_id._convert(amount_currency, self.currency_id,
-                                                                                  self.company_id,
-                                                                                  self.date)
+
+                    # self.bank_charge_currency = self.company_currency_id._convert(amount_currency, self.currency_id,
+                    #                                                               self.company_id,
+                    #                                                               self.date)
+                    self.bank_charge_currency = amount_currency * self.currency_id.rate
                 else:
                     self.bank_charge_currency = self.bank_charge
-            self._recompute_dynamic_lines()
+                self._recompute_dynamic_lines()
+        # else:
+        #     self.test_flag = 1
 
-    @api.onchange('bank_charge', 'currency_id', 'customer_currency_id')
+    @api.onchange('bank_charge','amount_commission', 'currency_id', 'customer_currency_id')
     def _onchange_bank_charge(self):
         if self.type in ['out_invoice', 'out_refund']:
             if self.currency_id != self.company_id.currency_id:
                 amount_currency = abs(self.bank_charge)
-                self.bank_charge_currency = self.company_currency_id._convert(amount_currency, self.currency_id,
-                                                                              self.company_id,
-                                                                              self.date)
+                # self.bank_charge_currency = self.company_currency_id._convert(amount_currency, self.currency_id,
+                #                                                               self.company_id,
+                #                                                               self.date)
+                self.bank_charge_currency = amount_currency * self.currency_id.rate
             else:
                 self.bank_charge_currency = self.bank_charge
+        # print("tesst 1")
+        # raise UserError("tesst 1")
+        # self.line_ids.unlink()
+        # self._compute_amount()
         self._recompute_dynamic_lines()
+        #self._recompute_bank_fee_lines()
 
     def _recompute_bank_fee_lines(self):
         """ thi function is used to create journal item for bank fee"""
@@ -875,14 +909,17 @@ class AccountMove(models.Model):
                 invoice._recompute_tax_lines(recompute_tax_base_amount=True)
 
             if invoice.is_invoice(include_receipts=True):
+                if invoice.type in ['out_invoice', 'out_refund'] and invoice.partner_id:
+                    print("dddddddddddd")
+                    invoice._recompute_currency_charge_lines()
 
+                if invoice.type in ['out_invoice', 'out_refund'] and invoice.partner_id:
+                    invoice._recompute_bank_fee_lines()
                 # Compute cash rounding.
                 invoice._recompute_cash_rounding_lines()
 
                 # compute currency charge
-                if invoice.type in ['out_invoice', 'out_refund'] and invoice.partner_id:
-                    print("dddddddddddd")
-                    invoice._recompute_currency_charge_lines()
+
 
                 # Compute payment terms.
                 invoice._recompute_payment_terms_lines()
@@ -895,8 +932,7 @@ class AccountMove(models.Model):
                 invoice._recompute_discount_lines()
 
                 # compute bank fee lines
-                if invoice.type in ['out_invoice', 'out_refund'] and invoice.partner_id:
-                    invoice._recompute_bank_fee_lines()
+
 
                 # Only synchronize one2many in onchange.
                 if invoice != invoice._origin:
