@@ -55,7 +55,10 @@ class SaleOrder(models.Model):
     shipping_mark = fields.Html(string="Shipping Mark")
     shipping_sample_book = fields.Text(string="Shippment Sample")
     notes = fields.Text(string="Notes")
-    currency_id = fields.Many2one('res.currency', related='',string='Currency', required=True, readonly= False)
+    currency_id = fields.Many2one('res.currency', related='',string='Currency', required=True, readonly= False ,compute='amt_currency')
+
+
+
 
     # Other details
     shipment_date = fields.Date(string="Shipment Date")
@@ -78,6 +81,10 @@ class SaleOrder(models.Model):
         ('no', 'Nothing to Invoice')
         ], string='Invoice Status', compute='_get_invoice_status', store=True, readonly=True)
 
+    @api.depends('currency_id')
+    def amt_currency(self):
+        currency = self.env['res.currency'].search([('id', '=', 2)])
+        self.currency_id = currency
 
     @api.depends('state', 'order_line.invoice_status')
     def _get_invoice_status(self):
