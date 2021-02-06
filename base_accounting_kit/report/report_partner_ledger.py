@@ -103,6 +103,30 @@ class ReportPartnerLedger(models.AbstractModel):
             result = contemp[0] or 0.0
         return result
 
+    # def _get_init_balance(self, data, partner, init_balance):
+    #     if init_balance:
+    #         query_get_data = self.env['account.move.line'].with_context(data['form'].get('used_context', {}),
+    #                                                                     date_to=False, initial_bal=True)._query_get()
+    #         reconcile_clause = "" if data['form'][
+    #             'reconciled'] else ' AND "account_move_line".full_reconcile_id IS NULL '
+    #         params = [partner.id, tuple(data['computed']['move_state']), tuple(data['computed']['account_ids'])] + \
+    #                  query_get_data[2]
+    #         query = """
+    #                     SELECT sum("account_move_line".debit) as debit, sum("account_move_line".credit) as credit,
+    #            sum("account_move_line".debit - "account_move_line".credit) as balance
+    #                     FROM """ + query_get_data[0] + """
+    #                     LEFT JOIN account_journal j ON ("account_move_line".journal_id = j.id)
+    #                     LEFT JOIN account_account acc ON ("account_move_line".account_id = acc.id)
+    #                     LEFT JOIN res_currency c ON ("account_move_line".currency_id=c.id)
+    #                     LEFT JOIN account_move m ON (m.id="account_move_line".move_id)
+    #                     WHERE "account_move_line".partner_id = %s
+    #                         AND m.state IN %s
+    #                         AND "account_move_line".account_id IN %s  AND """ + query_get_data[1] + reconcile_clause + """
+    #                         """
+    #         self.env.cr.execute(query, tuple(params))
+    #         res = self.env.cr.dictfetchall()
+    #         return res
+
     def _get_partner_currency(self, data, partner):
         currency = self.env['res.currency']
 
@@ -177,7 +201,10 @@ class ReportPartnerLedger(models.AbstractModel):
                 AND NOT account.deprecated
                 AND """ + query_get_data[1] + reconcile_clause
         self.env.cr.execute(query, tuple(params))
-        partner_ids = [res['partner_id'] for res in self.env.cr.dictfetchall()]
+        if data['form']['partner_ids']:
+            partner_ids = data['form']['partner_ids']
+        else:
+            partner_ids = [res['partner_id'] for res in self.env.cr.dictfetchall()]
         if data.get('form').get('partner_ids'):
             partner_ids = data.get('form').get('partner_ids')
         partners = obj_partner.browse(partner_ids)
@@ -191,4 +218,5 @@ class ReportPartnerLedger(models.AbstractModel):
             'lines': self._lines,
             'sum_partner': self._sum_partner,
             'get_currency': self._get_partner_currency,
+         #   '_init_bal': self._get_init_balance,
         }

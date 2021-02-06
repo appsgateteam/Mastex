@@ -335,14 +335,14 @@ class SaleOrder(models.Model):
         for r in self:
             result.append((r.id, u"%s %s" % ('SO', r.name)))
         return result
-
-    def _prepare_invoice(self):
-        res = super(SaleOrder, self)._prepare_invoice()
-        res['reference'] = self.name
-        res['sale_id'] = self.id
-        res['ref'] = self.name
-        res['is_order_to_invoice'] = True
-        return res
+    #
+    # def _prepare_invoice(self):
+    #     res = super(SaleOrder, self)._prepare_invoice()
+    #     res['reference'] = self.name
+    #     res['sale_id'] = self.id
+    #     res['ref'] = self.name
+    #     res['is_order_to_invoice'] = True
+    #     return res
 
     def create_invoices(self):
         if self.invoice_ids:
@@ -380,6 +380,9 @@ class SaleOrder(models.Model):
             'currency_id': self.currency_id.id, #instead of pricelist_id.currency_id now passing the default currency_id
             'campaign_id': self.campaign_id.id,
             'medium_id': self.medium_id.id,
+            'reference':self.name,
+            'sale_id':self.id,
+            'is_order_to_invoice':True,
             'source_id': self.source_id.id,
             'invoice_user_id': self.user_id and self.user_id.id,
             'team_id': self.team_id.id,
@@ -396,6 +399,8 @@ class SaleOrder(models.Model):
             'company_id': self.company_id.id,
         }
         return invoice_vals
+
+
 
 class LandingCost(models.Model):
     _name = 'sale.landing.cost'

@@ -32,5 +32,5 @@ from . import account_bank_book
 from . import account_cash_book
 from . import account_day_book
 from . import account_asset_report
-from . import partner_ledger_repor
+#from . import partner_ledger_repor
 
