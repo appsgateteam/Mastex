@@ -72,14 +72,14 @@
 
                                 </tr>
 
-                                 <tr t-foreach="_init_bal(data, o, data['form']['show_initial_balance'])" t-as="bal">
+                                 <!--<tr t-foreach="_init_bal(data, o, data['form']['show_initial_balance'])" t-as="bal">
                                     <t t-if="bal.get('balance')">
                                         <td colspan="4">
                                             <span>Initial Balance</span>
                                         </td>
                                         <td class="text-right">
                                             <span t-esc="bal.get('debit')"
-                                            />
+                                                />
                                             <span t-esc="res_company.currency_id.symbol"/>
                                         </td>
                                         <td class="text-right">
@@ -91,7 +91,7 @@
                                             <span t-esc="res_company.currency_id.symbol"/>
                                         </td>
                                     </t>
-                                </tr>
+                                </tr>-->
                                 <tr t-foreach="lines(data, o)" t-as="line">
                                     <td style="width:150px;">
                                         <span t-esc="line['date']"/>
@@ -114,12 +114,12 @@
                                               t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
                                     </td>
                                     <!-- commented td progess and added this-->
-                                   <!-- <td class="text-right">
+                                    <td class="text-right">
                                         <span t-esc="line['progress']"
                                               t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
-                                    </td>-->
+                                    </td>
 
-                                    <t t-foreach="_init_bal(data, o, data['form']['show_initial_balance'])" t-as="bal">
+                                <!--    <t t-foreach="_init_bal(data, o, data['form']['show_initial_balance'])" t-as="bal">
                                         <td class="text-right">
                                             <span t-if="bal.get('balance') and line['progress']"
                                                   t-esc="bal.get('balance') + line['progress']"
@@ -133,7 +133,7 @@
                                             <span t-else="" t-esc="0.0"
                                                   t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
                                         </td>
-                                    </t>
+                                    </t>-->
                                     <!-- commented td progess and added this-->
 
                                     <td class="text-right" t-if="data['form']['amount_currency']">
@@ -157,7 +157,7 @@
                                     </td>
 
                                 </tr>
-                                 <tr>
+                                <!-- <tr>
                                 <t t-foreach="_init_bal(data, o, data['form']['show_initial_balance'])" t-as="bal">
                                     <t t-if="data['form']['show_closing_balance']">
                                         <td colspan="4">
@@ -191,7 +191,7 @@
                                         </td>
                                     </t>
                                 </t>
-                            </tr>
+                            </tr>-->
                             </tbody>
                         </t>
                     </table>

@@ -33,16 +33,16 @@ class AccountPartnerLedger(models.TransientModel):
                                           "currency differs from the company currency.")
     reconciled = fields.Boolean('Reconciled Entries')
     partner_ids = fields.Many2many('res.partner', string="Partner Filter")
-    show_initial_balance = fields.Boolean(string='Show Initial Balance')
-    show_closing_balance = fields.Boolean(string='Show Closing Balance')
+    #show_initial_balance = fields.Boolean(string='Show Initial Balance')
+   # show_closing_balance = fields.Boolean(string='Show Closing Balance')
 
     def _print_report(self, data):
         data = self.pre_print_report(data)
         data['form'].update({'reconciled': self.reconciled,
                              'partner_ids': self.partner_ids.ids,
                              'amount_currency': self.amount_currency,
-                             'show_initial_balance':self.show_initial_balance,
-                             'show_closing_balance':self.show_closing_balance
+                            # 'show_initial_balance':self.show_initial_balance,
+                           #  'show_closing_balance':self.show_closing_balance
                              })
         return self.env.ref(
             'base_accounting_kit.action_report_partnerledger').report_action(
